@@ -30,8 +30,9 @@ export function LanguageToggle() {
           size="icon-sm"
           className="h-9 w-9 rounded-lg hover:bg-secondary/80 text-muted-foreground hover:text-foreground transition-colors"
           title="Changer de langue / Change language"
+          aria-label="Changer de langue / Change language"
         >
-          <Globe className="h-4 w-4" />
+          <Globe className="h-4 w-4" aria-hidden="true" />
           <span className="sr-only">Changer de langue</span>
         </Button>
       </DropdownMenuTrigger>

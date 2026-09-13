@@ -299,6 +299,40 @@ Finaliser la configuration SEO, l'indexation par les moteurs de recherche et la 
 
 ---
 
+## [2026-09-13] - Audit & Finalisation de l'Accessibilité WCAG & Web Interface Guidelines
+
+### 📌 Contexte & Objectif
+Améliorer l'ergonomie, la navigabilité au clavier, la compatibilité avec les lecteurs d'écran et la conformité aux *Web Interface Guidelines* de Vercel sur l'ensemble des écrans clés de QRCraft (Studio, Dashboard, Landing Page).
+
+### 🛠️ Actions Réalisées
+1. **Navigation au Clavier & Skip-Link (`src/app/layout.tsx`)** :
+   - Ajout d'un lien d'évitement accessible (`Skip-link`) dès le premier appui sur Tab (`Passer au contenu principal`), pointant vers l'ancre `#main-content`.
+   - Identification sémantique de `<main id="main-content">` sur la Landing Page (`/`), le Studio (`/studio`) et le Dashboard (`/dashboard`).
+
+2. **Rôles ARIA & Rendu d'Onglets (`src/components/qr/qr-studio-view.tsx`)** :
+   - Implémentation du pattern standard WAI-ARIA pour la bascule 2D / 3D : `role="tablist"`, `role="tab"`, `aria-selected`, `aria-controls`, et `role="tabpanel"`.
+   - Anneaux de focus visibles (`focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden`) sans perturbation du clic souris.
+
+3. **Boutons Interactifs & Icônes Décoratives** :
+   - `LanguageToggle` : ajout de `aria-label="Changer de langue / Change language"`.
+   - `DashboardHeader` : ajout de `aria-label` sur le champ de recherche et le bouton de déconnexion.
+   - `QRCodeTable` : `aria-label="Copier le lien court"` et libellé contextualisé `aria-label="Options pour le QR code [titre]"` sur les menus contextuels.
+   - `QRShapePicker` & `QRFinderPicker` : ajout d'attributs `aria-label`, `aria-pressed` et focus rings sur tous les sélecteurs graphiques.
+   - `QRExportDialog` : `aria-label` et `aria-pressed` sur chaque bouton de format et de résolution d'export.
+   - Masquage des icônes purement décoratives aux technologies d'assistance (`aria-hidden="true"`).
+
+4. **Typographie & Alignement Numérique** :
+   - Application de `tabular-nums` sur l'ensemble des compteurs de scans et indicateurs KPI dans `OverviewStatsCards` et `QRCodeTable`.
+   - Utilisation systématique de points de suspension typographiques `…` (au lieu de `...`).
+
+5. **Tests Automatisés & Validation** :
+   - Création de la suite de tests unitaires d'accessibilité dans `test/unit/a11y/accessibility.test.tsx`.
+   - **55/55 tests unitaires réussis avec succès** sur 12 suites de tests sous Vitest.
+   - Vérification TypeScript stricte validée (`tsc --noEmit`).
+   - Compilation de production Next.js 16 sans avertissement (`pnpm build`).
+
+---
+
 ## 🔒 Directives pour les Futurs Commits
 Chaque agent intervenant sur le dépôt doit :
 1. Renseigner l'entrée correspondante dans ce fichier `WALKTROUGH.md`.

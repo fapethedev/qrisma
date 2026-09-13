@@ -59,11 +59,11 @@ export function OverviewStatsCards({
                 {card.title}
               </CardTitle>
               <div className={`p-2 rounded-lg border ${card.color}`}>
-                <Icon className="w-4 h-4" />
+                <Icon className="w-4 h-4" aria-hidden="true" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold tracking-tight truncate">{card.value}</div>
+              <div className="text-2xl font-bold tracking-tight truncate tabular-nums">{card.value}</div>
               <p className="text-xs text-muted-foreground mt-1 truncate">{card.description}</p>
             </CardContent>
           </Card>

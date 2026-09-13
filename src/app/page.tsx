@@ -18,7 +18,7 @@ export default function HomePage() {
     <SmoothScrollProvider>
       <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary">
         <LandingNavbar />
-        <main>
+        <main id="main-content">
           <HeroSection />
           <BentoFeatures />
           <ParallaxShowcase />

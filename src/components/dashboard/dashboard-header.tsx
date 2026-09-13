@@ -49,13 +49,14 @@ export function DashboardHeader({
         {/* Barre de Recherche */}
         <div className="flex-1 max-w-md hidden md:block">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
               type="text"
-              placeholder="Rechercher par titre, destination, slug..."
+              placeholder="Rechercher par titre, destination, slug…"
+              aria-label="Rechercher des QR codes"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-9 bg-secondary/40 border-border/60 focus:bg-background h-9 rounded-lg text-sm"
+              className="pl-9 bg-secondary/40 border-border/60 focus:bg-background h-9 rounded-lg text-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
             />
           </div>
         </div>
@@ -67,7 +68,7 @@ export function DashboardHeader({
 
           <Link href="/studio">
             <Button size="sm" className="gap-2 shadow-sm font-medium">
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4" aria-hidden="true" />
               <span className="hidden sm:inline">Créer un QR</span>
             </Button>
           </Link>
@@ -96,9 +97,10 @@ export function DashboardHeader({
               })
             }
             title="Se déconnecter"
-            className="text-muted-foreground hover:text-foreground"
+            aria-label="Se déconnecter"
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-4 h-4" aria-hidden="true" />
           </Button>
         </div>
       </div>

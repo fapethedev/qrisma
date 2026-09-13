@@ -139,14 +139,16 @@ export function QRExportDialog({
                     key={opt.id}
                     type="button"
                     onClick={() => setFormat(opt.id)}
-                    className={`flex flex-col p-3 rounded-xl border text-left transition-all cursor-pointer relative ${
+                    aria-label={`Format ${opt.title} : ${opt.description}`}
+                    aria-pressed={isSelected}
+                    className={`flex flex-col p-3 rounded-xl border text-left transition-all cursor-pointer relative focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden ${
                       isSelected
                         ? 'border-primary bg-primary/10 text-foreground ring-1 ring-primary/30 shadow-2xs'
                         : 'border-border/60 hover:bg-accent/40 text-foreground'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <Icon className={`h-4 w-4 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <Icon className={`h-4 w-4 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} aria-hidden="true" />
                       <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
                         isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
                       }`}>
@@ -177,7 +179,9 @@ export function QRExportDialog({
                       key={res.id}
                       type="button"
                       onClick={() => setResolution(res.id)}
-                      className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
+                      aria-label={`Résolution ${res.label}, ${res.detail}`}
+                      aria-pressed={isSelected}
+                      className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden ${
                         isSelected
                           ? 'border-primary bg-primary/10 text-foreground ring-1 ring-primary/30'
                           : 'border-border/60 hover:bg-accent/40 text-foreground'

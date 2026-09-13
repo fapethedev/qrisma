@@ -101,7 +101,9 @@ export function QRShapePicker({ settings, onChange }: QRShapePickerProps) {
                 key={shape.id}
                 type="button"
                 onClick={() => onChange({ style: shape.id })}
-                className={`flex flex-col items-center justify-center p-3 rounded-xl border text-xs font-medium transition-all cursor-pointer relative ${
+                aria-label={shape.label}
+                aria-pressed={isSelected}
+                className={`flex flex-col items-center justify-center p-3 rounded-xl border text-xs font-medium transition-all cursor-pointer relative focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden ${
                   isSelected
                     ? 'border-primary bg-primary/10 text-primary ring-2 ring-primary/20 shadow-xs'
                     : 'border-border/60 hover:border-border hover:bg-accent/40 text-foreground'
@@ -109,11 +111,12 @@ export function QRShapePicker({ settings, onChange }: QRShapePickerProps) {
               >
                 {isSelected && (
                   <span className="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                    <Check className="h-2.5 w-2.5" />
+                    <Check className="h-2.5 w-2.5" aria-hidden="true" />
                   </span>
                 )}
                 <svg
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                   className="h-6 w-6 mb-1.5 fill-current transition-transform group-hover:scale-110"
                 >
                   <path d={shape.iconPath} />

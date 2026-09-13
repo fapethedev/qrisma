@@ -70,14 +70,16 @@ export function QRFinderPicker({
                 key={style.id}
                 type="button"
                 onClick={() => onOuterChange({ style: style.id })}
-                className={`flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
+                aria-label={`Bordure extérieure ${style.label}`}
+                aria-pressed={isSelected}
+                className={`flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-medium transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden ${
                   isSelected
                     ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary/30'
                     : 'border-border/60 hover:bg-accent/40 text-foreground'
                 }`}
               >
                 <span className="truncate">{style.label}</span>
-                {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-primary" />}
+                {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />}
               </button>
             );
           })}
@@ -97,14 +99,16 @@ export function QRFinderPicker({
                 key={style.id}
                 type="button"
                 onClick={() => onInnerChange({ style: style.id })}
-                className={`flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
+                aria-label={`Centre intérieur ${style.label}`}
+                aria-pressed={isSelected}
+                className={`flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-medium transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden ${
                   isSelected
                     ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary/30'
                     : 'border-border/60 hover:bg-accent/40 text-foreground'
                 }`}
               >
                 <span className="truncate">{style.label}</span>
-                {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-primary" />}
+                {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />}
               </button>
             );
           })}

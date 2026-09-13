@@ -176,13 +176,14 @@ export function QRCodeTable({
                         variant="ghost"
                         size="icon-xs"
                         onClick={() => handleCopy(qr.shortSlug, qr.id)}
-                        className="text-muted-foreground hover:text-foreground h-6 w-6"
+                        className="text-muted-foreground hover:text-foreground h-6 w-6 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
                         title="Copier le lien court"
+                        aria-label="Copier le lien court"
                       >
                         {copiedId === qr.id ? (
-                          <Check className="w-3.5 h-3.5 text-emerald-500" />
+                          <Check className="w-3.5 h-3.5 text-emerald-500" aria-hidden="true" />
                         ) : (
-                          <Copy className="w-3.5 h-3.5" />
+                          <Copy className="w-3.5 h-3.5" aria-hidden="true" />
                         )}
                       </Button>
                     </div>
@@ -202,9 +203,9 @@ export function QRCodeTable({
                   </TableCell>
 
                   {/* Compteur de Scans */}
-                  <TableCell className="text-right py-3 font-semibold text-sm">
+                  <TableCell className="text-right py-3 font-semibold text-sm tabular-nums">
                     <span className="inline-flex items-center gap-1.5 justify-end">
-                      <ScanLine className="w-3.5 h-3.5 text-muted-foreground" />
+                      <ScanLine className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
                       {qr.scanCount.toLocaleString('fr-FR')}
                     </span>
                   </TableCell>
@@ -213,13 +214,18 @@ export function QRCodeTable({
                   <TableCell className="text-right py-3">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon-sm" className="h-8 w-8">
-                          <MoreHorizontal className="w-4 h-4" />
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          className="h-8 w-8 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+                          aria-label={`Options pour le QR code ${qr.title || 'sans titre'}`}
+                        >
+                          <MoreHorizontal className="w-4 h-4" aria-hidden="true" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-44 text-xs">
                         <DropdownMenuItem onClick={() => onSelectAnalytics(qr)} className="gap-2 cursor-pointer">
-                          <BarChart2 className="w-4 h-4 text-indigo-500" />
+                          <BarChart2 className="w-4 h-4 text-indigo-500" aria-hidden="true" />
                           <span>Analytiques</span>
                         </DropdownMenuItem>
 

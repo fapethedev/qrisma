@@ -178,7 +178,7 @@ export function QRStudioView() {
       </header>
 
       {/* Main Studio Workspace */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <main id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <div className="mb-6 space-y-1">
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Générateur de QR Codes Personnalisés
@@ -199,30 +199,42 @@ export function QRStudioView() {
             <div className="bg-card rounded-2xl border border-border/80 shadow-md p-6">
               {/* Sélecteur de mode d'aperçu 2D vs 3D */}
               <div className="flex items-center justify-between mb-5 pb-3 border-b border-border/60">
-                <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-xl border border-border/70">
+                <div
+                  role="tablist"
+                  aria-label="Modes d'aperçu du QR code"
+                  className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-xl border border-border/70"
+                >
                   <button
                     type="button"
+                    role="tab"
+                    id="tab-preview-2d"
+                    aria-selected={viewMode === '2d'}
+                    aria-controls="panel-preview-2d"
                     onClick={() => setViewMode('2d')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden ${
                       viewMode === '2d'
                         ? 'bg-background text-foreground shadow-2xs font-semibold'
                         : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
-                    <QrCode className="h-3.5 w-3.5" />
+                    <QrCode className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Aperçu 2D</span>
                   </button>
 
                   <button
                     type="button"
+                    role="tab"
+                    id="tab-preview-3d"
+                    aria-selected={viewMode === '3d'}
+                    aria-controls="panel-preview-3d"
                     onClick={() => setViewMode('3d')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden ${
                       viewMode === '3d'
                         ? 'bg-background text-foreground shadow-2xs font-semibold'
                         : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
-                    <Box className="h-3.5 w-3.5" />
+                    <Box className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Mockup 3D</span>
                   </button>
                 </div>
@@ -235,7 +247,12 @@ export function QRStudioView() {
               </div>
 
               {/* Vue 2D SVG (Toujours rendue dans le DOM pour alimenter la texture 3D et l'export) */}
-              <div className={viewMode === '2d' ? 'block' : 'hidden'}>
+              <div
+                id="panel-preview-2d"
+                role="tabpanel"
+                aria-labelledby="tab-preview-2d"
+                className={viewMode === '2d' ? 'block' : 'hidden'}
+              >
                 <QRCodePreview2D
                   ref={qrRef}
                   encodedValue={encodedValue}
@@ -246,7 +263,12 @@ export function QRStudioView() {
 
               {/* Vue 3D Interactive (R3F) */}
               {viewMode === '3d' && (
-                <div className="space-y-4 animate-in fade-in-50">
+                <div
+                  id="panel-preview-3d"
+                  role="tabpanel"
+                  aria-labelledby="tab-preview-3d"
+                  className="space-y-4 animate-in fade-in-50"
+                >
                   <QRScene3D
                     svgElement={currentSvg || getSvgElement()}
                     design={design}
