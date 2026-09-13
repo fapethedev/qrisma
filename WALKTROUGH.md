@@ -74,10 +74,17 @@ Structuration complète des consignes, de l'architecture et de la feuille de rou
   - [x] Accordéon FAQ `FAQSection` traitant les questions de compatibilité, scannabilité et formats
   - [x] Pied de page `LandingFooter` avec mentions et stack technique
   - [x] Découpage des routes App Router : `/` (Landing page marketing) et `/studio` (Espace de travail dédié)
-- [ ] **Phase 4 : Studio de Visualisation 3D (R3F)**
-  - [ ] Scène Three Fiber avec OrbitControls & studio lighting
-  - [ ] Modèles 3D paramétrables (Smartphone, Affiche, Mug, Carte de visite)
-  - [ ] Synchronisation en direct de la texture QR
+- [x] **Phase 4 : Studio de Visualisation 3D (R3F)**
+  - [x] Intégration du skill `shadcn` dans la matrice de compétences (`AGENTS.md`)
+  - [x] Scène Three.js interactive `<QRScene3D>` avec éclairage studio et ombres douces (`ContactShadows`)
+  - [x] 4 modèles 3D paramétrables procéduraux :
+    - *Smartphone* (`PhoneMockup`) avec châssis titane et écran affichant le QR code
+    - *Affiche de galerie* (`PosterMockup`) dans un cadre épuré avec passe-partout
+    - *Mug céramique* (`MugMockup`) avec anse et texture QR projetée
+    - *Carte de visite de luxe* (`CardMockup`) avec coordonnées typographiques et QR code
+  - [x] Hook réactif `useQRTexture` générant une `THREE.CanvasTexture` haute résolution synchronisée en direct avec le SVG
+  - [x] Contrôles OrbitControls (rotation 360°, zoom restreint, recentrage caméra)
+  - [x] Bascule intuitive 2D Vectoriel / 3D Mockup dans le Studio avec lazy loading SSR-safe
 - [ ] **Phase 5 : Authentification & Sécurité (Better Auth)**
   - [ ] Configuration de `auth.ts` et du client React
   - [ ] Schéma utilisateur étendu (rôles, quotas, abonnements)

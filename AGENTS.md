@@ -79,7 +79,7 @@ L'agent de coding **doit impérativement catégoriser et faire appel aux skills 
 
 | Catégorie | Skill(s) associé(s) | Déclencheur / Cas d'usage |
 |---|---|---|
-| **Design, UI & UX Mastery** | `ui-ux-pro-max`<br>`frontend-design`<br>`web-design-guidelines` | Conception d'interfaces, choix des palettes couleurs, typographie, espacements, accessibilité WCAG, focus rings, contrastes, boutons d'icônes avec labels, ergonomie mobile-first. |
+| **Design, UI & UX Mastery** | `shadcn`<br>`ui-ux-pro-max`<br>`frontend-design`<br>`web-design-guidelines` | Design system shadcn/ui, composition stricte (pas de space-*, size-*, Field/FieldGroup, CardHeader/CardContent), accessibilité WCAG, focus rings, ergonomie mobile-first. |
 | **Patterns React & Next.js** | `vercel-react-best-practices`<br>`vercel-composition-patterns` | Élimination des waterfalls asynchrones, composants serveur vs client, composition propre sans prop-drilling, réduction de la taille des bundles. |
 | **Authentification & Sécurité** | `better-auth-best-practices`<br>`better-auth-security-best-practices`<br>`email-and-password-best-practices`<br>`two-factor-authentication-best-practices` | Configuration de Better Auth (`auth.ts`, route handlers, adapters DB), rate limiting, protection CSRF, tokens de session, 2FA TOTP. |
 | **3D & Expérience Interactive** | `react-three-fiber` | Scènes 3D Three.js & Drei, OrbitControls, textures canvas dynamiques du QR code projetées sur des meshs 3D (iPhone, poster, mug, carte de visite). |

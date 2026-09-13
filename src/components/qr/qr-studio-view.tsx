@@ -1,22 +1,55 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import type { ReactQRCodeRef } from '@lglab/react-qr-code';
-import { Download, QrCode, RefreshCw, Sparkles } from 'lucide-react';
+import { Box, Download, Loader2, QrCode, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQRStudioStore } from '@/stores/qr-studio-store';
 import { QRCustomizerForm } from './qr-customizer-form';
 import { QRExportDialog } from './qr-export-dialog';
 import { QRCodePreview2D } from './qr-preview-2d';
 
+// Chargement différé et dynamique de la scène 3D pour éviter tout conflit SSR / WebGL
+const QRScene3D = dynamic(
+  () => import('@/components/3d/qr-scene-3d').then((mod) => mod.QRScene3D),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[380px] sm:h-[420px] rounded-3xl border border-border/80 bg-muted/20 flex flex-col items-center justify-center gap-2">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <span className="text-xs text-muted-foreground">Chargement du studio 3D...</span>
+      </div>
+    ),
+  }
+);
+
+type StudioViewMode = '2d' | '3d';
+
 export function QRStudioView() {
   const { encodedValue, design, resetStudio, isDynamic } = useQRStudioStore();
+  const [viewMode, setViewMode] = useState<StudioViewMode>('2d');
   const [exportOpen, setExportOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [currentSvg, setCurrentSvg] = useState<SVGSVGElement | null>(null);
   const qrRef = useRef<ReactQRCodeRef>(null);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const getSvgElement = (): SVGSVGElement | null => {
-    return qrRef.current?.svg || document.querySelector('.group svg') as SVGSVGElement | null;
+    if (typeof document === 'undefined') return null;
+    return qrRef.current?.svg || (document.querySelector('.group svg') as SVGSVGElement | null);
   };
+
+  // Mise à jour de l'élément SVG pour la texture 3D
+  useEffect(() => {
+    if (mounted) {
+      const el = getSvgElement();
+      if (el) setCurrentSvg(el);
+    }
+  }, [mounted, encodedValue, design, viewMode]);
 
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-zinc-950 text-foreground transition-colors">
@@ -29,7 +62,10 @@ export function QRStudioView() {
             </div>
             <div>
               <span className="font-bold text-base tracking-tight flex items-center gap-1.5">
-                QRCraft <span className="text-[10px] uppercase font-extrabold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">Studio</span>
+                QRCraft{' '}
+                <span className="text-[10px] uppercase font-extrabold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                  Studio
+                </span>
               </span>
             </div>
           </div>
@@ -64,7 +100,7 @@ export function QRStudioView() {
             Générateur de QR Codes Personnalisés
           </h1>
           <p className="text-sm text-muted-foreground">
-            Personnalisez les modules, les dégradés, les coins et le logo avec prévisualisation vectorielle instantanée.
+            Personnalisez les modules, les dégradés, les coins et le logo avec prévisualisation vectorielle instantanée et projection 3D.
           </p>
         </div>
 
@@ -77,24 +113,71 @@ export function QRStudioView() {
           {/* Prévisualisation en direct (Droite - 5 colonnes - Sticky) */}
           <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
             <div className="bg-card rounded-2xl border border-border/80 shadow-md p-6">
-              <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/60">
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-primary" />
-                  Aperçu Vectoriel Temps Réel
-                </span>
+              {/* Sélecteur de mode d'aperçu 2D vs 3D */}
+              <div className="flex items-center justify-between mb-5 pb-3 border-b border-border/60">
+                <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-xl border border-border/70">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('2d')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                      viewMode === '2d'
+                        ? 'bg-background text-foreground shadow-2xs font-semibold'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <QrCode className="h-3.5 w-3.5" />
+                    <span>Aperçu 2D</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('3d')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                      viewMode === '3d'
+                        ? 'bg-background text-foreground shadow-2xs font-semibold'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <Box className="h-3.5 w-3.5" />
+                    <span>Mockup 3D</span>
+                  </button>
+                </div>
+
                 {isDynamic && (
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    Mode Dynamique Actif
+                    Dynamique
                   </span>
                 )}
               </div>
 
-              <QRCodePreview2D
-                ref={qrRef}
-                encodedValue={encodedValue}
-                design={design}
-                onOpenExport={() => setExportOpen(true)}
-              />
+              {/* Vue 2D SVG (Toujours rendue dans le DOM pour alimenter la texture 3D et l'export) */}
+              <div className={viewMode === '2d' ? 'block' : 'hidden'}>
+                <QRCodePreview2D
+                  ref={qrRef}
+                  encodedValue={encodedValue}
+                  design={design}
+                  onOpenExport={() => setExportOpen(true)}
+                />
+              </div>
+
+              {/* Vue 3D Interactive (R3F) */}
+              {viewMode === '3d' && (
+                <div className="space-y-4 animate-in fade-in-50">
+                  <QRScene3D
+                    svgElement={currentSvg || getSvgElement()}
+                    design={design}
+                  />
+
+                  <Button
+                    onClick={() => setExportOpen(true)}
+                    size="lg"
+                    className="w-full font-medium shadow-md transition-all hover:shadow-lg gap-2 cursor-pointer"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span>Télécharger le QR Code</span>
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
