@@ -122,7 +122,7 @@ Structuration complète des consignes, de l'architecture et de la feuille de rou
 - [x] **Phase 8 : Internationalisation (next-intl)**
   - [x] Configuration i18n (`src/i18n/routing.ts` & `src/i18n/request.ts`)
   - [x] Dictionnaires complets `messages/fr.json` et `messages/en.json` (100% miroirs)
-  - [x] Middleware i18n `src/middleware.ts` avec exclusion des routes `/api` et `/s/[slug]`
+  - [x] Proxy i18n Next.js 16 `src/proxy.ts` avec exclusion des routes `/api` et `/s/[slug]`
   - [x] Plugin `next-intl/plugin` configuré dans `next.config.ts`
   - [x] Composant sélecteur de langue `src/components/language-toggle.tsx` avec drapeaux (🇫🇷 / 🇬🇧)
   - [x] Intégration du sélecteur dans la Landing Page, le Dashboard et le Studio
@@ -145,7 +145,7 @@ Doter QRCraft d'une prise en charge multilingue native et fluide (Français / An
    - `src/i18n/routing.ts` : déclaration des langues `['fr', 'en']`, `defaultLocale: 'fr'` et mode sans préfixe d'URL (`localePrefix: 'never'`) pour préserver des URLs propres (`/`, `/studio`, `/dashboard`).
    - `src/i18n/request.ts` : chargement dynamique basé sur le cookie `NEXT_LOCALE` avec repli gracieux en contexte hors-requête.
    - Intégration du plugin `next-intl/plugin` dans `next.config.ts`.
-   - Middleware de négociation linguistique `src/middleware.ts` excluant formellement `/api`, `/_next`, `/_vercel` et `/s/` pour garantir le fonctionnement inaltéré des redirections QR codes.
+   - Migration vers la convention moderne Next.js 16 `src/proxy.ts` (remplaçant le conventionnel déprécié `middleware.ts`), excluant formellement `/api`, `/_next`, `/_vercel` et `/s/` pour garantir le fonctionnement inaltéré des redirections QR codes.
 
 2. **Dictionnaires Exhaustifs (`messages/`)** :
    - Création de `messages/fr.json` et `messages/en.json` couvrant l'ensemble de l'écosystème : `common`, `landing`, `studio`, `dashboard`, `auth`.
