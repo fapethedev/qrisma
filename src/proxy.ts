@@ -20,5 +20,5 @@ export default function proxy(request: NextRequest) {
 
 export const config = {
   // Exclure les routes API, assets internes Next, et les liens de redirection /s/[slug]
-  matcher: ['/((?!api|_next|_vercel|s/|.*\\..*).*)'],
+  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
 };

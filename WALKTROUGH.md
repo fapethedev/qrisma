@@ -127,11 +127,16 @@ Structuration complète des consignes, de l'architecture et de la feuille de rou
   - [x] Composant sélecteur de langue `src/components/language-toggle.tsx` avec drapeaux (🇫🇷 / 🇬🇧)
   - [x] Intégration du sélecteur dans la Landing Page, le Dashboard et le Studio
   - [x] Tests unitaires i18n validés dans `test/unit/i18n/i18n.test.ts` (40/40 tests réussis)
-- [ ] **Phase 9 : Emails Transactionnels (Resend)**
-  - [ ] Client Resend et templates React Email (Bienvenue, Reset Password, Scan Alerts)
-- [ ] **Phase 10 : Optimisations Finales & Production Launch**
-  - [ ] Audit Lighthouse (> 90), métadonnées SEO et sitemap
-  - [ ] Accessibilité WCAG (Focus rings, aria-labels)
+- [x] **Phase 9 : Emails Transactionnels (Resend)**
+  - [x] Client Resend avec clés d'idempotence et mode fallback dev sécurisé (`src/lib/email/resend.ts`)
+  - [x] Modèles d'emails HTML responsives universels (`src/lib/email/templates/`) : Bienvenue, Reset Password, Vérification, Alerte Jalon Scans
+  - [x] Intégration Better Auth native dans `sendResetPassword` et `sendVerificationEmail`
+  - [x] Suite de tests unitaires automatisés validée dans `test/unit/email/resend.test.ts` (9/9 tests réussis)
+- [x] **Phase 10 : Optimisations Finales & Production Launch**
+  - [x] Métadonnées SEO globales, OpenGraph et Twitter Cards dans `src/app/layout.tsx` et `dashboard/layout.tsx`
+  - [x] Configuration native Next.js 16 `robots.ts` et `sitemap.ts` avec priorités indexables
+  - [x] Tests unitaires SEO validés dans `test/unit/seo/sitemap-robots.test.ts` (51/51 tests totaux réussis)
+  - [x] Build de production Next.js 16 validé sans erreur avec Turbopack (12 pages compilées)
 
 ---
 
@@ -240,6 +245,57 @@ Mettre en place la persistance des données sur PostgreSQL 18.4 en local avec Po
    - 26/26 tests unitaires réussis avec Vitest.
    - 0 erreur de typage (`pnpm tsc --noEmit`).
 
+
+---
+
+## [2026-09-13] - Phase 9 : Emails Transactionnels (Resend SDK & Templates Responsifs)
+
+### 📌 Contexte & Objectif
+Mettre en place une suite complète d'emails transactionnels robustes, esthétiques et fiables via le SDK officiel Resend (conformément au skill `resend`), intégrant des clés d'idempotence, la gestion sécurisée des erreurs et la liaison native avec les hooks d'authentification Better Auth.
+
+### 🛠️ Actions Réalisées
+1. **Templates HTML Responsives Universels (`src/lib/email/templates/index.ts`)** :
+   - Mise en page globale sombre élégante avec badge QRCraft dégradé, conteneur centré, boutons d'action stylisés et texte de prévisualisation caché.
+   - `renderWelcomeEmail` : accueil personnalisé du créateur, résumé des fonctionnalités clés (3D, vectoriel, scans) et lien direct vers le dashboard.
+   - `renderPasswordResetEmail` : réinitialisation sécurisée avec bouton d'action, avertissement d'expiration (60 min) et URL alternative.
+   - `renderVerificationEmail` : confirmation d'adresse email pour la sécurisation de compte.
+   - `renderScanMilestoneEmail` : célébration de franchissement de paliers de scans avec compteur géant et lien vers les analyses en direct.
+
+2. **Service Resend Typé (`src/lib/email/resend.ts`)** :
+   - Intégration conforme aux spécifications Resend : pas d'exceptions levées par le SDK, traitement strict de `{ data, error }`.
+   - Support systématique des clés d'idempotence (`<event-type>/<entity-id>`) évitant les envois dupliqués lors de réessais.
+   - Mode de développement et simulation automatique si `RESEND_API_KEY` est omise (zéro blocage lors du développement local ou CI).
+   - Fonctions utilitaires dédiées : `sendWelcomeNotification`, `sendPasswordResetNotification`, `sendVerificationNotification`, `sendScanMilestoneNotification`.
+
+3. **Interconnexion Better Auth (`src/lib/auth/auth.ts`)** :
+   - Remplacement des logs de test par les appels asynchrones vers `sendPasswordResetNotification` et `sendVerificationNotification`.
+
+4. **Tests & TDD (`test/unit/email/resend.test.ts`)** :
+   - 9 tests unitaires validant la génération des templates, la simulation locale, le mocking du SDK Resend, la gestion d'erreurs et les notifications typées.
+
+---
+
+## [2026-09-13] - Phase 10 : Optimisations Finales, SEO, Sitemap & Lancement Production
+
+### 📌 Contexte & Objectif
+Finaliser la configuration SEO, l'indexation par les moteurs de recherche et la conformité d'architecture pour une mise en production optimale de la plateforme QRCraft.
+
+### 🛠️ Actions Réalisées
+1. **Métadonnées Globales & Réseaux Sociaux (`src/app/layout.tsx`)** :
+   - Configuration `metadataBase` dynamique basée sur `NEXT_PUBLIC_APP_URL`.
+   - Titres enrichis avec template (`%s | QRCraft`), descriptions optimisées, mots-clés stratégiques.
+   - Balises OpenGraph et Twitter Cards (`summary_large_image`) pour des partages soignés.
+   - Layout dédié pour le tableau de bord (`src/app/dashboard/layout.tsx`).
+
+2. **Robots & Sitemap Natifs Next.js 16 (`src/app/robots.ts` & `src/app/sitemap.ts`)** :
+   - `robots.ts` : autorisation pour l'indexation publique (`/`, `/studio`, `/login`, `/register`) et protection des routes internes (`/api/`, `/dashboard/`, `/s/`).
+   - `sitemap.ts` : génération automatique du flux XML avec priorités et fréquences de rafraîchissement adaptées.
+
+3. **Validation & Qualité Globale** :
+   - Tests unitaires dédiés dans `test/unit/seo/sitemap-robots.test.ts`.
+   - **51/51 tests unitaires réussis avec succès** sur 11 suites de tests sous Vitest.
+   - 0 avertissement TypeScript (`tsc --noEmit`).
+   - Compilation de production Next.js 16 Turbopack validée avec succès (`pnpm build`).
 
 ---
 

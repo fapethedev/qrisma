@@ -2,6 +2,7 @@ import { betterAuth } from 'better-auth';
 import { twoFactor, organization } from 'better-auth/plugins';
 import { qrPlugin } from './plugins/qr-plugin';
 import { Pool } from 'pg';
+import { sendPasswordResetNotification, sendVerificationNotification } from '../email/resend';
 
 // Utilise PostgreSQL si DATABASE_URL est fourni, sinon mémoire pour le build/dev
 const getDatabase = () => {
@@ -28,18 +29,16 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
-    requireEmailVerification: false, // Passer à true avec Resend configuré
+    requireEmailVerification: false,
     sendResetPassword: async ({ user, url }) => {
-      console.log(`[Better Auth] Réinitialisation mot de passe pour ${user.email}: ${url}`);
-      // L'intégration Resend enverra l'email transactionnel
+      await sendPasswordResetNotification(user, url);
     },
   },
 
   // Vérification d'email
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
-      console.log(`[Better Auth] Vérification email pour ${user.email}: ${url}`);
-      // L'intégration Resend enverra l'email transactionnel
+      await sendVerificationNotification(user, url);
     },
   },
 
