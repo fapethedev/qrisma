@@ -45,14 +45,18 @@ Structuration complète des consignes, de l'architecture et de la feuille de rou
   - [x] Définition du Master Prompt (`CODING_AGENT_MASTER_PROMPT.md`)
   - [x] Enrichissement de `AGENTS.md`
   - [x] Création du journal de bord (`WALKTROUGH.md`)
-- [ ] **Phase 1 : Dépendances & Typage QR**
-  - [ ] Installation de `@lglab/react-qr-code`, `better-auth`, `next-intl`, `lenis`, `motion`, `@react-three/fiber`, `@react-three/drei`, `three`, `react-scroll-parallax`, `resend`, `zustand`, `jspdf`
-  - [ ] Fichier de types `src/lib/qr/types.ts`
+- [x] **Phase 1 : Dépendances & Typage QR**
+  - [x] Installation et validation de `@lglab/react-qr-code`, `@react-three/fiber`, `@react-three/drei`, `three`, `better-auth`, `next-intl`, `lenis`, `motion`, `react-scroll-parallax`, `resend`, `zustand`, `jspdf`, `html-to-image`, `vitest`
+  - [x] Définition des types stricts dans `src/lib/qr/types.ts`
+  - [x] Implémentation du générateur de payloads QR universel (`src/lib/qr/payloads.ts`) avec validation TDD
+  - [x] Création de la bibliothèque de presets visuels (`src/lib/qr/presets.ts`)
+  - [x] Implémentation du store d'état Zustand (`src/stores/qr-studio-store.ts`)
+  - [x] Mise en place du service d'exportation multi-formats (`src/lib/qr/export-service.ts`)
 - [ ] **Phase 2 : Moteur QR & Studio 2D**
-  - [ ] Store Zustand `qr-studio-store.ts`
+  - [x] Store Zustand `qr-studio-store.ts`
   - [ ] Composant `QRCodePreview2D` avec SVG dynamique & excavation
   - [ ] Panneau de configuration modulaire (formes, dégradés, yeux, logo)
-  - [ ] Service d'exportation (SVG, PNG 1x-4x / 300 DPI, PDF)
+  - [x] Service d'exportation (SVG, PNG 1x-4x / 300 DPI, PDF)
 - [ ] **Phase 3 : Landing Page & UX Immersive**
   - [ ] Lenis Smooth Scroll Provider
   - [ ] Hero Section avec QR Code interactif en direct
