@@ -64,11 +64,16 @@ Structuration complète des consignes, de l'architecture et de la feuille de rou
   - [x] Boîte de dialogue d'exportation haute résolution `QRExportDialog` (SVG, PNG 1x-4x 300DPI, JPEG, PDF)
   - [x] Vue principale du studio `QRStudioView` intégrée sur la page d'accueil
   - [x] Migration et catégorisation de tous les tests dans `test/unit/` (`vitest.config.ts`, `test/unit/qr/payloads.test.ts`, `test/unit/qr/presets.test.ts`)
-- [ ] **Phase 3 : Landing Page & UX Immersive**
-  - [ ] Lenis Smooth Scroll Provider
-  - [ ] Hero Section avec QR Code interactif en direct
-  - [ ] Bento Grid de fonctionnalités avec Motion & Parallaxe
-  - [ ] Grille de Tarifs Free vs Pro avec toggle mensuel/annuel
+- [x] **Phase 3 : Landing Page & UX Immersive**
+  - [x] Provider unifié `SmoothScrollProvider` intégrant Lenis et `react-scroll-parallax`
+  - [x] Barre de navigation `LandingNavbar` avec liens d'ancrage, bascule Dark/Light (`ThemeToggle`) et CTA Studio
+  - [x] Section Hero `HeroSection` avec bac à sable interactif en direct (modification d'URL et bascule de thèmes en temps réel)
+  - [x] Grille bento `BentoFeatures` mettant en avant les 5 piliers (exports vectoriels/print, QR dynamiques, 3D, analytics, sécurité)
+  - [x] Galerie de parallaxe `ParallaxShowcase` animant des cartes de styles à vitesses de défilement étagées
+  - [x] Section Tarifs `PricingSection` avec toggle mensuel/annuel (-25%) et 3 offres (Free, Pro Creator, Enterprise)
+  - [x] Accordéon FAQ `FAQSection` traitant les questions de compatibilité, scannabilité et formats
+  - [x] Pied de page `LandingFooter` avec mentions et stack technique
+  - [x] Découpage des routes App Router : `/` (Landing page marketing) et `/studio` (Espace de travail dédié)
 - [ ] **Phase 4 : Studio de Visualisation 3D (R3F)**
   - [ ] Scène Three Fiber avec OrbitControls & studio lighting
   - [ ] Modèles 3D paramétrables (Smartphone, Affiche, Mug, Carte de visite)
