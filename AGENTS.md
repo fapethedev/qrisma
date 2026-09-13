@@ -73,29 +73,46 @@ L’application s’appuie sur la bibliothèque **[react-qr-code](https://reactq
 
 ---
 
-## Competence 
-Toutes les competences necessaires se trouvent dans `.agents/skills` ; L'agent devra les catégoriser et faire appel à eux selon l'outil ou la lib concerner
+## Compétences & Matrice de Routage (.agents/skills)
 
-Vu le niveau : toujours utiliser le mode plan
-Utiliser les bests practice à tous les niveaux
+L'agent de coding **doit impérativement catégoriser et faire appel aux skills de `.agents/skills`** selon l'outil ou la bibliothèque concernée avant toute modification :
+
+| Catégorie | Skill(s) associé(s) | Déclencheur / Cas d'usage |
+|---|---|---|
+| **Design, UI & UX Mastery** | `ui-ux-pro-max`<br>`frontend-design`<br>`web-design-guidelines` | Conception d'interfaces, choix des palettes couleurs, typographie, espacements, accessibilité WCAG, focus rings, contrastes, boutons d'icônes avec labels, ergonomie mobile-first. |
+| **Patterns React & Next.js** | `vercel-react-best-practices`<br>`vercel-composition-patterns` | Élimination des waterfalls asynchrones, composants serveur vs client, composition propre sans prop-drilling, réduction de la taille des bundles. |
+| **Authentification & Sécurité** | `better-auth-best-practices`<br>`better-auth-security-best-practices`<br>`email-and-password-best-practices`<br>`two-factor-authentication-best-practices` | Configuration de Better Auth (`auth.ts`, route handlers, adapters DB), rate limiting, protection CSRF, tokens de session, 2FA TOTP. |
+| **3D & Expérience Interactive** | `react-three-fiber` | Scènes 3D Three.js & Drei, OrbitControls, textures canvas dynamiques du QR code projetées sur des meshs 3D (iPhone, poster, mug, carte de visite). |
+| **PostgreSQL & Base de Données** | `postgres`<br>`postgresql-optimization`<br>`supabase-postgres-best-practices`<br>`neon-postgres`<br>`prisma-postgres` / `prisma-postgres-setup` | Modélisation des tables `users`, `qr_codes`, `scan_events`, `subscriptions`, indexation B-Tree sur les slugs, requêtes JSONB et agrégations analytiques optimisées. |
+| **Internationalisation** | `next-intl-add-language` | Configuration de next-intl, routage localisé `/[locale]/...`, dictionnaires `messages/fr.json` et `messages/en.json`, sélecteur de langue interactif. |
+| **Emails Transactionnels** | `resend` | Templates React Email, envoi sécurisé, gestion des clés d'idempotence, notifications d'analytics et emails d'authentification. |
+| **Tests & TDD** | `tdd` | Développement orienté tests pour les encodeurs de données QR, validateurs de scannabilité et logique de redirection. |
+| **Versionnage & Commits Git** | `git-commit` | Formatage standardisé des commits git selon Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`, `perf:`). |
+| **Extension de Compétences** | `find-skills` | Recherche de nouvelles compétences ou packages spécialisés si requis. |
+
+### Directives d'Exécution Absolues :
+1. **Toujours utiliser le mode plan** : Formaliser la démarche (objectifs, modifications de fichiers, tests de validation) avant d'implémenter.
+2. **Tenir à jour `WALKTROUGH.md`** : Tout ajout, refactorisation ou décision architecturale doit être consigné dans `WALKTROUGH.md` avec horodatage et justification.
+3. **Commits Git en tant qu'agent autorisés** : Réaliser des commits git atomiques et sémantiques via le skill `git-commit` après chaque étape fonctionnelle.
+4. **Référence du Master Prompt** : Consulter `CODING_AGENT_MASTER_PROMPT.md` pour le blueprint complet d'exécution et les spécifications techniques fines de `@lglab/react-qr-code`.
 
 ## **Stack Technique Complète**
 
 | Catégorie          | Technologie             | Rôle |
 |--------------------|-------------------------|------|
-| **Frontend**       | Next.js | Framework principal. |
-| **UI/UX**          | shadcn/ui + Tailwind CSS | Composants prêts à l’emploi et design system. |
-| **Animations**     | Framer Motion + Lenis   | Animations fluides et scroll smooth. |
-| **3D**            | React Three Fiber       | Prévisualisation 3D des QR codes. |
-| **Parallaxe**      | react-scroll-parallax   | Effets de parallaxe pour le storytelling. |
-| **SVG**           | SVGL                    | Génération de graphismes vectoriels. |
-| **QR Code**        | react-qr-code           | Génération des QR codes. |
-| **Backend**        | Next.js API Routes      | Logique métier et endpoints. |
-| **Base de données**| PostgreSQL (Vercel/Supabase) | Stockage des données. |
-| **Authentification**| Better Auth            | Gestion des utilisateurs et sessions. |
-| **i18n**          | next-intl               | Internationalisation. |
-| **Emails**        | Resend                  | Envoi d’emails transactionnels. |
-| **Déploiement**   | Vercel                  | Hébergement et CI/CD. |
+| **Frontend**       | Next.js 16 (React 19)   | Framework principal (App Router, Server Actions). |
+| **UI/UX**          | shadcn/ui + Tailwind CSS | Design system (61 composants déjà installés dans `src/components/ui/`). |
+| **Animations**     | Motion + Lenis          | Animations fluides et scroll smooth. |
+| **3D**            | React Three Fiber + Drei| Prévisualisation 3D dynamique des QR codes sur mockups. |
+| **Parallaxe**      | react-scroll-parallax   | Effets de parallaxe pour le storytelling et la landing page. |
+| **SVG**           | SVGL                    | Graphismes et logos vectoriels officiels. |
+| **QR Code**        | @lglab/react-qr-code    | Moteur de rendu QR code SVG haute performance et hautement personnalisable. |
+| **Backend**        | Next.js Route Handlers  | Redirection dynamique `/s/[slug]`, endpoints et API. |
+| **Base de données**| PostgreSQL (Neon/Supabase) | Stockage persistant, métadonnées QR, utilisateurs, logs de scan. |
+| **Authentification**| Better Auth            | Sessions, OAuth, Email/Mot de passe, 2FA, rate limiting. |
+| **i18n**          | next-intl               | Internationalisation FR / EN. |
+| **Emails**        | Resend                  | Envoi d'emails transactionnels avec React Email. |
+| **Déploiement**   | Vercel                  | Hébergement serverless et edge. |
 
 
 ## **Exemples de Tâches pour l’Agent de Coding**
