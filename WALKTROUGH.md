@@ -52,11 +52,18 @@ Structuration complète des consignes, de l'architecture et de la feuille de rou
   - [x] Création de la bibliothèque de presets visuels (`src/lib/qr/presets.ts`)
   - [x] Implémentation du store d'état Zustand (`src/stores/qr-studio-store.ts`)
   - [x] Mise en place du service d'exportation multi-formats (`src/lib/qr/export-service.ts`)
-- [ ] **Phase 2 : Moteur QR & Studio 2D**
-  - [x] Store Zustand `qr-studio-store.ts`
-  - [ ] Composant `QRCodePreview2D` avec SVG dynamique & excavation
-  - [ ] Panneau de configuration modulaire (formes, dégradés, yeux, logo)
-  - [x] Service d'exportation (SVG, PNG 1x-4x / 300 DPI, PDF)
+- [x] **Phase 2 : Moteur QR & Studio 2D**
+  - [x] Store Zustand `qr-studio-store.ts` avec synchronisation temps réel
+  - [x] Composant `QRCodePreview2D` avec SVG dynamique, styles avancés et conteneur soigné
+  - [x] Panneau de configuration modulaire `QRCustomizerForm` avec 5 onglets shadcn (Contenu, Formes, Couleurs, Logo, Thèmes)
+  - [x] Sélecteur visuel des formes de modules `QRShapePicker` avec aperçus SVG
+  - [x] Sélecteur de bordures et centres des yeux `QRFinderPicker`
+  - [x] Éditeur de dégradés et couleurs `QRGradientEditor`
+  - [x] Téléversement et gestion du logo avec excavation automatique `QRLogoUploader`
+  - [x] Badge de scannabilité et robustesse d'erreur en direct `QRScanCheckBadge`
+  - [x] Boîte de dialogue d'exportation haute résolution `QRExportDialog` (SVG, PNG 1x-4x 300DPI, JPEG, PDF)
+  - [x] Vue principale du studio `QRStudioView` intégrée sur la page d'accueil
+  - [x] Migration et catégorisation de tous les tests dans `test/unit/` (`vitest.config.ts`, `test/unit/qr/payloads.test.ts`, `test/unit/qr/presets.test.ts`)
 - [ ] **Phase 3 : Landing Page & UX Immersive**
   - [ ] Lenis Smooth Scroll Provider
   - [ ] Hero Section avec QR Code interactif en direct

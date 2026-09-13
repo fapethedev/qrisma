@@ -95,6 +95,7 @@ L'agent de coding **doit impérativement catégoriser et faire appel aux skills 
 2. **Tenir à jour `WALKTROUGH.md`** : Tout ajout, refactorisation ou décision architecturale doit être consigné dans `WALKTROUGH.md` avec horodatage et justification.
 3. **Commits Git en tant qu'agent autorisés** : Réaliser des commits git atomiques et sémantiques via le skill `git-commit` après chaque étape fonctionnelle.
 4. **Référence du Master Prompt** : Consulter `CODING_AGENT_MASTER_PROMPT.md` pour le blueprint complet d'exécution et les spécifications techniques fines de `@lglab/react-qr-code`.
+5. **Organisation des Tests (Règle d'or)** : Tous les tests doivent obligatoirement être catégorisés et placés dans le dossier `test/` (`test/unit/`, `test/integration/`, `test/e2e/`). Aucun fichier de test ne doit être logé dans `src/`.
 
 ## **Stack Technique Complète**
 

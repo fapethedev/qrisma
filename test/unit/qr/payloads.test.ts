@@ -6,9 +6,9 @@ import {
   buildSmsString,
   buildVCardString,
   buildWifiString,
-} from './payloads';
+} from '@/lib/qr/payloads';
 
-describe('QR Payload Generator (TDD)', () => {
+describe('QR Payload Generator (Unit Tests)', () => {
   it('should format URL with https scheme if omitted', () => {
     expect(buildQRPayload('url', { url: 'mywebsite.com' })).toBe('https://mywebsite.com');
     expect(buildQRPayload('url', { url: 'http://custom.org' })).toBe('http://custom.org');
