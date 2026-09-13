@@ -4,3 +4,6 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
   msw: false
+
+minimumReleaseAgeExclude:
+  - tailwind-merge@3.7.0
