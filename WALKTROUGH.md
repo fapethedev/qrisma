@@ -109,9 +109,16 @@ Structuration complète des consignes, de l'architecture et de la feuille de rou
   - [x] Parseur User-Agent (`src/lib/utils/ua-parser.ts`) pour la détection de terminaux, OS et navigateurs
   - [x] Route Handler dynamique `/s/[slug]` pour redirection 302 instantanée et comptage temps réel
   - [x] Tests unitaires catégorisés validés dans `test/unit/` (26/26 tests réussis)
-- [ ] **Phase 7 : Dashboard & Analytics des Scans**
-  - [ ] Page de gestion de la bibliothèque de QR codes (CRUD, filtres)
-  - [ ] Dashboard de métriques avec graphiques Recharts (timeline, devices, pays)
+- [x] **Phase 7 : Dashboard & Analytics des Scans**
+  - [x] Endpoints API RESTful (`/api/qr`, `/api/qr/[id]`, `/api/qr/[id]/analytics`, `/api/analytics/overview`)
+  - [x] Header Dashboard avec recherche en direct, profil et déconnexion
+  - [x] Cartes KPI Overview (Total Scans, QR actifs, Scans 7j, Top QR code)
+  - [x] Graphique temporel Recharts de scans journaliers avec dégradé subtil
+  - [x] Graphique de répartition des visiteurs par matériel et top pays
+  - [x] Tableau de gestion de la bibliothèque de QR codes avec miniatures SVG, copie en 1 clic et suppression sécurisée
+  - [x] Dialogue d'analyse approfondie `QRCodeAnalyticsDialog`
+  - [x] Intégration de la sauvegarde en direct dans le Studio (`/studio`)
+  - [x] Tests unitaires d'API et d'analytics validés dans `test/unit/` (36/36 tests réussis, build production OK)
 - [ ] **Phase 8 : Internationalisation (next-intl)**
   - [ ] Dictionnaires `fr.json` et `en.json`
   - [ ] Sélecteur de langue fluide dans la barre de navigation
@@ -120,6 +127,44 @@ Structuration complète des consignes, de l'architecture et de la feuille de rou
 - [ ] **Phase 10 : Optimisations Finales & Production Launch**
   - [ ] Audit Lighthouse (> 90), métadonnées SEO et sitemap
   - [ ] Accessibilité WCAG (Focus rings, aria-labels)
+
+---
+
+## [2026-09-13] - Phase 7 : Dashboard, Bibliothèque de QR Codes & Visualisation Analytique Recharts
+
+### 📌 Contexte & Objectif
+Fournir aux utilisateurs un espace de travail complet (`/dashboard`) pour piloter leur collection de QR codes, modifier leurs redirections dynamiques en temps réel, analyser les courbes de trafic avec Recharts et sauvegarder leurs créations directement depuis le Studio.
+
+### 🛠️ Actions Réalisées
+1. **Extension du Repository Analytique (`src/lib/db/qr-repository.ts`)** :
+   - Méthode `update` avec vérification stricte du propriétaire (`userId`).
+   - Méthode `getUserOverview` : agrégation simultanée du total de scans, nombre de QR codes actifs, activité des 7 derniers jours et identification du QR code le plus performant.
+   - Méthodes `getScanTimeline` et `getCountryBreakdown` : requêtes SQL optimisées avec groupement chronologique et géographique.
+
+2. **Routes API Complètes (App Router)** :
+   - `GET /api/qr` : Récupération filtrée et recherchée des QR codes de l'utilisateur ou de son organisation active.
+   - `POST /api/qr` : Création et assignation de slug unique (avec gestion des conflits 409 et sanitisation de slug).
+   - `GET /api/qr/[id]`, `PUT /api/qr/[id]`, `DELETE /api/qr/[id]` : Opérations CRUD protégées par session.
+   - `GET /api/qr/[id]/analytics` & `GET /api/analytics/overview` : Endpoints dédiés aux métriques pour les graphiques.
+
+3. **Composants d'Interface Dashboard (`src/components/dashboard/`)** :
+   - `DashboardHeader` : Navigation, sélecteur d'organisation, recherche instantanée, bascule de thème et CTA vers le Studio.
+   - `OverviewStatsCards` : 4 cartes KPI avec design soigné et icônes thématiques.
+   - `ScanTimelineChart` : Graphique d'aire Recharts interactif avec dégradé personnalisé, grille douce et tooltip contextuel.
+   - `DeviceBreakdownChart` : Graphique en barres horizontales pour la répartition par appareil et top pays.
+   - `QRCodeTable` : Tableau shadcn/ui complet avec miniatures SVG générées via `@lglab/react-qr-code`, copie de lien court en 1 clic avec feedback toast, badge Dynamique/Statique, menu contextuel et suppression avec `AlertDialog`.
+   - `QRCodeAnalyticsDialog` : Boîte de dialogue modale d'analyse détaillée pour chaque QR code.
+
+4. **Intégration dans le Studio (`/studio`)** :
+   - Ajout d'un bouton *"Sauvegarder"* et d'un lien vers le Dashboard dans l'en-tête du Studio.
+   - Dialogue modal interactif permettant de nommer le QR code avant enregistrement en base de données.
+
+5. **Validation, Qualité & TDD** :
+   - Tests unitaires ajoutés dans `test/unit/api/qr-api.test.ts` et `test/unit/dashboard/analytics-repository.test.ts`.
+   - **36/36 tests unitaires passés avec succès** sous Vitest.
+   - Compilation TypeScript sans aucune erreur (`tsc --noEmit`).
+   - Compilation de production Next.js 16 validée avec succès (`pnpm build`).
+
 
 ---
 
