@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth';
-import { twoFactor } from 'better-auth/plugins';
+import { twoFactor, organization } from 'better-auth/plugins';
+import { qrPlugin } from './plugins/qr-plugin';
 import { Pool } from 'pg';
 
 // Utilise PostgreSQL si DATABASE_URL est fourni, sinon mémoire pour le build/dev
@@ -63,7 +64,7 @@ export const auth = betterAuth({
     },
   },
 
-  // Plugins de sécurité & 2FA TOTP
+  // Plugins de sécurité, 2FA TOTP & Organisations multi-tenant
   plugins: [
     twoFactor({
       issuer: 'QRCraft',
@@ -72,6 +73,12 @@ export const auth = betterAuth({
         digits: 6,
       },
     }),
+    organization({
+      allowUserToCreateOrganization: true,
+      organizationLimit: 5,
+      membershipLimit: 100,
+    }),
+    qrPlugin(),
   ],
 
   // Sécurisation avancée des sessions et cookies

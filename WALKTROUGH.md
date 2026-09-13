@@ -99,9 +99,16 @@ Structuration complète des consignes, de l'architecture et de la feuille de rou
     - `/2fa` : Validation TOTP à 6 chiffres (`InputOTP`) et bascule avec codes de secours
   - [x] Dialogue interactif `TwoFactorSetupDialog` permettant l'activation de la 2FA et affichant le QR code TOTP généré par `@lglab/react-qr-code`
   - [x] Tests unitaires automatisés validés dans `test/unit/auth/auth-config.test.ts` (15/15 tests réussis)
-- [ ] **Phase 6 : PostgreSQL & Redirection Dynamique**
-  - [ ] Schéma SQL (`users`, `qr_codes`, `scan_events`, `subscriptions`)
-  - [ ] Route Handler `/s/[slug]` pour tracking et redirection 302 instantanée
+- [x] **Phase 6 : PostgreSQL & Redirection Dynamique**
+  - [x] Conteneur Podman PostgreSQL 18.4 (`compose.yml`) déployé et opérationnel sur port 5432
+  - [x] Fichiers `.env`, `.env.local` et `.env.example` synchronisés avec la base de données
+  - [x] Schéma natif Better Auth géré via `better-auth migrate` (10 tables créées sans ORM externe)
+  - [x] Plugin multi-tenant `organization` activé pour la gestion d'équipes / workspaces
+  - [x] Plugin Better Auth personnalisé `qrPlugin` gérant `qrCode` et `scanEvent`
+  - [x] Pool PostgreSQL singleton et repository typé `qrRepository` (`src/lib/db/`)
+  - [x] Parseur User-Agent (`src/lib/utils/ua-parser.ts`) pour la détection de terminaux, OS et navigateurs
+  - [x] Route Handler dynamique `/s/[slug]` pour redirection 302 instantanée et comptage temps réel
+  - [x] Tests unitaires catégorisés validés dans `test/unit/` (26/26 tests réussis)
 - [ ] **Phase 7 : Dashboard & Analytics des Scans**
   - [ ] Page de gestion de la bibliothèque de QR codes (CRUD, filtres)
   - [ ] Dashboard de métriques avec graphiques Recharts (timeline, devices, pays)
@@ -113,6 +120,44 @@ Structuration complète des consignes, de l'architecture et de la feuille de rou
 - [ ] **Phase 10 : Optimisations Finales & Production Launch**
   - [ ] Audit Lighthouse (> 90), métadonnées SEO et sitemap
   - [ ] Accessibilité WCAG (Focus rings, aria-labels)
+
+---
+
+## [2026-09-13] - Phase 6 : PostgreSQL 18.4, Better Auth Native Schema & Moteur de Redirection Dynamique
+
+### 📌 Contexte & Objectif
+Mettre en place la persistance des données sur PostgreSQL 18.4 en local avec Podman Compose, déléguer l'intégralité de la gestion du schéma à Better Auth (via ses plugins natifs et ses migrations automatiques sans générer de schémas tiers), et implémenter la route de redirection dynamique et de tracking analytique `/s/[slug]`.
+
+### 🛠️ Actions Réalisées
+1. **Déploiement Base de Données PostgreSQL 18.4 (Podman Compose)** :
+   - Configuration du service dans `compose.yml` avec l'image `postgres:18.4`, port `5432:5432`, volume persistant `qrcraft_pgdata` et healthcheck `pg_isready`.
+   - Création de `.env.local`, `.env` et `.env.example` avec `DATABASE_URL="postgresql://qrcraft:qrcraft_secret@localhost:5432/qrcraft_db?schema=public"`.
+   - Démarrage et validation du conteneur `qrcraft-postgres` (`Up (healthy)`).
+
+2. **Architecture Schéma 100% Better Auth Native (Sans ORM externe)** :
+   - Application de la directive utilisateur : Better Auth gère lui-même son schéma et ses tables.
+   - Intégration du plugin officiel `organization()` dans `src/lib/auth/auth.ts` et `organizationClient()` dans `src/lib/auth/auth-client.ts` pour supporter les organisations / entreprises multi-tenant (workspaces, équipes, rôles `owner`/`admin`/`member`).
+   - Conception du plugin Better Auth personnalisé `qrPlugin()` (`src/lib/auth/plugins/qr-plugin.ts`) définissant les entités métier `qrCode` et `scanEvent` avec clés étrangères en cascade.
+   - Exécution de `pnpm exec better-auth migrate` créant les 10 tables directement dans PostgreSQL : `user`, `session`, `account`, `verification`, `twoFactor`, `organization`, `member`, `invitation`, `qrCode`, `scanEvent`.
+
+3. **Pool PostgreSQL & Repository Typé** :
+   - Mise en place du singleton `Pool` (`pg`) dans `src/lib/db/index.ts` avec monitoring des slow queries en développement.
+   - Création de `src/lib/db/qr-repository.ts` : méthodes `create`, `findBySlug`, `findById`, `listByUser`, `listByOrganization`, `recordScan`, `getAnalytics`, `delete`.
+
+4. **Moteur de Redirection Dynamique & Analytics (`/s/[slug]`)** :
+   - Implémentation du parseur d'empreintes `src/lib/utils/ua-parser.ts` (détection Mobile/Tablet/Desktop/Bot, OS, navigateurs).
+   - Création du Route Handler Next.js `src/app/s/[slug]/route.ts` :
+     - Recherche optimisée par index btree sur `shortSlug`.
+     - Anonymisation de l'IP (hachage cryptographique SHA-256 avec sel).
+     - Détection de la géolocalisation (en-têtes edge `x-vercel-ip-country`, `cf-ipcountry`).
+     - Enregistrement du scan et incrémentation atomique du compteur `scanCount`.
+     - Redirection 302 temporaire avec en-têtes stricts `Cache-Control: no-store, no-cache, must-revalidate` garantissant le comptage de 100% des scans.
+
+5. **Validation & TDD** :
+   - Respect strict de la règle d'or : tests catégorisés dans `test/unit/` (`test/unit/utils/ua-parser.test.ts`, `test/unit/db/qr-repository.test.ts`, `test/unit/redirect/redirect-route.test.ts`).
+   - 26/26 tests unitaires réussis avec Vitest.
+   - 0 erreur de typage (`pnpm tsc --noEmit`).
+
 
 ---
 

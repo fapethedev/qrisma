@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: docker.io/library/postgres:18.4
+    container_name: qrcraft-postgres
+    restart: no
+    environment:
+      POSTGRES_USER: qrcraft
+      POSTGRES_PASSWORD: qrcraft_secret
+      POSTGRES_DB: qrcraft_db
+    networks:
+      - qrcraft_network
+    ports:
+      - "5432:5432"
+    volumes:
+      - qrcraft_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qrcraft -d qrcraft_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer_ui
+    depends_on:
+      - postgres
+    networks:
+      - qrcraft_network
+    ports:
+      - "8080:8080"
+    restart: no
+
+volumes:
+  qrcraft_data:
+
+    # Réseau dédié pour les services
+networks:
+  qrcraft_network:
+    driver: bridge
