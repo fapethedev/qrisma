@@ -1,0 +1,104 @@
+{
+  "common": {
+    "appName": "QRCraft",
+    "tagline": "Générateur de QR Codes Artistiques & Dynamiques",
+    "home": "Accueil",
+    "studio": "Studio",
+    "dashboard": "Tableau de bord",
+    "pricing": "Tarifs",
+    "features": "Fonctionnalités",
+    "faq": "FAQ",
+    "login": "Connexion",
+    "register": "Inscription",
+    "logout": "Déconnexion",
+    "save": "Sauvegarder",
+    "export": "Exporter",
+    "download": "Télécharger",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "delete": "Supprimer",
+    "loading": "Chargement...",
+    "dynamic": "Dynamique",
+    "static": "Statique"
+  },
+  "landing": {
+    "badge": "Moteur Vectoriel & Rendu 3D en Temps Réel",
+    "heroTitle": "Créez des QR Codes d'Exception.",
+    "heroSubtitle": "Alliez esthétique premium, rendu vectoriel haute fidélité, personnalisation 3D et redirection dynamique avec métriques de scans en temps réel.",
+    "ctaStudio": "Ouvrir le Studio Gratuitement",
+    "ctaPricing": "Découvrir les Tarifs Pro",
+    "sandboxTitle": "Bac à sable interactif",
+    "featuresTitle": "Une suite complète pensée pour les marques et créateurs",
+    "featuresSubtitle": "Chaque détail est conçu pour maximiser l'engagement et garantir une scannabilité irréprochable.",
+    "pricingTitle": "Des tarifs transparents et sans engagement",
+    "pricingSubtitle": "Commencez gratuitement, passez à la vitesse supérieure quand votre marque grandit."
+  },
+  "studio": {
+    "title": "Générateur de QR Codes Personnalisés",
+    "subtitle": "Personnalisez les modules, les dégradés, les coins et le logo avec prévisualisation vectorielle instantanée et projection 3D.",
+    "tabs": {
+      "content": "Contenu",
+      "shapes": "Formes",
+      "colors": "Couleurs",
+      "logo": "Logo",
+      "presets": "Thèmes"
+    },
+    "view2d": "Aperçu 2D",
+    "view3d": "Mockup 3D",
+    "saveToAccount": "Enregistrer dans mon compte",
+    "reset": "Réinitialiser",
+    "saveDialog": {
+      "title": "Enregistrer dans mon compte",
+      "description": "Donnez un nom à votre création pour la retrouver dans votre tableau de bord et suivre ses statistiques.",
+      "labelTitle": "Titre du QR Code",
+      "placeholder": "Ex : Carte de visite, Menu Printemps...",
+      "submit": "Confirmer l'enregistrement"
+    }
+  },
+  "dashboard": {
+    "title": "Mes QR Codes & Analytiques",
+    "searchPlaceholder": "Rechercher par titre, destination, slug...",
+    "newQR": "Nouveau QR Code",
+    "kpi": {
+      "totalScans": "Total des Scans",
+      "activeQRCodes": "QR Codes Actifs",
+      "scans7d": "Scans cette semaine",
+      "topPerformer": "Top Performance"
+    },
+    "charts": {
+      "timelineTitle": "Activité Globale des Scans (30 derniers jours)",
+      "timelineDesc": "Trafic total redirigé via vos liens courts",
+      "geoTitle": "Top Pays d'Origine",
+      "geoDesc": "Répartition géographique des scans",
+      "deviceTitle": "Répartition par Type de Terminal",
+      "deviceDesc": "Origine des scans selon le matériel de l'utilisateur"
+    },
+    "table": {
+      "title": "Mes QR Codes",
+      "subtitle": "Gérez vos liens dynamiques, modifiez les destinations et inspectez vos performances.",
+      "preview": "Aperçu",
+      "details": "Titre & Destination",
+      "shortLink": "Lien Court",
+      "type": "Type",
+      "scans": "Scans",
+      "actions": "Actions",
+      "emptyTitle": "Aucun QR code trouvé",
+      "emptyDesc": "Vous n'avez pas encore créé de QR code ou aucun résultat ne correspond à votre recherche.",
+      "createFirst": "Créer mon premier QR Code"
+    }
+  },
+  "auth": {
+    "loginTitle": "Bienvenue sur QRCraft",
+    "loginSubtitle": "Connectez-vous pour accéder à vos QR codes et statistiques",
+    "emailLabel": "Adresse Email",
+    "passwordLabel": "Mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?",
+    "signInButton": "Se connecter",
+    "noAccount": "Pas encore de compte ?",
+    "createAccount": "Créer un compte",
+    "registerTitle": "Créer votre compte QRCraft",
+    "registerSubtitle": "Générez des QR codes dynamiques et analysez vos scans",
+    "nameLabel": "Nom complet"
+  }
+}

@@ -119,14 +119,51 @@ Structuration complète des consignes, de l'architecture et de la feuille de rou
   - [x] Dialogue d'analyse approfondie `QRCodeAnalyticsDialog`
   - [x] Intégration de la sauvegarde en direct dans le Studio (`/studio`)
   - [x] Tests unitaires d'API et d'analytics validés dans `test/unit/` (36/36 tests réussis, build production OK)
-- [ ] **Phase 8 : Internationalisation (next-intl)**
-  - [ ] Dictionnaires `fr.json` et `en.json`
-  - [ ] Sélecteur de langue fluide dans la barre de navigation
+- [x] **Phase 8 : Internationalisation (next-intl)**
+  - [x] Configuration i18n (`src/i18n/routing.ts` & `src/i18n/request.ts`)
+  - [x] Dictionnaires complets `messages/fr.json` et `messages/en.json` (100% miroirs)
+  - [x] Middleware i18n `src/middleware.ts` avec exclusion des routes `/api` et `/s/[slug]`
+  - [x] Plugin `next-intl/plugin` configuré dans `next.config.ts`
+  - [x] Composant sélecteur de langue `src/components/language-toggle.tsx` avec drapeaux (🇫🇷 / 🇬🇧)
+  - [x] Intégration du sélecteur dans la Landing Page, le Dashboard et le Studio
+  - [x] Tests unitaires i18n validés dans `test/unit/i18n/i18n.test.ts` (40/40 tests réussis)
 - [ ] **Phase 9 : Emails Transactionnels (Resend)**
   - [ ] Client Resend et templates React Email (Bienvenue, Reset Password, Scan Alerts)
 - [ ] **Phase 10 : Optimisations Finales & Production Launch**
   - [ ] Audit Lighthouse (> 90), métadonnées SEO et sitemap
   - [ ] Accessibilité WCAG (Focus rings, aria-labels)
+
+---
+
+## [2026-09-13] - Phase 8 : Internationalisation Complète (next-intl FR/EN)
+
+### 📌 Contexte & Objectif
+Doter QRCraft d'une prise en charge multilingue native et fluide (Français / Anglais) conformément à la compétence `next-intl-add-language` : dictionnaires exhaustifs, bascule instantanée sans rechargement lourd et préservation totale des liens dynamiques courts `/s/[slug]`.
+
+### 🛠️ Actions Réalisées
+1. **Architecture & Routage (`src/i18n/`)** :
+   - `src/i18n/routing.ts` : déclaration des langues `['fr', 'en']`, `defaultLocale: 'fr'` et mode sans préfixe d'URL (`localePrefix: 'never'`) pour préserver des URLs propres (`/`, `/studio`, `/dashboard`).
+   - `src/i18n/request.ts` : chargement dynamique basé sur le cookie `NEXT_LOCALE` avec repli gracieux en contexte hors-requête.
+   - Intégration du plugin `next-intl/plugin` dans `next.config.ts`.
+   - Middleware de négociation linguistique `src/middleware.ts` excluant formellement `/api`, `/_next`, `/_vercel` et `/s/` pour garantir le fonctionnement inaltéré des redirections QR codes.
+
+2. **Dictionnaires Exhaustifs (`messages/`)** :
+   - Création de `messages/fr.json` et `messages/en.json` couvrant l'ensemble de l'écosystème : `common`, `landing`, `studio`, `dashboard`, `auth`.
+   - Correspondance exacte des clés (100% de parité validée par test unitaire).
+
+3. **Composant UI `LanguageToggle`** :
+   - Composant accessible `src/components/language-toggle.tsx` avec dropdown menu, icône Globe, drapeaux et mémorisation du choix dans le cookie `NEXT_LOCALE` (durée 1 an).
+   - Déploiement dans les en-têtes :
+     - Barre de navigation de la Landing Page (`src/components/landing/navbar.tsx`).
+     - En-tête du Dashboard (`src/components/dashboard/dashboard-header.tsx`).
+     - Barre d'outils du Studio (`src/components/qr/qr-studio-view.tsx`).
+
+4. **Tests & Validation TDD** :
+   - Tests de parité et de conformité des dictionnaires dans `test/unit/i18n/i18n.test.ts`.
+   - **40/40 tests unitaires passés avec succès** sous Vitest.
+   - Compilation TypeScript sans erreur (`tsc --noEmit`).
+   - Build Next.js 16 réussi en production avec Turbopack.
+
 
 ---
 

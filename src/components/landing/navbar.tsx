@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, QrCode, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/shared/theme-toggle';
+import { LanguageToggle } from '@/components/language-toggle';
 
 export function LandingNavbar() {
   return (
@@ -42,7 +43,8 @@ export function LandingNavbar() {
         </nav>
 
         {/* Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          <LanguageToggle />
           <ThemeToggle />
 
           <Link href="/studio">

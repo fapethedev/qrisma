@@ -9,6 +9,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 
 const ebGaramondHeading = EB_Garamond({
   subsets: ["latin"],
@@ -25,14 +27,17 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
     <html
-      lang="fr"
+      lang={locale}
       suppressHydrationWarning
       className={cn(
         "antialiased",
@@ -43,10 +48,12 @@ export default function RootLayout({
       )}
     >
       <body>
-        <ThemeProvider>
-          {children}
-          <Toaster position="bottom-right" />
-        </ThemeProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ThemeProvider>
+            {children}
+            <Toaster position="bottom-right" />
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

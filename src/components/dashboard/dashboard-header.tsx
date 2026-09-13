@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Plus, Search, QrCode, Sparkles, Building2, LogOut } from 'lucide-react';
 import { signOut } from '@/lib/auth/auth-client';
 import { ThemeToggle } from '@/components/shared/theme-toggle';
+import { LanguageToggle } from '@/components/language-toggle';
 
 interface DashboardHeaderProps {
   searchQuery: string;
@@ -60,7 +61,8 @@ export function DashboardHeader({
         </div>
 
         {/* Actions & Profil */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          <LanguageToggle />
           <ThemeToggle />
 
           <Link href="/studio">

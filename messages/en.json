@@ -1,0 +1,104 @@
+{
+  "common": {
+    "appName": "QRCraft",
+    "tagline": "Artistic & Dynamic QR Code Generator",
+    "home": "Home",
+    "studio": "Studio",
+    "dashboard": "Dashboard",
+    "pricing": "Pricing",
+    "features": "Features",
+    "faq": "FAQ",
+    "login": "Sign In",
+    "register": "Sign Up",
+    "logout": "Sign Out",
+    "save": "Save",
+    "export": "Export",
+    "download": "Download",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "dynamic": "Dynamic",
+    "static": "Static"
+  },
+  "landing": {
+    "badge": "Vector Engine & Real-Time 3D Rendering",
+    "heroTitle": "Craft Exceptional QR Codes.",
+    "heroSubtitle": "Combine premium aesthetics, high-fidelity vector output, 3D product previews, and dynamic redirection with real-time scan analytics.",
+    "ctaStudio": "Open Free Studio",
+    "ctaPricing": "Explore Pro Plans",
+    "sandboxTitle": "Interactive Live Sandbox",
+    "featuresTitle": "A complete creative suite designed for brands & creators",
+    "featuresSubtitle": "Every detail is engineered to maximize engagement and ensure flawless scannability.",
+    "pricingTitle": "Transparent pricing with no commitments",
+    "pricingSubtitle": "Start for free, upgrade smoothly as your brand and reach scale."
+  },
+  "studio": {
+    "title": "Custom QR Code Studio",
+    "subtitle": "Customize modules, gradients, eye corners, and logo with instant vector preview and interactive 3D mockups.",
+    "tabs": {
+      "content": "Content",
+      "shapes": "Shapes",
+      "colors": "Colors",
+      "logo": "Logo",
+      "presets": "Presets"
+    },
+    "view2d": "2D Vector",
+    "view3d": "3D Mockup",
+    "saveToAccount": "Save to Account",
+    "reset": "Reset",
+    "saveDialog": {
+      "title": "Save to Account",
+      "description": "Give your QR code a name to track its scans and edit its redirection destination anytime from your dashboard.",
+      "labelTitle": "QR Code Title",
+      "placeholder": "e.g. Business Card, Spring Menu...",
+      "submit": "Confirm & Save"
+    }
+  },
+  "dashboard": {
+    "title": "My QR Codes & Analytics",
+    "searchPlaceholder": "Search by title, destination, slug...",
+    "newQR": "New QR Code",
+    "kpi": {
+      "totalScans": "Total Scans",
+      "activeQRCodes": "Active QR Codes",
+      "scans7d": "Scans this week",
+      "topPerformer": "Top Performer"
+    },
+    "charts": {
+      "timelineTitle": "Overall Scan Activity (Last 30 Days)",
+      "timelineDesc": "Total traffic redirected through your short links",
+      "geoTitle": "Top Visitor Countries",
+      "geoDesc": "Geographical distribution of scans",
+      "deviceTitle": "Device Breakdown",
+      "deviceDesc": "Origin of scans categorized by user hardware"
+    },
+    "table": {
+      "title": "My QR Codes",
+      "subtitle": "Manage your dynamic links, change destinations on the fly, and inspect performance.",
+      "preview": "Preview",
+      "details": "Title & Destination",
+      "shortLink": "Short Link",
+      "type": "Type",
+      "scans": "Scans",
+      "actions": "Actions",
+      "emptyTitle": "No QR codes found",
+      "emptyDesc": "You haven't created any QR codes yet or no matches were found for your search query.",
+      "createFirst": "Create My First QR Code"
+    }
+  },
+  "auth": {
+    "loginTitle": "Welcome back to QRCraft",
+    "loginSubtitle": "Sign in to access your QR codes and analytics",
+    "emailLabel": "Email Address",
+    "passwordLabel": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "signInButton": "Sign In",
+    "noAccount": "Don't have an account yet?",
+    "createAccount": "Create an account",
+    "registerTitle": "Create your QRCraft Account",
+    "registerSubtitle": "Generate dynamic QR codes and track scan analytics",
+    "nameLabel": "Full Name"
+  }
+}

@@ -19,6 +19,8 @@ import {
 import { useQRStudioStore } from '@/stores/qr-studio-store';
 import { useSession } from '@/lib/auth/auth-client';
 import { toast } from 'sonner';
+import { LanguageToggle } from '@/components/language-toggle';
+import { ThemeToggle } from '@/components/shared/theme-toggle';
 import { QRCustomizerForm } from './qr-customizer-form';
 import { QRExportDialog } from './qr-export-dialog';
 import { QRCodePreview2D } from './qr-preview-2d';
@@ -166,6 +168,11 @@ export function QRStudioView() {
               <Download className="h-3.5 w-3.5" />
               <span>Exporter</span>
             </Button>
+
+            <div className="h-5 w-px bg-border/60 mx-1 hidden sm:block" />
+
+            <LanguageToggle />
+            <ThemeToggle />
           </div>
         </div>
       </header>
