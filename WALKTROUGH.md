@@ -85,11 +85,20 @@ Structuration complète des consignes, de l'architecture et de la feuille de rou
   - [x] Hook réactif `useQRTexture` générant une `THREE.CanvasTexture` haute résolution synchronisée en direct avec le SVG
   - [x] Contrôles OrbitControls (rotation 360°, zoom restreint, recentrage caméra)
   - [x] Bascule intuitive 2D Vectoriel / 3D Mockup dans le Studio avec lazy loading SSR-safe
-- [ ] **Phase 5 : Authentification & Sécurité (Better Auth)**
-  - [ ] Configuration de `auth.ts` et du client React
-  - [ ] Schéma utilisateur étendu (rôles, quotas, abonnements)
-  - [ ] Pages `/login`, `/register`, `/forgot-password`
-  - [ ] Protection anti-bruteforce et support 2FA TOTP
+- [x] **Phase 5 : Authentification & Sécurité (Better Auth)**
+  - [x] Configuration serveur `src/lib/auth/auth.ts` avec support PostgreSQL (`pg.Pool`) et mémoire de secours
+  - [x] Schéma utilisateur étendu SaaS : rôle (`free`, `pro`, `admin`), plan d'abonnement et compteur de QR codes
+  - [x] Plugin `twoFactor` avec émetteur *QRCraft* et options TOTP (période 30s, 6 chiffres)
+  - [x] Plugin `emailAndPassword` conforme aux best practices (min 8 caractères, `sendResetPassword`, `sendVerificationEmail`)
+  - [x] Instance client `src/lib/auth/auth-client.ts` avec `twoFactorClient` et redirection automatique `/2fa`
+  - [x] Route Handler Next.js App Router `src/app/api/auth/[...all]/route.ts`
+  - [x] Pages d'authentification complètes conformes au skill `shadcn` :
+    - `/login` : Connexion email/mot de passe avec redirection et gestion des états
+    - `/register` : Inscription avec politique de mot de passe et confirmation
+    - `/forgot-password` : Demande de lien de réinitialisation via `requestPasswordReset`
+    - `/2fa` : Validation TOTP à 6 chiffres (`InputOTP`) et bascule avec codes de secours
+  - [x] Dialogue interactif `TwoFactorSetupDialog` permettant l'activation de la 2FA et affichant le QR code TOTP généré par `@lglab/react-qr-code`
+  - [x] Tests unitaires automatisés validés dans `test/unit/auth/auth-config.test.ts` (15/15 tests réussis)
 - [ ] **Phase 6 : PostgreSQL & Redirection Dynamique**
   - [ ] Schéma SQL (`users`, `qr_codes`, `scan_events`, `subscriptions`)
   - [ ] Route Handler `/s/[slug]` pour tracking et redirection 302 instantanée
