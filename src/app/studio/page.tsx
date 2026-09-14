@@ -1,10 +1,13 @@
 import { QRStudioView } from '@/components/qr/qr-studio-view';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata = {
-  title: 'Studio de Création QR Code | QRCraft',
-  description:
-    'Studio de personnalisation de QR codes en temps réel : formes, dégradés, logos, yeux et exports SVG/PNG 4K/PDF.',
-};
+export async function generateMetadata() {
+  const t = await getTranslations('studio');
+  return {
+    title: t('metaTitle'),
+    description: t('metaDesc'),
+  };
+}
 
 export default function StudioPage() {
   return <QRStudioView />;

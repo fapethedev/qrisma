@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import {
   ResponsiveContainer,
   BarChart,
@@ -32,28 +33,33 @@ const COLORS = ['#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e'
 export function DeviceBreakdownChart({
   devices = [],
   countries = [],
-  title = 'Répartition des Visiteurs',
-  description = 'Par type d’appareil ou géolocalisation',
+  title,
+  description,
 }: DeviceBreakdownChartProps) {
+  const t = useTranslations('dashboard.charts');
+
+  const chartTitle = title || t('deviceTitle');
+  const chartDesc = description || t('deviceDesc');
+
   // Préparer les données pour les terminaux
   const deviceData =
     devices.length > 0
       ? devices.map((d) => ({
-          name: d.deviceType || 'Inconnu',
+          name: d.deviceType || t('unknown'),
           value: typeof d.count === 'string' ? parseInt(d.count, 10) : d.count,
         }))
       : [
-          { name: 'Mobile', value: 0 },
-          { name: 'Desktop', value: 0 },
-          { name: 'Tablette', value: 0 },
+          { name: t('mobile'), value: 0 },
+          { name: t('desktop'), value: 0 },
+          { name: t('tablet'), value: 0 },
         ];
 
   return (
     <Card className="border-border/60 shadow-sm bg-card/60 backdrop-blur-sm col-span-1">
       <CardHeader>
-        <CardTitle className="text-base font-semibold">{title}</CardTitle>
+        <CardTitle className="text-base font-semibold">{chartTitle}</CardTitle>
         <CardDescription className="text-xs text-muted-foreground">
-          {description}
+          {chartDesc}
         </CardDescription>
       </CardHeader>
       <CardContent className="h-[280px] w-full pt-2">

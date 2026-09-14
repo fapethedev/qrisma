@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { ArrowLeft, CheckCircle2, Loader2, Mail, QrCode } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,9 @@ import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth/auth-client';
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations('auth.forgotPassword');
+  const tCommon = useTranslations('common');
+
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -25,28 +29,29 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
-      toast.error('Veuillez saisir votre adresse email.');
+      toast.error(tCommon('requiredFields'));
       return;
     }
 
     setLoading(true);
     try {
-      // Flow de réinitialisation Better Auth
       const { error } = await authClient.requestPasswordReset({
         email: email.trim(),
         redirectTo: `${window.location.origin}/login`,
       });
 
       if (error) {
-        toast.error('Erreur', { description: error.message || 'Impossible d’envoyer l’email de réinitialisation.' });
+        toast.error(tCommon('errorOccurred'), {
+          description: error.message || tCommon('errorOccurred'),
+        });
       } else {
         setSubmitted(true);
-        toast.success('Lien envoyé !', {
-          description: 'Consultez votre boîte de réception pour réinitialiser votre mot de passe.',
+        toast.success(t('successTitle'), {
+          description: t('successDesc'),
         });
       }
     } catch {
-      toast.error('Une erreur est survenue.');
+      toast.error(tCommon('errorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -63,7 +68,7 @@ export default function ForgotPasswordPage() {
             <span className="font-bold text-xl tracking-tight">QRCraft</span>
           </Link>
           <p className="text-xs text-muted-foreground">
-            Récupération de l’accès à votre compte
+            {t('subtitle')}
           </p>
         </div>
 
@@ -71,44 +76,44 @@ export default function ForgotPasswordPage() {
           {submitted ? (
             <CardContent className="pt-6 flex flex-col items-center gap-4 text-center">
               <div className="size-12 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                <CheckCircle2 className="size-6" />
+                <CheckCircle2 className="size-6" aria-hidden="true" />
               </div>
               <div className="flex flex-col gap-1">
-                <h3 className="font-bold text-lg text-foreground">Email de réinitialisation envoyé</h3>
+                <h3 className="font-bold text-lg text-foreground">{t('sentTitle')}</h3>
                 <p className="text-xs text-muted-foreground max-w-xs">
-                  Si un compte est associé à <span className="font-medium text-foreground">{email}</span>, vous recevrez un lien sécurisé d’ici quelques instants.
+                  {t('sentDesc', { email })}
                 </p>
               </div>
 
               <Link href="/login" className="w-full pt-2">
                 <Button variant="outline" className="w-full text-xs font-medium gap-2">
-                  <ArrowLeft className="size-3.5" />
-                  <span>Retour à la connexion</span>
+                  <ArrowLeft className="size-3.5" aria-hidden="true" />
+                  <span>{t('backToLogin')}</span>
                 </Button>
               </Link>
             </CardContent>
           ) : (
             <form onSubmit={handleSubmit}>
               <CardHeader className="flex flex-col gap-1.5">
-                <CardTitle className="text-xl font-bold">Mot de passe oublié</CardTitle>
+                <CardTitle className="text-xl font-bold">{t('title')}</CardTitle>
                 <CardDescription className="text-xs">
-                  Entrez votre email pour recevoir les instructions de réinitialisation
+                  {t('formSubtitle')}
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="email" className="text-xs font-medium">
-                    Adresse email de votre compte
+                    {t('emailLabel')}
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
                     <Input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="alexandre@exemple.com"
+                      placeholder={t('emailPlaceholder')}
                       required
                       className="pl-9 text-xs h-10"
                     />
@@ -124,11 +129,11 @@ export default function ForgotPasswordPage() {
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="size-4 animate-spin" />
-                      <span>Envoi en cours...</span>
+                      <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                      <span>{t('submitting')}</span>
                     </>
                   ) : (
-                    <span>Envoyer le lien de réinitialisation</span>
+                    <span>{t('submitButton')}</span>
                   )}
                 </Button>
 
@@ -136,8 +141,8 @@ export default function ForgotPasswordPage() {
                   href="/login"
                   className="text-xs text-center text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5"
                 >
-                  <ArrowLeft className="size-3.5" />
-                  <span>Retour à la page de connexion</span>
+                  <ArrowLeft className="size-3.5" aria-hidden="true" />
+                  <span>{t('backToLogin')}</span>
                 </Link>
               </CardFooter>
             </form>

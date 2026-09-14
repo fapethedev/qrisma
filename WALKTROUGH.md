@@ -359,6 +359,41 @@ Permettre l'initialisation automatique d'une base de données PostgreSQL vierge 
 
 ---
 
+## [2026-09-14] - Intégration Complète et Propre de l'Internationalisation (next-intl)
+
+### 📌 Contexte & Objectif
+Parcourir l'ensemble de l'arborescence `src/app` et tous les composants UI connectés pour éliminer toute chaîne textuelle codée en dur, harmoniser l'App Router Next.js 16 avec `next-intl` (mode `localePrefix: 'never'` basé sur le cookie `NEXT_LOCALE`), et assurer une parité stricte à 100% entre les dictionnaires français (`messages/fr.json`) et anglais (`messages/en.json`).
+
+### 🛠️ Actions Réalisées
+1. **Harmonisation et Parité des Dictionnaires (`messages/fr.json` & `messages/en.json`)** :
+   - Préservation stricte de la structure racine à 5 domaines : `auth`, `common`, `dashboard`, `landing`, `studio`.
+   - Ajout des clés complètes pour :
+     - *Studio* : `studio.customizer` (modes dynamiques, types de payload URL/vCard/Wi-Fi/Text/Email/Phone/SMS/Crypto, tolérance/niveaux d'erreur L/M/Q/H, marge extérieure et thèmes prédéfinis), `studio.shapes`, `studio.finder`, `studio.colors`, `studio.logo`, `studio.scene3d`, `studio.saveDialog.defaultTitle`.
+     - *Auth & Sécurité* : `auth.twoFactorSetup` (dialogue modal 2FA, codes de secours, validation TOTP), `auth.twoFactor.invalidCode`.
+     - *Landing & Navigation* : `common.showcase`, `landing.sandboxUrlPlaceholder`.
+   - **Parité stricte à 100%** validée par le test unitaire `test/unit/i18n/i18n.test.ts` (mêmes clés de premier niveau et ensemble identique de feuilles arborescentes).
+
+2. **Refactorisation de l'App Router (`src/app/`)** :
+   - `src/app/layout.tsx` : Fourniture globale de `<NextIntlClientProvider>` avec `locale`, `messages`, et configuration explicite de `timeZone: 'Europe/Paris'` pour éliminer tout avertissement `ENVIRONMENT_FALLBACK`.
+   - `src/app/page.tsx` : Génération des métadonnées SEO localisées via `getTranslations('landing')`.
+   - `src/app/studio/page.tsx` : Métadonnées SEO dynamiques via `getTranslations('studio')`.
+   - `src/app/dashboard/layout.tsx` : Métadonnées du tableau de bord via `getTranslations('dashboard')`.
+   - `src/app/dashboard/page.tsx` : Vue unifiée du dashboard avec traductions des titres, recherche et métriques.
+   - Routes d'authentification (`src/app/login/`, `src/app/register/`, `src/app/forgot-password/`, `src/app/2fa/`) : formulaires, placeholders, libellés et notifications toasts 100% localisés.
+
+3. **Refactorisation des Composants Studio & UI** :
+   - `src/components/qr/qr-studio-view.tsx` : Titre par défaut localisé, composant `Studio3DLoading` avec traduction `studio.loading3d`, bouton d'export via `common.export`.
+   - `src/components/qr/qr-customizer-form.tsx` : Remplacement de toutes les chaînes résiduelles (niveaux d'erreur, marges en modules, en-tête des presets) par les clés `studio.customizer`.
+   - `src/components/auth/two-factor-setup-dialog.tsx` : Remplacement de l'ensemble des toasts et textes de l'assistant de configuration TOTP par `useTranslations('auth.twoFactorSetup')`.
+
+4. **Validation Qualité, Tests & Production** :
+   - **55/55 tests unitaires réussis avec succès** sur 12 suites de tests sous Vitest (`pnpm test`).
+   - Élimination des avertissements `ENVIRONMENT_FALLBACK` dans les tests d'accessibilité (`test/unit/a11y/accessibility.test.tsx`).
+   - Vérification des types TypeScript sans aucune erreur (`pnpm run typecheck` / `tsc --noEmit`).
+   - Compilation de production Next.js 16 validée avec succès (`pnpm build`), avec 0 avertissement `MISSING_MESSAGE` et génération complète des 12 routes statiques et dynamiques.
+
+---
+
 ## 🔒 Directives pour les Futurs Commits
 Chaque agent intervenant sur le dépôt doit :
 1. Renseigner l'entrée correspondante dans ce fichier `WALKTROUGH.md`.

@@ -6,12 +6,15 @@ import { LandingNavbar } from '@/components/landing/navbar';
 import { ParallaxShowcase } from '@/components/landing/parallax-showcase';
 import { PricingSection } from '@/components/landing/pricing-section';
 import { SmoothScrollProvider } from '@/components/shared/smooth-scroll-provider';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata = {
-  title: 'QRCraft | Générateur de QR Codes Personnalisés & Trackables',
-  description:
-    'Créez des QR codes uniques, esthétiques et trackables. Formes de modules sur-mesure, dégradés dynamiques, incrustation de logos et exports vectoriels SVG & PDF 4K.',
-};
+export async function generateMetadata() {
+  const t = await getTranslations('landing');
+  return {
+    title: t('metaTitle'),
+    description: t('metaDesc'),
+  };
+}
 
 export default function HomePage() {
   return (

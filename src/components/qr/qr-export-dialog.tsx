@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Download, FileCode2, FileImage, FileText, Loader2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -24,66 +25,61 @@ interface QRExportDialogProps {
   defaultFilename?: string;
 }
 
-const FORMAT_OPTIONS: {
-  id: QRExportFormat;
-  title: string;
-  badge: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-}[] = [
-  {
-    id: 'svg',
-    title: 'SVG Vectoriel',
-    badge: 'Recommandé',
-    description: 'Netteté infinie sans perte, parfait pour le web, l’impression et les graphistes.',
-    icon: FileCode2,
-  },
-  {
-    id: 'png',
-    title: 'PNG Haute Définition',
-    badge: 'Universel',
-    description: 'Format matriciel idéal avec transparence, prêt pour tous supports numériques.',
-    icon: FileImage,
-  },
-  {
-    id: 'jpeg',
-    title: 'JPEG Compact',
-    badge: 'Standard',
-    description: 'Format standard opaque avec fond blanc, léger et compatible partout.',
-    icon: FileImage,
-  },
-  {
-    id: 'pdf',
-    title: 'PDF Document A4',
-    badge: 'Print Ready',
-    description: 'Document prêt à être imprimé directement avec repères et cadrage soigné.',
-    icon: FileText,
-  },
-];
-
-const RESOLUTION_OPTIONS: { id: QRExportResolution; label: string; detail: string }[] = [
-  { id: 512, label: '512 px (1x)', detail: 'Réseaux sociaux & Web' },
-  { id: 1024, label: '1024 px (2x)', detail: 'Écrans Retina & Docs' },
-  { id: 2048, label: '2048 px (4x)', detail: 'Flyers & Packaging' },
-  { id: 4096, label: '4096 px (Print)', detail: 'Impression Haute Résolution 300 DPI' },
-];
-
 export function QRExportDialog({
   open,
   onOpenChange,
   getSvgElement,
   defaultFilename = 'mon-code-qr',
 }: QRExportDialogProps) {
+  const t = useTranslations('studio.exportDialog');
   const [format, setFormat] = useState<QRExportFormat>('svg');
   const [resolution, setResolution] = useState<QRExportResolution>(2048);
   const [filename, setFilename] = useState(defaultFilename);
   const [transparent, setTransparent] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
+  const formatOptions = [
+    {
+      id: 'svg' as const,
+      title: t('svgTitle'),
+      badge: t('svgBadge'),
+      description: t('svgDesc'),
+      icon: FileCode2,
+    },
+    {
+      id: 'png' as const,
+      title: t('pngTitle'),
+      badge: t('pngBadge'),
+      description: t('pngDesc'),
+      icon: FileImage,
+    },
+    {
+      id: 'jpeg' as const,
+      title: t('jpegTitle'),
+      badge: t('jpegBadge'),
+      description: t('jpegDesc'),
+      icon: FileImage,
+    },
+    {
+      id: 'pdf' as const,
+      title: t('pdfTitle'),
+      badge: t('pdfBadge'),
+      description: t('pdfDesc'),
+      icon: FileText,
+    },
+  ];
+
+  const resolutionOptions = [
+    { id: 512 as const, label: t('res512'), detail: t('res512Detail') },
+    { id: 1024 as const, label: t('res1024'), detail: t('res1024Detail') },
+    { id: 2048 as const, label: t('res2048'), detail: t('res2048Detail') },
+    { id: 4096 as const, label: t('res4096'), detail: t('res4096Detail') },
+  ];
+
   const handleExport = async () => {
     const svgEl = getSvgElement();
     if (!svgEl) {
-      toast.error('Erreur : QR Code introuvable dans le studio.');
+      toast.error(t('errorNotFound'));
       return;
     }
 
@@ -97,14 +93,14 @@ export function QRExportDialog({
         transparentBackground: transparent,
       });
 
-      toast.success('QR Code exporté avec succès !', {
-        description: `Téléchargé au format ${format.toUpperCase()}`,
+      toast.success(t('successToast'), {
+        description: t('successDesc', { format: format.toUpperCase() }),
       });
       onOpenChange(false);
     } catch (error) {
       console.error(error);
-      toast.error('Échec de l’exportation', {
-        description: 'Une erreur est survenue lors de la génération du fichier.',
+      toast.error(t('errorToast'), {
+        description: t('errorDesc'),
       });
     } finally {
       setIsExporting(false);
@@ -117,10 +113,10 @@ export function QRExportDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg">
             <Sparkles className="h-5 w-5 text-primary" />
-            <span>Exporter le QR Code</span>
+            <span>{t('title')}</span>
           </DialogTitle>
           <DialogDescription>
-            Sélectionnez votre format de fichier et votre niveau de qualité préféré.
+            {t('description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -128,10 +124,10 @@ export function QRExportDialog({
           {/* Sélection du Format */}
           <div className="space-y-2.5">
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Format de fichier
+              {t('formatLabel')}
             </Label>
             <div className="grid grid-cols-2 gap-2.5">
-              {FORMAT_OPTIONS.map((opt) => {
+              {formatOptions.map((opt) => {
                 const Icon = opt.icon;
                 const isSelected = format === opt.id;
                 return (
@@ -169,10 +165,10 @@ export function QRExportDialog({
           {format !== 'svg' && (
             <div className="space-y-2.5 pt-2 border-t border-border/50">
               <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Résolution & Qualité
+                {t('resolutionLabel')}
               </Label>
               <div className="grid grid-cols-2 gap-2">
-                {RESOLUTION_OPTIONS.map((res) => {
+                {resolutionOptions.map((res) => {
                   const isSelected = resolution === res.id;
                   return (
                     <button
@@ -199,7 +195,7 @@ export function QRExportDialog({
           {/* Nom du fichier */}
           <div className="space-y-1.5 pt-2 border-t border-border/50">
             <Label htmlFor="filename-input" className="text-xs font-medium text-muted-foreground">
-              Nom du fichier
+              {t('filenameLabel')}
             </Label>
             <div className="flex items-center gap-2">
               <Input
@@ -222,7 +218,7 @@ export function QRExportDialog({
             disabled={isExporting}
             className="cursor-pointer"
           >
-            Annuler
+            {t('cancel')}
           </Button>
           <Button
             type="button"
@@ -233,12 +229,12 @@ export function QRExportDialog({
             {isExporting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Génération en cours...</span>
+                <span>{t('generating')}</span>
               </>
             ) : (
               <>
                 <Download className="h-4 w-4" />
-                <span>Télécharger maintenant</span>
+                <span>{t('downloadNow')}</span>
               </>
             )}
           </Button>

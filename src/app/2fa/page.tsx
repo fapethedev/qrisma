@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ReactQRCode } from '@lglab/react-qr-code';
+import { useTranslations } from 'next-intl';
 import { ArrowLeft, ArrowRight, KeyRound, Loader2, QrCode, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,9 @@ import { twoFactor } from '@/lib/auth/auth-client';
 
 export default function TwoFactorPage() {
   const router = useRouter();
+  const t = useTranslations('auth.twoFactor');
+  const tCommon = useTranslations('common');
+
   const [code, setCode] = useState('');
   const [backupCode, setBackupCode] = useState('');
   const [useBackup, setUseBackup] = useState(false);
@@ -31,46 +34,44 @@ export default function TwoFactorPage() {
     e.preventDefault();
 
     if (!useBackup && code.length !== 6) {
-      toast.error('Veuillez saisir les 6 chiffres du code d’authentification.');
+      toast.error(t('codeLengthError'));
       return;
     }
 
     if (useBackup && !backupCode.trim()) {
-      toast.error('Veuillez saisir votre code de secours.');
+      toast.error(t('backupCodeRequired'));
       return;
     }
 
     setLoading(true);
     try {
       if (useBackup) {
-        // Validation avec code de secours
         const res = await twoFactor.verifyBackupCode({
           code: backupCode.trim(),
         });
 
         if (res.error) {
-          toast.error('Code de secours invalide', { description: res.error.message });
+          toast.error(t('invalidBackupCode'), { description: res.error.message });
         } else {
-          toast.success('Authentification réussie !');
+          toast.success(t('successToast'));
           router.push('/studio');
         }
       } else {
-        // Validation TOTP standard
         const res = await twoFactor.verifyTotp({
           code,
         });
 
         if (res.error) {
-          toast.error('Code invalide', {
-            description: res.error.message || 'Veuillez vérifier l’heure de votre appareil et réessayer.',
+          toast.error(t('invalidCode'), {
+            description: res.error.message,
           });
         } else {
-          toast.success('Double authentification validée !');
+          toast.success(t('successToast'));
           router.push('/studio');
         }
       }
     } catch {
-      toast.error('Erreur inattendue lors de la vérification 2FA.');
+      toast.error(tCommon('errorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -87,7 +88,7 @@ export default function TwoFactorPage() {
             <span className="font-bold text-xl tracking-tight">QRCraft</span>
           </Link>
           <p className="text-xs text-muted-foreground">
-            Sécurité renforcée par double facteur (2FA)
+            {t('subtitle')}
           </p>
         </div>
 
@@ -95,13 +96,11 @@ export default function TwoFactorPage() {
           <form onSubmit={handleVerify}>
             <CardHeader className="flex flex-col gap-1.5 text-center">
               <div className="mx-auto size-11 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-1">
-                <ShieldCheck className="size-6" />
+                <ShieldCheck className="size-6" aria-hidden="true" />
               </div>
-              <CardTitle className="text-xl font-bold">Vérification en 2 étapes</CardTitle>
+              <CardTitle className="text-xl font-bold">{t('title')}</CardTitle>
               <CardDescription className="text-xs">
-                {useBackup
-                  ? 'Entrez l’un de vos codes de secours de récupération'
-                  : 'Ouvrez votre application d’authentification (Google Authenticator, Authy, 1Password) et saisissez le code à 6 chiffres'}
+                {useBackup ? t('backupCodeSubtitle') : t('formSubtitle')}
               </CardDescription>
             </CardHeader>
 
@@ -122,20 +121,20 @@ export default function TwoFactorPage() {
                       <InputOTPSlot index={5} className="size-11 text-base font-bold rounded-lg border border-border/80" />
                     </InputOTPGroup>
                   </InputOTP>
-                  <span className="text-[11px] text-muted-foreground">Code valide pendant 30 secondes</span>
+                  <span className="text-[11px] text-muted-foreground">TOTP (30s)</span>
                 </div>
               ) : (
                 <div className="w-full flex flex-col gap-1.5">
                   <Label htmlFor="backupCode" className="text-xs font-medium">
-                    Code de secours (ex: a1b2c3d4)
+                    {t('backupCodeLabel')}
                   </Label>
                   <div className="relative">
-                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
                     <Input
                       id="backupCode"
                       value={backupCode}
                       onChange={(e) => setBackupCode(e.target.value)}
-                      placeholder="Entrez votre code de secours"
+                      placeholder={t('backupPlaceholder')}
                       className="pl-9 text-xs h-10 font-mono"
                     />
                   </div>
@@ -151,9 +150,7 @@ export default function TwoFactorPage() {
                 }}
                 className="text-xs text-primary font-medium hover:underline cursor-pointer"
               >
-                {useBackup
-                  ? 'Utiliser l’application d’authentification TOTP'
-                  : 'Appareil perdu ? Utiliser un code de secours'}
+                {useBackup ? t('useTotpCode') : t('useBackupCode')}
               </button>
             </CardContent>
 
@@ -165,13 +162,13 @@ export default function TwoFactorPage() {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="size-4 animate-spin" />
-                    <span>Vérification...</span>
+                    <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                    <span>{t('submitting')}</span>
                   </>
                 ) : (
                   <>
-                    <span>Confirmer l’accès</span>
-                    <ArrowRight className="size-3.5" />
+                    <span>{t('submitButton')}</span>
+                    <ArrowRight className="size-3.5" aria-hidden="true" />
                   </>
                 )}
               </Button>
@@ -180,8 +177,8 @@ export default function TwoFactorPage() {
                 href="/login"
                 className="text-xs text-center text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5"
               >
-                <ArrowLeft className="size-3.5" />
-                <span>Retour à la connexion</span>
+                <ArrowLeft className="size-3.5" aria-hidden="true" />
+                <span>{t('backToLogin')}</span>
               </Link>
             </CardFooter>
           </form>

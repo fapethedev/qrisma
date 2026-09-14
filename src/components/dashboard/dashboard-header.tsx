@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search, QrCode, Sparkles, Building2, LogOut } from 'lucide-react';
@@ -24,6 +25,8 @@ export function DashboardHeader({
   userName,
   activeOrgName,
 }: DashboardHeaderProps) {
+  const t = useTranslations('dashboard');
+
   return (
     <header className="border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
@@ -52,8 +55,8 @@ export function DashboardHeader({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
               type="text"
-              placeholder="Rechercher par titre, destination, slug…"
-              aria-label="Rechercher des QR codes"
+              placeholder={t('searchPlaceholder')}
+              aria-label={t('searchAria')}
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               className="pl-9 bg-secondary/40 border-border/60 focus:bg-background h-9 rounded-lg text-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
@@ -69,7 +72,7 @@ export function DashboardHeader({
           <Link href="/studio">
             <Button size="sm" className="gap-2 shadow-sm font-medium">
               <Plus className="w-4 h-4" aria-hidden="true" />
-              <span className="hidden sm:inline">Créer un QR</span>
+              <span className="hidden sm:inline">{t('createQR')}</span>
             </Button>
           </Link>
 
@@ -96,8 +99,8 @@ export function DashboardHeader({
                 },
               })
             }
-            title="Se déconnecter"
-            aria-label="Se déconnecter"
+            title={t('logout')}
+            aria-label={t('logout')}
             className="text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
           >
             <LogOut className="w-4 h-4" aria-hidden="true" />

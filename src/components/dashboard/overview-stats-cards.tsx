@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { ScanLine, QrCode, TrendingUp, Sparkles } from 'lucide-react';
 
@@ -17,32 +20,39 @@ export function OverviewStatsCards({
   topQRCodeTitle,
   topQRCodeScans,
 }: OverviewStatsCardsProps) {
+  const t = useTranslations('dashboard.kpi');
+  const locale = useLocale();
+  const numLocale = locale === 'en' ? 'en-US' : 'fr-FR';
+
   const cards = [
     {
-      title: 'Total des Scans',
-      value: totalScans.toLocaleString('fr-FR'),
-      description: 'Scans cumulés sur tous vos QR codes',
+      title: t('totalScans'),
+      value: totalScans.toLocaleString(numLocale),
+      description: t('totalScansDesc'),
       icon: ScanLine,
       color: 'text-indigo-500 bg-indigo-500/10 border-indigo-500/20',
     },
     {
-      title: 'QR Codes Actifs',
-      value: totalQRCodes.toLocaleString('fr-FR'),
-      description: 'Codes prêts à être scannés',
+      title: t('activeQRCodes'),
+      value: totalQRCodes.toLocaleString(numLocale),
+      description: t('activeQRCodesDesc'),
       icon: QrCode,
       color: 'text-violet-500 bg-violet-500/10 border-violet-500/20',
     },
     {
-      title: 'Scans cette semaine',
-      value: recentScans7d.toLocaleString('fr-FR'),
-      description: 'Activité sur les 7 derniers jours',
+      title: t('scans7d'),
+      value: recentScans7d.toLocaleString(numLocale),
+      description: t('scans7dDesc'),
       icon: TrendingUp,
       color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
     },
     {
-      title: 'Top Performance',
-      value: topQRCodeTitle || 'Aucun scan',
-      description: topQRCodeScans !== undefined ? `${topQRCodeScans} scans enregistrés` : 'En attente de scans',
+      title: t('topPerformer'),
+      value: topQRCodeTitle || t('topPerformerEmpty'),
+      description:
+        topQRCodeScans !== undefined
+          ? t('topPerformerDesc', { count: topQRCodeScans })
+          : t('waitingScans'),
       icon: Sparkles,
       color: 'text-amber-500 bg-amber-500/10 border-amber-500/20',
     },

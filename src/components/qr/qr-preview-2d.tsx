@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { ReactQRCode, type ReactQRCodeRef } from '@lglab/react-qr-code';
 import { motion } from 'motion/react';
 import { Download, Sparkles } from 'lucide-react';
@@ -18,6 +19,7 @@ interface QRCodePreview2DProps {
 
 export const QRCodePreview2D = React.forwardRef<ReactQRCodeRef, QRCodePreview2DProps>(
   ({ encodedValue, design, onOpenExport, className = '' }, forwardedRef) => {
+    const t = useTranslations('studio');
     const internalRef = useRef<ReactQRCodeRef>(null);
     const activeRef = (forwardedRef || internalRef) as React.RefObject<ReactQRCodeRef>;
 
@@ -70,7 +72,7 @@ export const QRCodePreview2D = React.forwardRef<ReactQRCodeRef, QRCodePreview2DP
             className="w-full max-w-xs font-medium shadow-md transition-all hover:shadow-lg gap-2 cursor-pointer"
           >
             <Download className="h-4 w-4" />
-            <span>Télécharger le QR Code</span>
+            <span>{t('downloadButton')}</span>
           </Button>
         )}
       </motion.div>

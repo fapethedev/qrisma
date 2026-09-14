@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
 import { ReactQRCode } from '@lglab/react-qr-code';
 import {
   Table,
@@ -38,7 +39,6 @@ import {
   BarChart2,
   Edit,
   Trash2,
-  Download,
   ScanLine,
   Plus,
 } from 'lucide-react';
@@ -69,6 +69,10 @@ export function QRCodeTable({
   onDelete,
   appUrl = 'http://localhost:3000',
 }: QRCodeTableProps) {
+  const t = useTranslations('dashboard.table');
+  const locale = useLocale();
+  const numLocale = locale === 'en' ? 'en-US' : 'fr-FR';
+
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -76,7 +80,7 @@ export function QRCodeTable({
     const fullUrl = `${window.location.origin}/s/${slug}`;
     navigator.clipboard.writeText(fullUrl);
     setCopiedId(id);
-    toast.success('Lien court copié dans le presse-papier !');
+    toast.success(t('copySuccess'));
     setTimeout(() => setCopiedId(null), 2000);
   };
 
@@ -84,9 +88,9 @@ export function QRCodeTable({
     if (!deletingId) return;
     try {
       await onDelete(deletingId);
-      toast.success('QR Code supprimé avec succès.');
+      toast.success(t('deleteSuccess'));
     } catch (err: any) {
-      toast.error('Erreur lors de la suppression du QR Code.');
+      toast.error(t('deleteError'));
     } finally {
       setDeletingId(null);
     }
@@ -98,14 +102,14 @@ export function QRCodeTable({
         <div className="w-12 h-12 rounded-full bg-secondary/80 flex items-center justify-center mx-auto mb-4 text-muted-foreground">
           <ScanLine className="w-6 h-6" />
         </div>
-        <h3 className="text-base font-semibold text-foreground">Aucun QR code trouvé</h3>
+        <h3 className="text-base font-semibold text-foreground">{t('emptyTitle')}</h3>
         <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
-          Vous n'avez pas encore créé de QR code ou aucun résultat ne correspond à votre recherche.
+          {t('emptyDesc')}
         </p>
         <Link href="/studio">
           <Button size="sm" className="mt-5 gap-2">
             <Plus className="w-4 h-4" />
-            Créer mon premier QR Code
+            {t('createFirst')}
           </Button>
         </Link>
       </div>
@@ -118,12 +122,12 @@ export function QRCodeTable({
         <Table>
           <TableHeader className="bg-secondary/40">
             <TableRow>
-              <TableHead className="w-[80px]">Aperçu</TableHead>
-              <TableHead>Titre & Destination</TableHead>
-              <TableHead className="hidden md:table-cell">Lien Court</TableHead>
-              <TableHead className="w-[110px]">Type</TableHead>
-              <TableHead className="text-right w-[110px]">Scans</TableHead>
-              <TableHead className="text-right w-[70px]">Actions</TableHead>
+              <TableHead className="w-[80px]">{t('preview')}</TableHead>
+              <TableHead>{t('details')}</TableHead>
+              <TableHead className="hidden md:table-cell">{t('shortLink')}</TableHead>
+              <TableHead className="w-[110px]">{t('type')}</TableHead>
+              <TableHead className="text-right w-[110px]">{t('scans')}</TableHead>
+              <TableHead className="text-right w-[70px]">{t('actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -152,7 +156,7 @@ export function QRCodeTable({
                   <TableCell className="py-3">
                     <div className="flex flex-col gap-0.5">
                       <span className="font-semibold text-sm text-foreground hover:underline cursor-pointer">
-                        {qr.title || 'Sans titre'}
+                        {qr.title || t('noTitle')}
                       </span>
                       <a
                         href={qr.destinationUrl}
@@ -177,8 +181,8 @@ export function QRCodeTable({
                         size="icon-xs"
                         onClick={() => handleCopy(qr.shortSlug, qr.id)}
                         className="text-muted-foreground hover:text-foreground h-6 w-6 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
-                        title="Copier le lien court"
-                        aria-label="Copier le lien court"
+                        title={t('copyShortLink')}
+                        aria-label={t('copyShortLink')}
                       >
                         {copiedId === qr.id ? (
                           <Check className="w-3.5 h-3.5 text-emerald-500" aria-hidden="true" />
@@ -193,11 +197,11 @@ export function QRCodeTable({
                   <TableCell className="py-3">
                     {qr.isDynamic ? (
                       <Badge variant="default" className="text-[10px] font-medium bg-indigo-500/15 text-indigo-500 hover:bg-indigo-500/20 border-indigo-500/30">
-                        Dynamique
+                        {t('dynamic')}
                       </Badge>
                     ) : (
                       <Badge variant="outline" className="text-[10px] font-medium text-muted-foreground">
-                        Statique
+                        {t('static')}
                       </Badge>
                     )}
                   </TableCell>
@@ -206,7 +210,7 @@ export function QRCodeTable({
                   <TableCell className="text-right py-3 font-semibold text-sm tabular-nums">
                     <span className="inline-flex items-center gap-1.5 justify-end">
                       <ScanLine className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
-                      {qr.scanCount.toLocaleString('fr-FR')}
+                      {qr.scanCount.toLocaleString(numLocale)}
                     </span>
                   </TableCell>
 
@@ -218,7 +222,7 @@ export function QRCodeTable({
                           variant="ghost"
                           size="icon-sm"
                           className="h-8 w-8 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
-                          aria-label={`Options pour le QR code ${qr.title || 'sans titre'}`}
+                          aria-label={t('optionsFor', { title: qr.title || t('noTitle') })}
                         >
                           <MoreHorizontal className="w-4 h-4" aria-hidden="true" />
                         </Button>
@@ -226,18 +230,18 @@ export function QRCodeTable({
                       <DropdownMenuContent align="end" className="w-44 text-xs">
                         <DropdownMenuItem onClick={() => onSelectAnalytics(qr)} className="gap-2 cursor-pointer">
                           <BarChart2 className="w-4 h-4 text-indigo-500" aria-hidden="true" />
-                          <span>Analytiques</span>
+                          <span>{t('analytics')}</span>
                         </DropdownMenuItem>
 
                         <DropdownMenuItem onClick={() => handleCopy(qr.shortSlug, qr.id)} className="gap-2 cursor-pointer">
                           <Copy className="w-4 h-4" />
-                          <span>Copier le lien</span>
+                          <span>{t('copyLink')}</span>
                         </DropdownMenuItem>
 
                         <Link href={`/studio?edit=${qr.id}`}>
                           <DropdownMenuItem className="gap-2 cursor-pointer">
                             <Edit className="w-4 h-4" />
-                            <span>Modifier le style</span>
+                            <span>{t('editStyle')}</span>
                           </DropdownMenuItem>
                         </Link>
 
@@ -248,7 +252,7 @@ export function QRCodeTable({
                           className="gap-2 text-destructive focus:text-destructive cursor-pointer"
                         >
                           <Trash2 className="w-4 h-4" />
-                          <span>Supprimer</span>
+                          <span>{t('delete')}</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -264,15 +268,15 @@ export function QRCodeTable({
       <AlertDialog open={!!deletingId} onOpenChange={(open) => !open && setDeletingId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Êtes-vous absolument sûr ?</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteConfirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action est irréversible. Le QR code ainsi que tous ses événements de scans et historiques analytiques associés seront définitivement supprimés.
+              {t('deleteConfirmDesc')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Supprimer définitivement
+              {t('deleteConfirmButton')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

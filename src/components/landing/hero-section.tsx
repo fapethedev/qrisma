@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { ReactQRCode } from '@lglab/react-qr-code';
 import { motion } from 'motion/react';
 import { ArrowRight, CheckCircle2, Globe, Sparkles, Wand2 } from 'lucide-react';
@@ -10,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { QR_VISUAL_PRESETS } from '@/lib/qr/presets';
 
 export function HeroSection() {
+  const t = useTranslations('landing');
   const [demoUrl, setDemoUrl] = useState('https://qrcraft.dev');
   const [activePresetIndex, setActivePresetIndex] = useState(0);
 
@@ -31,30 +33,30 @@ export function HeroSection() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-semibold shadow-xs">
               <Sparkles className="h-3.5 w-3.5" />
-              <span>Next-Gen QR Code Engine & Micro-SaaS</span>
+              <span>{t('badge')}</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
-              Sublimez vos QR Codes.{' '}
+              {t('heroTitlePart1')}{' '}
               <span className="bg-gradient-to-r from-primary via-indigo-500 to-purple-600 bg-clip-text text-transparent">
-                Mesurez chaque scan.
+                {t('heroTitlePart2')}
               </span>
             </h1>
 
             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              Fini les QR codes ternes et pixélisés. Créez des pièces graphiques mémorables avec dégradés dynamiques, modules personnalisés, logos intégrés et liens courts trackables modifiables après impression.
+              {t('heroSubtitle')}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
               <Link href="/studio" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full sm:w-auto font-semibold gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 cursor-pointer h-12 px-6">
-                  <span>Créer mon QR Code gratuit</span>
+                  <span>{t('ctaCreate')}</span>
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
               <a href="#features" className="w-full sm:w-auto">
                 <Button variant="outline" size="lg" className="w-full sm:w-auto font-medium cursor-pointer h-12 px-6 border-border/80">
-                  Découvrir les fonctionnalités
+                  {t('ctaFeatures')}
                 </Button>
               </a>
             </div>
@@ -63,15 +65,15 @@ export function HeroSection() {
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-5 pt-4 text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                <span>Exports Vectoriels SVG & PDF 4K</span>
+                <span>{t('proofVector')}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                <span>Scannabilité certifiée iOS & Android</span>
+                <span>{t('proofScannability')}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                <span>Aucune carte requise</span>
+                <span>{t('proofNoCard')}</span>
               </div>
             </div>
           </motion.div>
@@ -87,24 +89,24 @@ export function HeroSection() {
               <div className="flex items-center justify-between pb-3 border-b border-border/60">
                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Wand2 className="h-3.5 w-3.5 text-primary" />
-                  Bac à sable interactif
+                  {t('sandboxTitle')}
                 </span>
                 <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                  En Direct
+                  {t('sandboxLive')}
                 </span>
               </div>
 
               {/* Champ URL réactif */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs font-medium">
-                  <span className="text-muted-foreground">URL cible en direct</span>
+                  <span className="text-muted-foreground">{t('sandboxTargetUrl')}</span>
                 </div>
                 <div className="relative">
                   <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                   <Input
                     value={demoUrl}
                     onChange={(e) => setDemoUrl(e.target.value)}
-                    placeholder="https://votresite.com"
+                    placeholder={t('sandboxUrlPlaceholder')}
                     className="pl-8 h-9 text-xs font-mono"
                   />
                 </div>
@@ -112,7 +114,7 @@ export function HeroSection() {
 
               {/* Pills Sélecteurs de Styles */}
               <div className="space-y-1.5">
-                <span className="text-[11px] font-medium text-muted-foreground">Styles de démo instantanés</span>
+                <span className="text-[11px] font-medium text-muted-foreground">{t('sandboxStyles')}</span>
                 <div className="grid grid-cols-3 gap-1.5">
                   {QR_VISUAL_PRESETS.slice(0, 3).map((preset, index) => {
                     const isSelected = activePresetIndex === index;
@@ -160,7 +162,7 @@ export function HeroSection() {
 
               <Link href="/studio" className="block">
                 <Button className="w-full text-xs font-semibold h-10 gap-1.5 shadow-sm cursor-pointer">
-                  <span>Ouvrir dans le Studio Complet</span>
+                  <span>{t('sandboxOpenStudio')}</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>

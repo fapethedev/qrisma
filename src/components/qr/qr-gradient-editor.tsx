@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
@@ -25,12 +26,12 @@ const GRADIENT_PRESETS: { label: string; from: string; to: string }[] = [
   { label: 'Dark Monochrome', from: '#18181B', to: '#3F3F46' },
 ];
 
-const BACKGROUND_PRESETS = [
-  { label: 'Blanc', value: '#FFFFFF' },
-  { label: 'Transparent', value: 'transparent' },
-  { label: 'Obsidienne Sombre', value: '#090D16' },
-  { label: 'Gris Perle', value: '#F8FAFC' },
-  { label: 'Ivoire Crème', value: '#FFFBEB' },
+const BG_CONFIGS: { key: 'white' | 'transparent' | 'dark' | 'gray' | 'cream'; value: string }[] = [
+  { key: 'white', value: '#FFFFFF' },
+  { key: 'transparent', value: 'transparent' },
+  { key: 'dark', value: '#090D16' },
+  { key: 'gray', value: '#F8FAFC' },
+  { key: 'cream', value: '#FFFBEB' },
 ];
 
 export function QRGradientEditor({
@@ -41,6 +42,7 @@ export function QRGradientEditor({
   onGradientChange,
   onSolidColorChange,
 }: QRGradientEditorProps) {
+  const t = useTranslations('studio.colors');
   const isGradientEnabled = Boolean(gradient);
   const stops = gradient?.stops || [
     { offset: '0%', color: '#4F46E5' },
@@ -82,10 +84,10 @@ export function QRGradientEditor({
       <div className="flex items-center justify-between p-3.5 rounded-xl border border-border/60 bg-muted/30">
         <div className="space-y-0.5">
           <Label htmlFor="gradient-toggle" className="text-xs font-semibold cursor-pointer">
-            Dégradé de couleurs dynamique
+            {t('gradientToggle')}
           </Label>
           <p className="text-[11px] text-muted-foreground">
-            Applique un dégradé vectoriel sur les données et les yeux du QR Code.
+            {t('gradientDesc')}
           </p>
         </div>
         <Switch
@@ -99,7 +101,7 @@ export function QRGradientEditor({
         <div className="space-y-5 p-4 rounded-xl border border-border/50 bg-background/50">
           {/* Palettes prédéfinies de dégradés */}
           <div className="space-y-2">
-            <Label className="text-xs font-medium text-muted-foreground">Combinaisons populaires</Label>
+            <Label className="text-xs font-medium text-muted-foreground">{t('popular')}</Label>
             <div className="grid grid-cols-3 gap-2">
               {GRADIENT_PRESETS.map((p) => (
                 <button
@@ -128,7 +130,7 @@ export function QRGradientEditor({
           {/* Éditeurs de couleurs des stops */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Couleur de départ (0%)</Label>
+              <Label className="text-xs text-muted-foreground">{t('startColor')}</Label>
               <div className="flex items-center gap-2">
                 <input
                   type="color"
@@ -145,7 +147,7 @@ export function QRGradientEditor({
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Couleur de fin (100%)</Label>
+              <Label className="text-xs text-muted-foreground">{t('endColor')}</Label>
               <div className="flex items-center gap-2">
                 <input
                   type="color"
@@ -165,7 +167,7 @@ export function QRGradientEditor({
           {/* Rotation du dégradé */}
           <div className="space-y-2 pt-2">
             <div className="flex items-center justify-between text-xs">
-              <Label className="text-muted-foreground">Angle d’orientation</Label>
+              <Label className="text-muted-foreground">{t('angle')}</Label>
               <span className="font-mono font-medium">{rotation}°</span>
             </div>
             <Slider
@@ -186,7 +188,7 @@ export function QRGradientEditor({
       ) : (
         /* Couleur Unie */
         <div className="space-y-2">
-          <Label className="text-xs font-medium text-muted-foreground">Couleur principale des modules</Label>
+          <Label className="text-xs font-medium text-muted-foreground">{t('solidColor')}</Label>
           <div className="flex items-center gap-2.5">
             <input
               type="color"
@@ -206,33 +208,36 @@ export function QRGradientEditor({
       {/* Arrière-plan du QR Code */}
       <div className="space-y-2.5 pt-3 border-t border-border/50">
         <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Couleur de fond
+          {t('bgColor')}
         </Label>
         <div className="flex flex-wrap gap-2">
-          {BACKGROUND_PRESETS.map((preset) => (
-            <button
-              key={preset.label}
-              type="button"
-              onClick={() => onBackgroundChange(preset.value)}
-              className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
-                currentBgValue === preset.value
-                  ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary/30'
-                  : 'border-border/60 hover:bg-accent/40 text-foreground'
-              }`}
-            >
-              <span
-                className="h-3 w-3 rounded-full border border-border/80"
-                style={{
-                  backgroundColor: preset.value === 'transparent' ? '#FFFFFF' : preset.value,
-                  backgroundImage:
-                    preset.value === 'transparent'
-                      ? 'repeating-conic-gradient(#808080 0% 25%, #FFF 0% 50%) 50% / 4px 4px'
-                      : 'none',
-                }}
-              />
-              <span>{preset.label}</span>
-            </button>
-          ))}
+          {BG_CONFIGS.map((preset) => {
+            const label = t(`bgPresets.${preset.key}`);
+            return (
+              <button
+                key={preset.key}
+                type="button"
+                onClick={() => onBackgroundChange(preset.value)}
+                className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                  currentBgValue === preset.value
+                    ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary/30'
+                    : 'border-border/60 hover:bg-accent/40 text-foreground'
+                }`}
+              >
+                <span
+                  className="h-3 w-3 rounded-full border border-border/80"
+                  style={{
+                    backgroundColor: preset.value === 'transparent' ? '#FFFFFF' : preset.value,
+                    backgroundImage:
+                      preset.value === 'transparent'
+                        ? 'repeating-conic-gradient(#808080 0% 25%, #FFF 0% 50%) 50% / 4px 4px'
+                        : 'none',
+                  }}
+                />
+                <span>{label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

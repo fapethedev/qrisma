@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useSession } from '@/lib/auth/auth-client';
 import { DashboardHeader } from '@/components/dashboard/dashboard-header';
 import { OverviewStatsCards } from '@/components/dashboard/overview-stats-cards';
@@ -15,6 +16,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { QrCode, BarChart3, History, Globe } from 'lucide-react';
 
 export default function DashboardPage() {
+  const t = useTranslations('dashboard');
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
@@ -142,14 +144,14 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <ScanTimelineChart
             data={overview.timeline || []}
-            title="Activité Globale des Scans (30 derniers jours)"
-            description="Trafic total redirigé via vos liens courts"
+            title={t('charts.timelineTitle')}
+            description={t('charts.timelineDesc')}
           />
 
           <DeviceBreakdownChart
             countries={overview.countries || []}
-            title="Top Pays d'Origine"
-            description="Répartition géographique des scans"
+            title={t('charts.geoTitle')}
+            description={t('charts.geoDesc')}
           />
         </div>
 
@@ -157,9 +159,9 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold tracking-tight">Mes QR Codes</h2>
+              <h2 className="text-xl font-bold tracking-tight">{t('table.title')}</h2>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Gérez vos liens dynamiques, modifiez les destinations et inspectez vos performances.
+                {t('table.subtitle')}
               </p>
             </div>
           </div>

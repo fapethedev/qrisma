@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { ArrowRight, CheckCircle2, Loader2, Lock, Mail, QrCode, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,9 @@ import { signUp } from '@/lib/auth/auth-client';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const t = useTranslations('auth.register');
+  const tCommon = useTranslations('common');
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,17 +34,17 @@ export default function RegisterPage() {
     e.preventDefault();
 
     if (!name.trim() || !email.trim() || !password) {
-      toast.error('Veuillez remplir tous les champs obligatoires.');
+      toast.error(tCommon('requiredFields'));
       return;
     }
 
     if (password.length < 8) {
-      toast.error('Le mot de passe doit comporter au moins 8 caractères.');
+      toast.error(t('passwordLengthError'));
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error('Les mots de passe ne correspondent pas.');
+      toast.error(t('passwordMismatch'));
       return;
     }
 
@@ -54,17 +58,17 @@ export default function RegisterPage() {
       });
 
       if (result.error) {
-        toast.error('Échec de l’inscription', {
-          description: result.error.message || 'Une erreur est survenue lors de la création du compte.',
+        toast.error(t('errorToast'), {
+          description: result.error.message || tCommon('errorOccurred'),
         });
       } else {
-        toast.success('Compte créé avec succès !', {
-          description: 'Bienvenue sur QRCraft. Redirection vers votre studio...',
+        toast.success(t('successToast'), {
+          description: t('redirecting'),
         });
         router.push('/studio');
       }
     } catch {
-      toast.error('Erreur inattendue lors de l’inscription.');
+      toast.error(tCommon('errorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -81,32 +85,32 @@ export default function RegisterPage() {
             <span className="font-bold text-xl tracking-tight">QRCraft</span>
           </Link>
           <p className="text-xs text-muted-foreground">
-            Créez votre compte gratuit et générez des QR codes d'exception
+            {t('subtitle')}
           </p>
         </div>
 
         <Card className="rounded-2xl border-border/80 shadow-lg">
           <form onSubmit={handleSubmit}>
             <CardHeader className="flex flex-col gap-1.5">
-              <CardTitle className="text-xl font-bold">Inscription Gratuite</CardTitle>
+              <CardTitle className="text-xl font-bold">{t('title')}</CardTitle>
               <CardDescription className="text-xs">
-                Démarrez avec 5 QR codes gratuits pour toujours, sans carte requise
+                {t('formSubtitle')}
               </CardDescription>
             </CardHeader>
 
             <CardContent className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="name" className="text-xs font-medium">
-                  Nom complet ou entreprise
+                  {t('nameLabel')}
                 </Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
                   <Input
                     id="name"
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Alexandre Durand"
+                    placeholder={t('namePlaceholder')}
                     required
                     className="pl-9 text-xs h-10"
                   />
@@ -115,16 +119,16 @@ export default function RegisterPage() {
 
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="email" className="text-xs font-medium">
-                  Adresse email
+                  {t('emailLabel')}
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
                   <Input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="alexandre@exemple.com"
+                    placeholder={t('emailPlaceholder')}
                     required
                     className="pl-9 text-xs h-10"
                   />
@@ -133,10 +137,10 @@ export default function RegisterPage() {
 
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="password" className="text-xs font-medium">
-                  Mot de passe (8 caractères minimum)
+                  {t('passwordLabel')} ({t('passwordHelper')})
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
                   <Input
                     id="password"
                     type="password"
@@ -152,10 +156,10 @@ export default function RegisterPage() {
 
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="confirmPassword" className="text-xs font-medium">
-                  Confirmer le mot de passe
+                  {t('confirmPasswordLabel')}
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -170,8 +174,8 @@ export default function RegisterPage() {
               </div>
 
               <div className="flex items-center gap-2 pt-1 text-[11px] text-muted-foreground">
-                <CheckCircle2 className="size-3.5 text-emerald-500 shrink-0" />
-                <span>En créant un compte, vous acceptez nos CGU et notre politique de confidentialité.</span>
+                <CheckCircle2 className="size-3.5 text-emerald-500 shrink-0" aria-hidden="true" />
+                <span>QRCraft SaaS</span>
               </div>
             </CardContent>
 
@@ -183,21 +187,21 @@ export default function RegisterPage() {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="size-4 animate-spin" />
-                    <span>Création du compte...</span>
+                    <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                    <span>{t('submitting')}</span>
                   </>
                 ) : (
                   <>
-                    <span>Créer mon compte</span>
-                    <ArrowRight className="size-3.5" />
+                    <span>{t('submitButton')}</span>
+                    <ArrowRight className="size-3.5" aria-hidden="true" />
                   </>
                 )}
               </Button>
 
               <p className="text-xs text-center text-muted-foreground">
-                Déjà un compte ?{' '}
+                {t('alreadyAccount')}{' '}
                 <Link href="/login" className="text-primary font-semibold hover:underline">
-                  Se connecter
+                  {t('signIn')}
                 </Link>
               </p>
             </CardFooter>

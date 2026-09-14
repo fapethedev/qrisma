@@ -1,9 +1,13 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'Tableau de bord & Analytiques',
-  description: 'Gérez votre bibliothèque de QR codes personnalisés, surveillez vos statistiques de scans en direct et éditez vos redirections dynamiques.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('dashboard');
+  return {
+    title: t('metaTitle'),
+    description: t('metaDesc'),
+  };
+}
 
 export default function DashboardLayout({
   children,
