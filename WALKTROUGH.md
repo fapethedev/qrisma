@@ -333,6 +333,32 @@ Améliorer l'ergonomie, la navigabilité au clavier, la compatibilité avec les 
 
 ---
 
+## [2026-09-14] - Automatisation des Migrations Better Auth au Build Vercel (CI/CD)
+
+### 📌 Contexte & Objectif
+Permettre l'initialisation automatique d'une base de données PostgreSQL vierge lors du déploiement sur Vercel sans manipulation manuelle, tout en garantissant une idempotence totale pour les déploiements futurs sans risque de perte de données.
+
+### 🛠️ Actions Réalisées
+1. **Script de Migration Résilient (`scripts/migrate.mjs`)** :
+   - Détection conditionnelle de `DATABASE_URL`.
+   - Exécution de `better-auth migrate --config src/lib/auth/auth.ts --yes`.
+   - Idempotence garantie : vérifie le schéma existant et n'altère aucune table/donnée existante (`No migrations needed`).
+   - Tolérance aux builds sans base de données (développement hors-ligne ou CI).
+   - Arrêt avec code d'erreur (`process.exit(1)`) en cas de problème de connexion DB en production pour éviter de déployer un site avec une base non synchronisée.
+
+2. **Configuration `package.json`** :
+   - Mise à jour du script de build : `"build": "node scripts/migrate.mjs && next build"`.
+   - Ajout d'un raccourci manuel : `"db:migrate": "better-auth migrate --config src/lib/auth/auth.ts --yes"`.
+   - Déplacement de `@better-auth/cli` vers `dependencies` pour garantir sa disponibilité dans tous les environnements de production.
+
+3. **Validation & Tests** :
+   - Validation de l'exécution avec base locale (`Tables synchronisées avec succès`).
+   - Validation du repli gracieux sans `DATABASE_URL` (code 0).
+   - **55/55 tests unitaires passés avec succès** sous Vitest.
+   - Compilation de production Next.js 16 validée (`pnpm build`).
+
+---
+
 ## 🔒 Directives pour les Futurs Commits
 Chaque agent intervenant sur le dépôt doit :
 1. Renseigner l'entrée correspondante dans ce fichier `WALKTROUGH.md`.
