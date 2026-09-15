@@ -18,7 +18,7 @@ export function LandingFooter() {
               <div className="h-8 w-8 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-xs">
                 <QrCode className="h-4 w-4" />
               </div>
-              <span className="font-bold text-lg tracking-tight text-foreground">
+              <span className="font-heading font-extrabold text-lg tracking-wider text-foreground">
                 QRCraft
               </span>
             </Link>
@@ -32,7 +32,7 @@ export function LandingFooter() {
 
           {/* Navigation Rapide */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">{t('footerNav')}</h4>
+            <h4 className="text-xs font-heading font-bold uppercase tracking-wider text-foreground">{t('footerNav')}</h4>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li>
                 <Link href="/dashboard/studio" className="hover:text-primary transition-colors">

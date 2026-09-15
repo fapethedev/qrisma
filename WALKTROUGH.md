@@ -434,6 +434,60 @@ Réorganiser l'arborescence des routes Next.js avec des Route Groups (`(...)`) p
 
 ---
 
+## [2026-09-15] - Refonte Typographique Complète (Quantico, DynaPuff, Source Code Pro) dans `src/app/font.ts`
+
+### 📌 Contexte & Objectif
+Remplacer intégralement les polices historiques par une triade typographique cohérente, distinctive et hautement sémantique :
+1. **Quantico** (Google Fonts) : Typographie géométrique, cybernétique et technologique, aux angles biseautés distinctifs. Rôle : En-têtes `h1-h6`, identité de marque (`QRCraft`), métriques numériques KPI haute visibilité, prix des offres SaaS, titres de modales et de cartes.
+2. **DynaPuff** (Google Fonts) : Typographie display ludique, organique et "bubbly". Rôle : Badges de mise en avant, pastilles marketing (`bentoBadge`, `pricingBadge`, `showcaseBadge`, `faqBadge`), réductions promotionnelles (`-25% de remise`), label "Le Plus Populaire", badges "Studio" et types de QR dynamiques/statiques.
+3. **Source Code Pro** (Google Fonts) : Typographie monospace technique, épurée et ultra-lisible. Rôle : Corps de texte technique, formulaires d'authentification (champs email, mot de passe, slots OTP 2FA), compteurs de scans (`tabular-nums`), URLs, slugs de redirection (`/s/[slug]`) et blocs de code.
+
+Le fichier de configuration devait être strictement localisé dans `src/app/font.ts`.
+
+### 🛠️ Actions Réalisées
+1. **Création de `src/app/font.ts`** :
+   - Export de `fontQuantico` via `Quantico` de `next/font/google` avec `weight: ['400', '700']`, `subsets: ['latin']`, variable `--font-quantico`, `display: 'swap'`.
+   - Export de `fontDynaPuff` via `DynaPuff` de `next/font/google` avec `subsets: ['latin']`, variable `--font-dynapuff`, `display: 'swap'`.
+   - Export de `fontSourceCodePro` via `Source_Code_Pro` de `next/font/google` avec `subsets: ['latin']`, variable `--font-source-code-pro`, `display: 'swap'`.
+
+2. **Raccordement dans `src/app/layout.tsx`** :
+   - Importation directe depuis `./font`.
+   - Injection des variables CSS (`fontQuantico.variable`, `fontDynaPuff.variable`, `fontSourceCodePro.variable`) et de la classe `font-sans` sur `<html>`.
+   - Suppression définitive de tous les imports de polices héritées (`Geist`, `Geist_Mono`, `IBM_Plex_Sans`, `EB_Garamond`).
+
+3. **Mappage CSS Moderne Tailwind CSS v4 (`src/app/globals.css`)** :
+   - Déclaration des tokens de thèmes dans `@theme inline` :
+     - `--font-sans: var(--font-source-code-pro), monospace;`
+     - `--font-heading: var(--font-quantico), sans-serif;`
+     - `--font-mono: var(--font-source-code-pro), monospace;`
+     - `--font-accent: var(--font-dynapuff), cursive, sans-serif;`
+   - Application des règles de base `@layer base` : `body` et `html` en `font-sans`, titres `h1-h6` en `font-heading tracking-tight`, code/kbd en `font-mono`.
+
+4. **Intégration Sémantique Fois-par-Fois dans les Composants UI** :
+   - **Composants Marketing & Landing** :
+     - `src/components/landing/navbar.tsx` : Logo `QRCraft` en `font-heading font-extrabold tracking-wider`, pastille `SaaS` en `font-accent font-bold`.
+     - `src/components/landing/hero-section.tsx` : Badge d'introduction et pastille live en `font-accent font-bold`, titre principal et titre du bac à sable en `font-heading font-extrabold`.
+     - `src/components/landing/bento-features.tsx` : Badge de section en `font-accent`, étiquettes de formats vectoriels (SVG, PNG 4K, PDF A4) en `font-heading`, statistiques chiffrées en `font-heading font-extrabold tabular-nums`, badge 3D en `font-accent font-bold`.
+     - `src/components/landing/pricing-section.tsx` : Badge tarifaire, remise `-25%` et étiquette "Le Plus Populaire" en `font-accent font-bold`, prix et titres de plans en `font-heading font-extrabold tabular-nums`.
+     - `src/components/landing/parallax-showcase.tsx` : Badge de galerie en `font-accent`, titres et étiquettes de styles (Cyberpunk, Modern, Gold) en `font-heading font-bold`.
+     - `src/components/landing/faq-section.tsx` : Badge FAQ en `font-accent font-bold`, questions en `font-heading font-semibold`.
+     - `src/components/landing/footer.tsx` : Logo `QRCraft` et en-têtes de colonnes en `font-heading`.
+   - **Composants Dashboard & Administration** :
+     - `src/components/dashboard/dashboard-header.tsx` : Marque `QRCraft` en `font-heading font-extrabold`, pastille d'organisation active en `font-accent font-semibold`, barre de recherche en `font-mono`.
+     - `src/components/dashboard/overview-stats-cards.tsx` : Titres de cartes et valeurs numériques KPI en `font-heading font-extrabold tabular-nums`.
+     - `src/components/dashboard/qr-code-table.tsx` : Badges dynamiques/statiques en `font-accent font-semibold`, compteurs de scans en `font-heading font-bold tabular-nums`, slugs `/s/...` en `font-mono`.
+   - **Studio de Création** :
+     - `src/components/qr/qr-studio-view.tsx` : Logo `QRCraft` en `font-heading`, pastille `Studio` en `font-accent font-bold`, titre `h1` en `font-heading font-extrabold`.
+   - **Flux d'Authentification & Sécurité (`src/app/(auth)/`)** :
+     - `login`, `register`, `forgot-password`, `2fa` : En-têtes et logos en `font-heading font-extrabold`, boutons de soumission en `font-heading font-bold`, champs email et mot de passe en `font-mono`, slots de code OTP 2FA en `font-mono font-bold`.
+
+5. **Validation Qualité & Build de Production** :
+   - **55/55 tests unitaires réussis** sur 12 suites sous Vitest (`pnpm test`).
+   - **0 erreur TypeScript** (`tsc --noEmit`).
+   - Compilation de production Next.js 16 validée avec succès (`pnpm build`).
+
+---
+
 ## 🔒 Directives pour les Futurs Commits
 Chaque agent intervenant sur le dépôt doit :
 1. Renseigner l'entrée correspondante dans ce fichier `WALKTROUGH.md`.

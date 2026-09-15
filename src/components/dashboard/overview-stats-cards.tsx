@@ -65,7 +65,7 @@ export function OverviewStatsCards({
         return (
           <Card key={idx} className="border-border/60 shadow-sm bg-card/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <CardTitle className="text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground">
                 {card.title}
               </CardTitle>
               <div className={`p-2 rounded-lg border ${card.color}`}>
@@ -73,7 +73,7 @@ export function OverviewStatsCards({
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold tracking-tight truncate tabular-nums">{card.value}</div>
+              <div className="text-2xl font-heading font-extrabold tracking-tight truncate tabular-nums">{card.value}</div>
               <p className="text-xs text-muted-foreground mt-1 truncate">{card.description}</p>
             </CardContent>
           </Card>

@@ -85,7 +85,7 @@ export default function TwoFactorPage() {
             <div className="size-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
               <QrCode className="size-5" />
             </div>
-            <span className="font-bold text-xl tracking-tight">QRCraft</span>
+            <span className="font-heading font-extrabold text-xl tracking-wider">QRCraft</span>
           </Link>
           <p className="text-xs text-muted-foreground">
             {t('subtitle')}
@@ -98,7 +98,7 @@ export default function TwoFactorPage() {
               <div className="mx-auto size-11 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-1">
                 <ShieldCheck className="size-6" aria-hidden="true" />
               </div>
-              <CardTitle className="text-xl font-bold">{t('title')}</CardTitle>
+              <CardTitle className="text-xl font-heading font-bold">{t('title')}</CardTitle>
               <CardDescription className="text-xs">
                 {useBackup ? t('backupCodeSubtitle') : t('formSubtitle')}
               </CardDescription>
@@ -113,15 +113,15 @@ export default function TwoFactorPage() {
                     onChange={(val) => setCode(val)}
                   >
                     <InputOTPGroup className="gap-2">
-                      <InputOTPSlot index={0} className="size-11 text-base font-bold rounded-lg border border-border/80" />
-                      <InputOTPSlot index={1} className="size-11 text-base font-bold rounded-lg border border-border/80" />
-                      <InputOTPSlot index={2} className="size-11 text-base font-bold rounded-lg border border-border/80" />
-                      <InputOTPSlot index={3} className="size-11 text-base font-bold rounded-lg border border-border/80" />
-                      <InputOTPSlot index={4} className="size-11 text-base font-bold rounded-lg border border-border/80" />
-                      <InputOTPSlot index={5} className="size-11 text-base font-bold rounded-lg border border-border/80" />
+                      <InputOTPSlot index={0} className="size-11 text-base font-mono font-bold rounded-lg border border-border/80" />
+                      <InputOTPSlot index={1} className="size-11 text-base font-mono font-bold rounded-lg border border-border/80" />
+                      <InputOTPSlot index={2} className="size-11 text-base font-mono font-bold rounded-lg border border-border/80" />
+                      <InputOTPSlot index={3} className="size-11 text-base font-mono font-bold rounded-lg border border-border/80" />
+                      <InputOTPSlot index={4} className="size-11 text-base font-mono font-bold rounded-lg border border-border/80" />
+                      <InputOTPSlot index={5} className="size-11 text-base font-mono font-bold rounded-lg border border-border/80" />
                     </InputOTPGroup>
                   </InputOTP>
-                  <span className="text-[11px] text-muted-foreground">TOTP (30s)</span>
+                  <span className="text-[11px] text-muted-foreground font-mono">TOTP (30s)</span>
                 </div>
               ) : (
                 <div className="w-full flex flex-col gap-1.5">
@@ -158,7 +158,7 @@ export default function TwoFactorPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full text-xs font-semibold h-10 gap-2 cursor-pointer"
+                className="w-full text-xs font-heading font-bold h-10 gap-2 cursor-pointer"
               >
                 {loading ? (
                   <>

@@ -36,13 +36,13 @@ export function DashboardHeader({
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
               <QrCode className="w-5 h-5" />
             </div>
-            <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            <span className="font-heading font-extrabold text-lg tracking-wider bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               QRCraft
             </span>
           </Link>
 
           {activeOrgName && (
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/80 text-xs font-medium text-muted-foreground border border-border">
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/80 text-xs font-accent font-semibold text-muted-foreground border border-border">
               <Building2 className="w-3.5 h-3.5" />
               <span>{activeOrgName}</span>
             </div>
@@ -59,7 +59,7 @@ export function DashboardHeader({
               aria-label={t('searchAria')}
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-9 bg-secondary/40 border-border/60 focus:bg-background h-9 rounded-lg text-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+              className="pl-9 bg-secondary/40 border-border/60 focus:bg-background h-9 rounded-lg text-xs font-mono focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
             />
           </div>
         </div>

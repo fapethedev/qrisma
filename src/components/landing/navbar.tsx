@@ -20,10 +20,10 @@ export function LandingNavbar() {
             <QrCode className="h-5 w-5" aria-hidden="true" />
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="font-bold text-base sm:text-lg tracking-tight text-foreground">
+            <span className="font-heading font-extrabold text-base sm:text-lg tracking-wider text-foreground">
               {t('appName')}
             </span>
-            <span className="hidden sm:inline-block text-[10px] uppercase font-extrabold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+            <span className="hidden sm:inline-block font-accent text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 shadow-2xs">
               SaaS
             </span>
           </div>

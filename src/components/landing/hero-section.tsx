@@ -31,14 +31,14 @@ export function HeroSection() {
             transition={{ duration: 0.5, ease: 'easeOut' }}
             className="lg:col-span-7 space-y-6 text-center lg:text-left"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-semibold shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-accent font-bold shadow-xs">
               <Sparkles className="h-3.5 w-3.5" />
               <span>{t('badge')}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15]">
               {t('heroTitlePart1')}{' '}
-              <span className="bg-gradient-to-r from-primary via-indigo-500 to-purple-600 bg-clip-text text-transparent">
+              <span className="font-heading bg-gradient-to-r from-primary via-indigo-500 to-purple-600 bg-clip-text text-transparent">
                 {t('heroTitlePart2')}
               </span>
             </h1>
@@ -87,11 +87,11 @@ export function HeroSection() {
           >
             <div className="relative mx-auto max-w-md bg-card/90 backdrop-blur-xl border border-border/80 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5">
               <div className="flex items-center justify-between pb-3 border-b border-border/60">
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <span className="text-xs font-heading font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Wand2 className="h-3.5 w-3.5 text-primary" />
                   {t('sandboxTitle')}
                 </span>
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <span className="font-accent text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                   {t('sandboxLive')}
                 </span>
               </div>

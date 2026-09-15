@@ -65,7 +65,7 @@ export default function ForgotPasswordPage() {
             <div className="size-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
               <QrCode className="size-5" />
             </div>
-            <span className="font-bold text-xl tracking-tight">QRCraft</span>
+            <span className="font-heading font-extrabold text-xl tracking-wider">QRCraft</span>
           </Link>
           <p className="text-xs text-muted-foreground">
             {t('subtitle')}
@@ -79,14 +79,14 @@ export default function ForgotPasswordPage() {
                 <CheckCircle2 className="size-6" aria-hidden="true" />
               </div>
               <div className="flex flex-col gap-1">
-                <h3 className="font-bold text-lg text-foreground">{t('sentTitle')}</h3>
+                <h3 className="font-heading font-bold text-lg text-foreground">{t('sentTitle')}</h3>
                 <p className="text-xs text-muted-foreground max-w-xs">
                   {t('sentDesc', { email })}
                 </p>
               </div>
 
               <Link href="/login" className="w-full pt-2">
-                <Button variant="outline" className="w-full text-xs font-medium gap-2">
+                <Button variant="outline" className="w-full text-xs font-heading font-semibold gap-2">
                   <ArrowLeft className="size-3.5" aria-hidden="true" />
                   <span>{t('backToLogin')}</span>
                 </Button>
@@ -95,7 +95,7 @@ export default function ForgotPasswordPage() {
           ) : (
             <form onSubmit={handleSubmit}>
               <CardHeader className="flex flex-col gap-1.5">
-                <CardTitle className="text-xl font-bold">{t('title')}</CardTitle>
+                <CardTitle className="text-xl font-heading font-bold">{t('title')}</CardTitle>
                 <CardDescription className="text-xs">
                   {t('formSubtitle')}
                 </CardDescription>
@@ -115,7 +115,7 @@ export default function ForgotPasswordPage() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={t('emailPlaceholder')}
                       required
-                      className="pl-9 text-xs h-10"
+                      className="pl-9 text-xs font-mono h-10"
                     />
                   </div>
                 </div>
@@ -125,7 +125,7 @@ export default function ForgotPasswordPage() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full text-xs font-semibold h-10 gap-2 cursor-pointer"
+                  className="w-full text-xs font-heading font-bold h-10 gap-2 cursor-pointer"
                 >
                   {loading ? (
                     <>

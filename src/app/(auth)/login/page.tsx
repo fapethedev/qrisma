@@ -68,7 +68,7 @@ export default function LoginPage() {
             <div className="size-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
               <QrCode className="size-5" />
             </div>
-            <span className="font-bold text-xl tracking-tight">QRCraft</span>
+            <span className="font-heading font-extrabold text-xl tracking-wider">QRCraft</span>
           </Link>
           <p className="text-xs text-muted-foreground">
             {t('subtitle')}
@@ -78,7 +78,7 @@ export default function LoginPage() {
         <Card className="rounded-2xl border-border/80 shadow-lg">
           <form onSubmit={handleSubmit}>
             <CardHeader className="flex flex-col gap-1.5">
-              <CardTitle className="text-xl font-bold">{t('title')}</CardTitle>
+              <CardTitle className="text-xl font-heading font-bold">{t('title')}</CardTitle>
               <CardDescription className="text-xs">
                 {t('formSubtitle')}
               </CardDescription>
@@ -98,7 +98,7 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={t('emailPlaceholder')}
                     required
-                    className="pl-9 text-xs h-10"
+                    className="pl-9 text-xs font-mono h-10"
                   />
                 </div>
               </div>
@@ -124,7 +124,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     required
-                    className="pl-9 text-xs h-10"
+                    className="pl-9 text-xs font-mono h-10"
                   />
                 </div>
               </div>
@@ -134,7 +134,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full text-xs font-semibold h-10 gap-2 cursor-pointer"
+                className="w-full text-xs font-heading font-bold h-10 gap-2 cursor-pointer"
               >
                 {loading ? (
                   <>

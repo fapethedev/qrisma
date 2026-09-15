@@ -17,11 +17,11 @@ export function ParallaxShowcase() {
     <section id="showcase" className="py-24 overflow-hidden relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-semibold">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-accent font-bold">
             <Layers className="h-3.5 w-3.5" />
             <span>{t('showcaseBadge')}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
+          <h2 className="text-3xl sm:text-4xl font-heading font-extrabold tracking-tight text-foreground">
             {t('showcaseTitle')}
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base">
@@ -34,7 +34,7 @@ export function ParallaxShowcase() {
           {/* Carte Gauche : Cyberpunk */}
           <Parallax speed={-8}>
             <div className="p-6 rounded-3xl border border-cyan-500/30 bg-card/90 shadow-2xl backdrop-blur-md flex flex-col items-center gap-4 transition-transform hover:scale-105 duration-300">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-cyan-500">
+              <span className="text-[11px] font-heading font-bold uppercase tracking-widest text-cyan-500">
                 {t('styleCyberpunk')}
               </span>
               <div className="p-4 rounded-2xl bg-[#090D16] shadow-lg">
@@ -58,7 +58,7 @@ export function ParallaxShowcase() {
           {/* Carte Centre : Modern Indigo (Plus haute avec vitesse différente) */}
           <Parallax speed={6}>
             <div className="p-7 rounded-3xl border border-primary/40 bg-card shadow-2xl backdrop-blur-md flex flex-col items-center gap-4 transition-transform hover:scale-105 duration-300 ring-2 ring-primary/10">
-              <div className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-primary">
+              <div className="inline-flex items-center gap-1 text-[11px] font-heading font-bold uppercase tracking-widest text-primary">
                 <Sparkles className="h-3 w-3" />
                 <span>{t('styleModern')}</span>
               </div>
@@ -83,7 +83,7 @@ export function ParallaxShowcase() {
           {/* Carte Droite : Obsidian & Gold */}
           <Parallax speed={-5}>
             <div className="p-6 rounded-3xl border border-amber-500/30 bg-card/90 shadow-2xl backdrop-blur-md flex flex-col items-center gap-4 transition-transform hover:scale-105 duration-300">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-amber-500">
+              <span className="text-[11px] font-heading font-bold uppercase tracking-widest text-amber-500">
                 {t('styleGold')}
               </span>
               <div className="p-4 rounded-2xl bg-[#121214] shadow-lg">

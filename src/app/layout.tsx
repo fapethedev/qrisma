@@ -1,10 +1,5 @@
 import type { Metadata } from "next";
-import {
-  Geist,
-  Geist_Mono,
-  IBM_Plex_Sans,
-  EB_Garamond,
-} from "next/font/google";
+import { fontQuantico, fontDynaPuff, fontSourceCodePro } from "./font";
 
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -55,21 +50,6 @@ export const metadata: Metadata = {
   },
 };
 
-const ebGaramondHeading = EB_Garamond({
-  subsets: ["latin"],
-  variable: "--font-heading",
-});
-
-const ibmPlexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-});
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -85,10 +65,10 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={cn(
         "antialiased",
-        fontMono.variable,
+        fontQuantico.variable,
+        fontDynaPuff.variable,
+        fontSourceCodePro.variable,
         "font-sans",
-        ibmPlexSans.variable,
-        ebGaramondHeading.variable,
       )}
     >
       <body>

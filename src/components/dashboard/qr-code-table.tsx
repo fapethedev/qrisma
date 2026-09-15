@@ -196,18 +196,18 @@ export function QRCodeTable({
                   {/* Type (Dynamique / Statique) */}
                   <TableCell className="py-3">
                     {qr.isDynamic ? (
-                      <Badge variant="default" className="text-[10px] font-medium bg-indigo-500/15 text-indigo-500 hover:bg-indigo-500/20 border-indigo-500/30">
+                      <Badge variant="default" className="text-[10px] font-accent font-semibold bg-indigo-500/15 text-indigo-500 hover:bg-indigo-500/20 border-indigo-500/30">
                         {t('dynamic')}
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="text-[10px] font-medium text-muted-foreground">
+                      <Badge variant="outline" className="text-[10px] font-accent font-semibold text-muted-foreground">
                         {t('static')}
                       </Badge>
                     )}
                   </TableCell>
 
                   {/* Compteur de Scans */}
-                  <TableCell className="text-right py-3 font-semibold text-sm tabular-nums">
+                  <TableCell className="text-right py-3 font-heading font-bold text-sm tabular-nums">
                     <span className="inline-flex items-center gap-1.5 justify-end">
                       <ScanLine className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
                       {qr.scanCount.toLocaleString(numLocale)}

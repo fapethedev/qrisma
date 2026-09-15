@@ -25,11 +25,11 @@ export function BentoFeatures() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* En-tête de section */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-semibold">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-accent font-bold">
             <Sparkles className="h-3.5 w-3.5" />
             <span>{t('bentoBadge')}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
+          <h2 className="text-3xl sm:text-4xl font-heading font-extrabold tracking-tight text-foreground">
             {t('bentoTitle')}
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
@@ -62,15 +62,15 @@ export function BentoFeatures() {
 
               <div className="grid grid-cols-3 gap-3 pt-6 z-10">
                 <div className="p-3 rounded-xl border border-border/80 bg-background/80 text-center">
-                  <span className="text-xs font-bold text-primary block">SVG</span>
+                  <span className="text-xs font-heading font-bold text-primary block">SVG</span>
                   <span className="text-[11px] text-muted-foreground">{t('cardVectorTagSvg')}</span>
                 </div>
                 <div className="p-3 rounded-xl border border-border/80 bg-background/80 text-center">
-                  <span className="text-xs font-bold text-primary block">PNG 4K</span>
+                  <span className="text-xs font-heading font-bold text-primary block">PNG 4K</span>
                   <span className="text-[11px] text-muted-foreground">{t('cardVectorTagPng')}</span>
                 </div>
                 <div className="p-3 rounded-xl border border-border/80 bg-background/80 text-center">
-                  <span className="text-xs font-bold text-primary block">PDF A4</span>
+                  <span className="text-xs font-heading font-bold text-primary block">PDF A4</span>
                   <span className="text-[11px] text-muted-foreground">{t('cardVectorTagPdf')}</span>
                 </div>
               </div>
@@ -129,7 +129,7 @@ export function BentoFeatures() {
                 </p>
               </div>
 
-              <div className="pt-6 flex items-center gap-2 text-xs font-medium text-purple-600 dark:text-purple-400">
+              <div className="pt-6 flex items-center gap-2 text-xs font-accent font-bold text-purple-600 dark:text-purple-400">
                 <Smartphone className="h-4 w-4" />
                 <span>{t('card3dBadge')}</span>
               </div>
@@ -160,19 +160,19 @@ export function BentoFeatures() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6">
                 <div className="p-3 rounded-xl border border-border/80 bg-background/80">
                   <span className="text-xs text-muted-foreground block">{t('statTotalScans')}</span>
-                  <span className="text-lg font-extrabold text-foreground">12 450</span>
+                  <span className="text-lg font-heading font-extrabold text-foreground tabular-nums">12 450</span>
                 </div>
                 <div className="p-3 rounded-xl border border-border/80 bg-background/80">
                   <span className="text-xs text-muted-foreground block">{t('statMobile')}</span>
-                  <span className="text-lg font-extrabold text-foreground">94.2%</span>
+                  <span className="text-lg font-heading font-extrabold text-foreground tabular-nums">94.2%</span>
                 </div>
                 <div className="p-3 rounded-xl border border-border/80 bg-background/80">
                   <span className="text-xs text-muted-foreground block">{t('statTopCountry')}</span>
-                  <span className="text-lg font-extrabold text-foreground">France</span>
+                  <span className="text-lg font-heading font-extrabold text-foreground">France</span>
                 </div>
                 <div className="p-3 rounded-xl border border-border/80 bg-background/80">
                   <span className="text-xs text-muted-foreground block">{t('statClickRate')}</span>
-                  <span className="text-lg font-extrabold text-foreground">99.8%</span>
+                  <span className="text-lg font-heading font-extrabold text-foreground tabular-nums">99.8%</span>
                 </div>
               </div>
             </Card>

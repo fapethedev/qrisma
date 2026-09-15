@@ -123,9 +123,9 @@ export function QRStudioView() {
               <div className="h-9 w-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                 <QrCode className="h-5 w-5" />
               </div>
-              <span className="font-bold text-base tracking-tight flex items-center gap-1.5">
+              <span className="font-heading font-extrabold text-base tracking-wider flex items-center gap-1.5">
                 QRCraft{' '}
-                <span className="text-[10px] uppercase font-extrabold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                <span className="text-[10px] font-accent font-bold uppercase px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                   Studio
                 </span>
               </span>
@@ -188,7 +188,7 @@ export function QRStudioView() {
       {/* Main Studio Workspace */}
       <main id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <div className="mb-6 space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight text-foreground">
             {t('title')}
           </h1>
           <p className="text-sm text-muted-foreground">

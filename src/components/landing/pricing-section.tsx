@@ -18,11 +18,11 @@ export function PricingSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
         {/* En-tête */}
         <div className="text-center max-w-2xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-semibold">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-accent font-bold">
             <Sparkles className="h-3.5 w-3.5" />
             <span>{t('pricingBadge')}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
+          <h2 className="text-3xl sm:text-4xl font-heading font-extrabold tracking-tight text-foreground">
             {t('pricingTitle')}
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
@@ -51,7 +51,7 @@ export function PricingSection() {
               }`}
             >
               <span>{t('billingYearly')}</span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <span className="text-[10px] font-accent font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                 {t('billingDiscount')}
               </span>
             </Label>
@@ -64,14 +64,14 @@ export function PricingSection() {
           <Card className="p-8 rounded-3xl border-border/80 bg-card shadow-sm flex flex-col justify-between">
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold text-foreground">{t('planFreeTitle')}</h3>
+                <h3 className="text-lg font-heading font-bold text-foreground">{t('planFreeTitle')}</h3>
                 <p className="text-xs text-muted-foreground mt-1">
                   {t('planFreeDesc')}
                 </p>
               </div>
 
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold text-foreground">{t('planFreePrice')}</span>
+                <span className="text-4xl font-heading font-extrabold text-foreground tabular-nums">{t('planFreePrice')}</span>
                 <span className="text-xs text-muted-foreground">{t('planFreePeriod')}</span>
               </div>
 
@@ -106,13 +106,13 @@ export function PricingSection() {
 
           {/* Plan Pro Creator (Mise en avant) */}
           <Card className="p-8 rounded-3xl border-primary bg-gradient-to-b from-card to-primary/5 shadow-xl flex flex-col justify-between relative ring-2 ring-primary/20">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-extrabold uppercase tracking-wide shadow-sm">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-accent font-bold uppercase tracking-wide shadow-sm">
               {t('planProPopular')}
             </div>
 
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold text-foreground flex items-center gap-1.5">
+                <h3 className="text-lg font-heading font-bold text-foreground flex items-center gap-1.5">
                   <span>{t('planProTitle')}</span>
                   <Sparkles className="h-4 w-4 text-primary" />
                 </h3>
@@ -122,7 +122,7 @@ export function PricingSection() {
               </div>
 
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold text-foreground">
+                <span className="text-4xl font-heading font-extrabold text-foreground tabular-nums">
                   {isAnnual ? t('planProPriceYearly') : t('planProPriceMonthly')}
                 </span>
                 <span className="text-xs text-muted-foreground">
@@ -164,7 +164,7 @@ export function PricingSection() {
 
             <div className="pt-8">
               <Link href="/dashboard/studio" className="block">
-                <Button className="w-full text-xs font-bold h-11 gap-1.5 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 cursor-pointer">
+                <Button className="w-full text-xs font-heading font-bold h-11 gap-1.5 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 cursor-pointer">
                   <span>{t('planProCta')}</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
@@ -176,14 +176,14 @@ export function PricingSection() {
           <Card className="p-8 rounded-3xl border-border/80 bg-card shadow-sm flex flex-col justify-between">
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold text-foreground">{t('planEnterpriseTitle')}</h3>
+                <h3 className="text-lg font-heading font-bold text-foreground">{t('planEnterpriseTitle')}</h3>
                 <p className="text-xs text-muted-foreground mt-1">
                   {t('planEnterpriseDesc')}
                 </p>
               </div>
 
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold text-foreground">
+                <span className="text-4xl font-heading font-extrabold text-foreground tabular-nums">
                   {isAnnual ? t('planEnterprisePriceYearly') : t('planEnterprisePriceMonthly')}
                 </span>
                 <span className="text-xs text-muted-foreground">{t('planEnterprisePeriod')}</span>
