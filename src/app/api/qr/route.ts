@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { qrRepository } from '@/lib/db/qr-repository';
+import { checkQRCodeCreationQuota } from '@/lib/auth/permissions';
 import crypto from 'crypto';
 
 export const dynamic = 'force-dynamic';
@@ -50,6 +51,22 @@ export async function POST(request: NextRequest) {
 
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+    }
+
+    // Contrôle des quotas Freemium
+    const existingUserQRs = await qrRepository.listByUser(session.user.id);
+    const userPlan = (session.user as any).plan || 'free';
+    const quotaCheck = checkQRCodeCreationQuota(userPlan, existingUserQRs.length);
+
+    if (!quotaCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: quotaCheck.message,
+          limit: quotaCheck.limit,
+          currentCount: quotaCheck.currentCount,
+        },
+        { status: 403 }
+      );
     }
 
     const body = await request.json();

@@ -488,6 +488,60 @@ Le fichier de configuration devait être strictement localisé dans `src/app/fon
 
 ---
 
+## [2026-09-15] - Audit Exhaustif, Correction des 5 Bugs Critiques, Quotas Freemium, Page Paramètres & Duplication QR
+
+### 📌 Contexte & Objectif
+À la suite d'un audit forensique complet confrontant `CODING_AGENT_MASTER_PROMPT.md`, `AGENTS.md` et le codebase effectif, remédiation ciblée des 5 bugs critiques et des lacunes fonctionnelles majeures identifiées dans `audit_and_gap_analysis_plan.md` :
+- Boucle infinie de redirection des QR codes dynamiques.
+- Édition de QR code inopérante depuis le tableau de bord (`?edit=...` ignoré).
+- Absence d'interface pour le profil utilisateur et la configuration 2FA TOTP (`TwoFactorSetupDialog` orphelin).
+- Quotas Freemium non vérifiés (créations illimitées sur forfait gratuit).
+- URL de redirection codée en dur `https://qrcraft.dev` dans le store.
+- Fonctionnalité de duplication/clonage manquante.
+- Non-déclenchement des emails transactionnels (Bienvenue et Jalons de scans).
+
+### 🛠️ Actions Réalisées
+
+1. **Éradication de la Boucle de Redirection & Résolution Dynamique de l'Hôte (`qr-studio-store.ts`)** :
+   - Découplage strict entre la valeur saisie par l'utilisateur (`realDestinationUrl`) et la valeur encodée dans le SVG (`encodedValue`).
+   - Si le QR code est dynamique, `encodedValue` devient `${origin}/s/${slug}` tout en conservant intacte l'URL de destination finale, empêchant toute redirection circulaire vers le shortlink lui-même.
+   - Remplacement de l'URL en dur `https://qrcraft.dev` par la fonction utilitaire `getAppOrigin()`, détectant automatiquement `window.location.origin` côté navigateur ou `NEXT_PUBLIC_APP_URL` côté serveur.
+
+2. **Studio d'Édition Réactif & Mode Modification (`qr-studio-view.tsx` & `qr-studio-store.ts`)** :
+   - Intégration de `useSearchParams().get('edit')` dans `QRStudioView` (enveloppé sous `<React.Suspense>`).
+   - Récupération des métadonnées du QR code via `GET /api/qr/[id]` et hydratation complète de l'état Zustand (`loadExistingQRCode`).
+   - Affichage d'un bandeau d'alerte visuel informant l'utilisateur du mode édition.
+   - Bascule automatique de la sauvegarde vers une requête HTTP `PUT /api/qr/[editingId]`.
+
+3. **Page Paramètres & Profil Utilisateur (`/dashboard/settings`)** :
+   - Création de `src/app/(admin)/dashboard/settings/page.tsx` articulée autour de 3 onglets shadcn :
+     - **Profil** : Modification du nom (`authClient.updateUser`) et affichage sécurisé de l'adresse email.
+     - **Sécurité** : Modification du mot de passe (`authClient.changePassword`), statut 2FA et dialogue interactif d'appairage TOTP `TwoFactorSetupDialog`.
+     - **Abonnement** : Badge de plan (`Free` / `Pro`), jauge de progression d'utilisation des QR codes (`X / 5` pour le plan Gratuit via `Progress`), et incitation au surclassement Pro.
+   - Bouton d'accès direct avec icône `Settings` dans la barre supérieure `DashboardHeader`.
+   - Internationalisation à parité 100% FR / EN (`messages/fr.json` et `messages/en.json`).
+
+4. **Contrôle et Application des Quotas Freemium (`src/lib/auth/permissions.ts` & `src/app/api/qr/route.ts`)** :
+   - Définition centralisée de `PLAN_LIMITS` : plan Free limité à 5 QR codes, résolutions standard (512px, 1024px) ; plan Pro avec QR illimités, exports vectoriels/4K et logos personnalisés sans filigrane.
+   - Validation stricte dans le gestionnaire `POST /api/qr` : rejet avec code HTTP 403 et message explicatif si le quota de 5 QR codes est atteint par un compte gratuit.
+
+5. **Duplication de QR Code & Filtres du Tableau de Bord (`src/app/api/qr/[id]/clone/route.ts` & `dashboard/page.tsx`)** :
+   - Route de clonage `POST /api/qr/[id]/clone` : vérification d'authentification, contrôle des quotas Freemium, génération d'un slug aléatoire unique et création d'une copie sous le titre `${titre} (Copie)`.
+   - Action "Dupliquer" ajoutée au menu dropdown de chaque QR code dans `QRCodeTable`.
+   - Filtres instantanés par onglets rapides (Tous / Dynamiques / Statiques) avec compteurs en temps réel dans l'en-tête du tableau de bord.
+
+6. **Déclenchement Automatisé des Emails Transactionnels (`auth.ts` & `/s/[slug]/route.ts`)** :
+   - Configuration du hook Better Auth `databaseHooks.user.create.after` pour déclencher systématiquement `sendWelcomeNotification` lors de la création d'un utilisateur.
+   - Ajout dans `src/app/s/[slug]/route.ts` d'une tâche d'arrière-plan vérifiant les seuils de scans clés (10, 50, 100, 500, 1000 scans) et déclenchant `sendScanMilestoneNotification`.
+   - Ajout de la méthode `qrRepository.findUserById` pour la résolution optimisée de l'email du propriétaire.
+
+7. **Validation Qualité & Assurance Régression** :
+   - **57/57 tests unitaires réussis** sur 12 suites Vitest (`pnpm test`).
+   - **0 erreur TypeScript** (`npx tsc --noEmit`).
+   - **Compilation de production Next.js 16 validée sans avertissement** (`pnpm run build`).
+
+---
+
 ## 🔒 Directives pour les Futurs Commits
 Chaque agent intervenant sur le dépôt doit :
 1. Renseigner l'entrée correspondante dans ce fichier `WALKTROUGH.md`.

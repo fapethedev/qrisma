@@ -24,7 +24,7 @@ describe('Internationalization (next-intl)', () => {
     const enKeys = Object.keys(enMessages).sort();
 
     expect(frKeys).toEqual(enKeys);
-    expect(frKeys).toEqual(['auth', 'common', 'dashboard', 'landing', 'studio']);
+    expect(frKeys).toEqual(['auth', 'common', 'dashboard', 'landing', 'settings', 'studio']);
   });
 
   it('ensures all subkeys are identically mirrored between fr.json and en.json', () => {

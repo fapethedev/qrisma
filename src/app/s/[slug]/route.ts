@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { qrRepository } from '@/lib/db/qr-repository';
 import { parseUserAgent } from '@/lib/utils/ua-parser';
+import { sendScanMilestoneNotification } from '@/lib/email/resend';
 
 export const dynamic = 'force-dynamic';
+
+const SCAN_MILESTONES = [10, 50, 100, 500, 1000, 5000, 10000];
 
 export async function GET(
   request: NextRequest,
@@ -52,6 +55,25 @@ export async function GET(
         ip,
         referer,
       });
+
+      // Notification par email en arrière-plan si un jalon est franchi
+      const newScanCount = (qr.scanCount || 0) + 1;
+      if (SCAN_MILESTONES.includes(newScanCount)) {
+        (async () => {
+          try {
+            const user = await qrRepository.findUserById(qr.userId);
+            if (user && user.email) {
+              await sendScanMilestoneNotification(
+                { id: user.id, email: user.email, name: user.name },
+                { id: qr.id, name: qr.title },
+                newScanCount
+              );
+            }
+          } catch (milestoneErr) {
+            console.error('[Scan Milestone Email Error]', milestoneErr);
+          }
+        })();
+      }
     } catch (scanError) {
       console.error('[Scan Record Error]', scanError);
       // Ne pas bloquer la redirection si l'enregistrement de l'analytique échoue

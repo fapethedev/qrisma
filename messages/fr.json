@@ -419,6 +419,12 @@
     "searchAria": "Rechercher des QR codes",
     "createQR": "Créer un QR",
     "logout": "Se déconnecter",
+    "settings": "Paramètres",
+    "filter": {
+      "all": "Tous",
+      "dynamic": "Dynamiques",
+      "static": "Statiques"
+    },
     "kpi": {
       "totalScans": "Total des Scans",
       "totalScansDesc": "Scans cumulés sur tous vos QR codes",
@@ -460,6 +466,9 @@
       "copyShortLink": "Copier le lien court",
       "optionsFor": "Options pour le QR code {title}",
       "editStyle": "Modifier le style",
+      "duplicate": "Dupliquer",
+      "duplicateSuccess": "QR Code dupliqué avec succès.",
+      "duplicateError": "Erreur lors de la duplication du QR Code.",
       "delete": "Supprimer",
       "deleteConfirmTitle": "Êtes-vous absolument sûr ?",
       "deleteConfirmDesc": "Cette action est irréversible. Le QR code ainsi que tous ses événements de scans et historiques analytiques associés seront définitivement supprimés.",
@@ -583,6 +592,61 @@
       "errorCode": "Veuillez entrer les 6 chiffres du code.",
       "errorInvalid": "Code invalide",
       "successActivated": "Double authentification activée avec succès !"
+    }
+  },
+  "settings": {
+    "title": "Paramètres du compte",
+    "subtitle": "Gérez vos informations personnelles, la sécurité de votre compte et votre formule d'abonnement.",
+    "tabs": {
+      "profile": "Profil",
+      "security": "Sécurité",
+      "subscription": "Abonnement"
+    },
+    "profile": {
+      "title": "Informations du profil",
+      "desc": "Mettez à jour votre nom d'affichage et consultez vos identifiants.",
+      "nameLabel": "Nom complet",
+      "namePlaceholder": "Votre nom",
+      "emailLabel": "Adresse email",
+      "saveButton": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "successToast": "Profil mis à jour avec succès !",
+      "errorToast": "Erreur lors de la mise à jour du profil."
+    },
+    "security": {
+      "title": "Sécurité du compte",
+      "desc": "Renforcez la protection de vos QR codes et de vos données analytiques.",
+      "passwordTitle": "Modifier votre mot de passe",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmNewPassword": "Confirmer le nouveau mot de passe",
+      "changePasswordButton": "Mettre à jour le mot de passe",
+      "passwordChanged": "Mot de passe modifié avec succès !",
+      "passwordError": "Erreur lors de la modification du mot de passe.",
+      "passwordMismatch": "Les nouveaux mots de passe ne correspondent pas.",
+      "twoFactorTitle": "Authentification à deux facteurs (2FA)",
+      "twoFactorDesc": "Ajoutez un second niveau de sécurité avec une application d'authentification TOTP.",
+      "twoFactorEnabled": "Activée",
+      "twoFactorDisabled": "Désactivée",
+      "enable2FA": "Configurer la 2FA",
+      "disable2FA": "Désactiver la 2FA",
+      "disable2FAPrompt": "Veuillez entrer votre mot de passe pour désactiver la 2FA",
+      "twoFactorDisabledToast": "Double authentification désactivée."
+    },
+    "subscription": {
+      "title": "Formule & Quotas",
+      "desc": "Visualisez les limites de votre plan et vos capacités actuelles.",
+      "currentPlan": "Forfait actuel",
+      "planFree": "Gratuit (Free)",
+      "planPro": "Pro Creator",
+      "planEnterprise": "Entreprise",
+      "quotaTitle": "Quota de QR codes",
+      "quotaDesc": "Nombre de QR codes actifs créés sur ce compte.",
+      "quotaValue": "{used} / {max} QR codes créés",
+      "unlimited": "Illimité",
+      "upgradePrompt": "Besoin de plus de QR codes, d'exports 4K sans filigrane et d'analytiques avancées ?",
+      "upgradeButton": "Passer au Forfait Pro",
+      "proPerks": "Tous les avantages Pro débloqués : exports SVG & PDF 4K, pas de filigrane, scans illimités."
     }
   }
 }

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, QrCode, Sparkles, Building2, LogOut } from 'lucide-react';
+import { Plus, Search, QrCode, Sparkles, Building2, LogOut, Settings } from 'lucide-react';
 import { signOut } from '@/lib/auth/auth-client';
 import { ThemeToggle } from '@/components/shared/theme-toggle';
 import { LanguageToggle } from '@/components/language-toggle';
@@ -86,6 +86,18 @@ export function DashboardHeader({
               {userEmail}
             </span>
           </div>
+
+          <Link href="/dashboard/settings">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              title={t('settings')}
+              aria-label={t('settings')}
+              className="text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+            >
+              <Settings className="w-4 h-4" aria-hidden="true" />
+            </Button>
+          </Link>
 
           <Button
             variant="ghost"

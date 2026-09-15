@@ -41,6 +41,7 @@ import {
   Trash2,
   ScanLine,
   Plus,
+  CopyPlus,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -60,6 +61,7 @@ interface QRCodeTableProps {
   items: QRCodeItem[];
   onSelectAnalytics: (qr: QRCodeItem) => void;
   onDelete: (id: string) => Promise<void>;
+  onDuplicate?: (id: string) => Promise<void>;
   appUrl?: string;
 }
 
@@ -67,6 +69,7 @@ export function QRCodeTable({
   items,
   onSelectAnalytics,
   onDelete,
+  onDuplicate,
   appUrl = 'http://localhost:3000',
 }: QRCodeTableProps) {
   const t = useTranslations('dashboard.table');
@@ -75,6 +78,20 @@ export function QRCodeTable({
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
+
+  const handleDuplicate = async (id: string) => {
+    if (!onDuplicate || duplicatingId) return;
+    try {
+      setDuplicatingId(id);
+      await onDuplicate(id);
+      toast.success(t('duplicateSuccess'));
+    } catch (err: any) {
+      toast.error(err.message || t('duplicateError'));
+    } finally {
+      setDuplicatingId(null);
+    }
+  };
 
   const handleCopy = (slug: string, id: string) => {
     const fullUrl = `${window.location.origin}/s/${slug}`;
@@ -244,6 +261,17 @@ export function QRCodeTable({
                             <span>{t('editStyle')}</span>
                           </DropdownMenuItem>
                         </Link>
+
+                        {onDuplicate && (
+                          <DropdownMenuItem
+                            onClick={() => handleDuplicate(qr.id)}
+                            disabled={duplicatingId === qr.id}
+                            className="gap-2 cursor-pointer"
+                          >
+                            <CopyPlus className="w-4 h-4 text-emerald-500" />
+                            <span>{t('duplicate')}</span>
+                          </DropdownMenuItem>
+                        )}
 
                         <DropdownMenuSeparator />
 

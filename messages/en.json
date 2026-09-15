@@ -419,6 +419,12 @@
     "searchAria": "Search QR codes",
     "createQR": "Create QR",
     "logout": "Log Out",
+    "settings": "Settings",
+    "filter": {
+      "all": "All",
+      "dynamic": "Dynamic",
+      "static": "Static"
+    },
     "kpi": {
       "totalScans": "Total Scans",
       "totalScansDesc": "Cumulative scans across all your QR codes",
@@ -460,6 +466,9 @@
       "copyShortLink": "Copy short link",
       "optionsFor": "Options for QR code {title}",
       "editStyle": "Edit style",
+      "duplicate": "Duplicate",
+      "duplicateSuccess": "QR Code duplicated successfully.",
+      "duplicateError": "Error while duplicating QR Code.",
       "delete": "Delete",
       "deleteConfirmTitle": "Are you absolutely sure?",
       "deleteConfirmDesc": "This action is irreversible. The QR code as well as all associated scan events and analytical history will be permanently deleted.",
@@ -583,6 +592,61 @@
       "errorCode": "Please enter the 6-digit code.",
       "errorInvalid": "Invalid code",
       "successActivated": "Two-factor authentication enabled successfully!"
+    }
+  },
+  "settings": {
+    "title": "Account Settings",
+    "subtitle": "Manage your personal information, account security, and subscription plan.",
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security",
+      "subscription": "Subscription"
+    },
+    "profile": {
+      "title": "Profile Information",
+      "desc": "Update your display name and view your credentials.",
+      "nameLabel": "Full Name",
+      "namePlaceholder": "Your name",
+      "emailLabel": "Email address",
+      "saveButton": "Save changes",
+      "saving": "Saving...",
+      "successToast": "Profile updated successfully!",
+      "errorToast": "Failed to update profile."
+    },
+    "security": {
+      "title": "Account Security",
+      "desc": "Enhance the protection of your QR codes and analytics data.",
+      "passwordTitle": "Change your password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmNewPassword": "Confirm new password",
+      "changePasswordButton": "Update password",
+      "passwordChanged": "Password changed successfully!",
+      "passwordError": "Failed to change password.",
+      "passwordMismatch": "New passwords do not match.",
+      "twoFactorTitle": "Two-Factor Authentication (2FA)",
+      "twoFactorDesc": "Add an extra layer of security using a TOTP authenticator app.",
+      "twoFactorEnabled": "Enabled",
+      "twoFactorDisabled": "Disabled",
+      "enable2FA": "Configure 2FA",
+      "disable2FA": "Disable 2FA",
+      "disable2FAPrompt": "Please enter your password to disable 2FA",
+      "twoFactorDisabledToast": "Two-factor authentication disabled."
+    },
+    "subscription": {
+      "title": "Plan & Quotas",
+      "desc": "View your plan limits and current capacities.",
+      "currentPlan": "Current Plan",
+      "planFree": "Free",
+      "planPro": "Pro Creator",
+      "planEnterprise": "Enterprise",
+      "quotaTitle": "QR Codes Quota",
+      "quotaDesc": "Active QR codes created on this account.",
+      "quotaValue": "{used} / {max} QR codes created",
+      "unlimited": "Unlimited",
+      "upgradePrompt": "Need more QR codes, watermark-free 4K exports, and advanced analytics?",
+      "upgradeButton": "Upgrade to Pro Plan",
+      "proPerks": "All Pro perks unlocked: SVG & 4K PDF exports, no watermark, unlimited scans."
     }
   }
 }

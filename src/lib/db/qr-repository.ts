@@ -391,6 +391,17 @@ export const qrRepository = {
   },
 
   /**
+   * Récupère les informations publiques d'un utilisateur par son ID
+   */
+  async findUserById(userId: string): Promise<{ id: string; email: string; name: string | null } | null> {
+    const rows = await query<{ id: string; email: string; name: string | null }>(
+      `SELECT "id", "email", "name" FROM "user" WHERE "id" = $1 LIMIT 1;`,
+      [userId]
+    );
+    return rows[0] || null;
+  },
+
+  /**
    * Suppression d'un QR code
    */
   async delete(id: string, userId: string): Promise<boolean> {
