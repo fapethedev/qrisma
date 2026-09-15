@@ -50,7 +50,7 @@ export function LandingNavbar() {
           <LanguageToggle />
           <ThemeToggle />
 
-          <Link href="/studio">
+          <Link href="/dashboard/studio">
             <Button size="sm" className="font-medium gap-1.5 shadow-sm hover:shadow cursor-pointer">
               <span>{t('studio')}</span>
               <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />

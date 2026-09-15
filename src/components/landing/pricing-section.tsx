@@ -96,7 +96,7 @@ export function PricingSection() {
             </div>
 
             <div className="pt-8">
-              <Link href="/studio" className="block">
+              <Link href="/dashboard/studio" className="block">
                 <Button variant="outline" className="w-full text-xs font-semibold h-11 cursor-pointer">
                   {t('planFreeCta')}
                 </Button>
@@ -163,7 +163,7 @@ export function PricingSection() {
             </div>
 
             <div className="pt-8">
-              <Link href="/studio" className="block">
+              <Link href="/dashboard/studio" className="block">
                 <Button className="w-full text-xs font-bold h-11 gap-1.5 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 cursor-pointer">
                   <span>{t('planProCta')}</span>
                   <ArrowRight className="h-3.5 w-3.5" />

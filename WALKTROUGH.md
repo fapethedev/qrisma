@@ -394,6 +394,46 @@ Parcourir l'ensemble de l'arborescence `src/app` et tous les composants UI conne
 
 ---
 
+## [2026-09-15] - Séparation des Routes par Route Groups Next.js 16 ((marketing), (auth), (admin))
+
+### 📌 Contexte & Objectif
+Réorganiser l'arborescence des routes Next.js avec des Route Groups (`(...)`) pour isoler les domaines de l'application :
+- `(marketing)` pour les pages vitrines publiques (`/`).
+- `(auth)` pour les flux d'authentification et de sécurité (`/login`, `/register`, `/forgot-password`, `/2fa`).
+- `(admin)` pour les espaces applicatifs connectés, en intégrant le studio de création sous le dashboard (`/dashboard` et `/dashboard/studio`).
+- Équiper **chaque groupe de routes** de sa batterie complète de pages d'état conventionnelles Next.js 16 : `loading.tsx`, `error.tsx`, `not-found.tsx`, `forbidden.tsx` (403), et `unauthorized.tsx` (401).
+
+### 🛠️ Actions Réalisées
+1. **Architecture des Route Groups (`src/app/`)** :
+   - **Groupe `(marketing)`** :
+     - Déplacement de `src/app/page.tsx` vers `src/app/(marketing)/page.tsx`.
+     - Création de `loading.tsx` (skeleton de landing page), `error.tsx` (boundary d'erreur avec bouton réessayer), `not-found.tsx` (404 vitrine), `forbidden.tsx` (403 vitrine) et `unauthorized.tsx` (401 avec accès direct à la connexion).
+   - **Groupe `(auth)`** :
+     - Déplacement de `/login`, `/register`, `/forgot-password`, `/2fa` dans `src/app/(auth)/`.
+     - Création de `loading.tsx` (skeleton de formulaire auth), `error.tsx`, `not-found.tsx`, `forbidden.tsx` et `unauthorized.tsx`.
+   - **Groupe `(admin)`** :
+     - Déplacement de `dashboard/` dans `src/app/(admin)/dashboard/`.
+     - Intégration du Studio dans le Dashboard : `src/app/(admin)/dashboard/studio/page.tsx`.
+     - Création de `loading.tsx` (skeleton KPI + graphiques + table), `error.tsx`, `not-found.tsx`, `forbidden.tsx` (403 accès admin refusé) et `unauthorized.tsx` (401 session expirée).
+
+2. **Routage, Redirections & Liens d'Application** :
+   - Ajout d'une règle de redirection automatique dans `next.config.ts` : `/studio` → `/dashboard/studio` (307).
+   - Mise à jour des liens internes vers `/dashboard/studio` dans :
+     - `LandingNavbar`, `HeroSection`, `PricingSection`, `LandingFooter`.
+     - `DashboardHeader`, `QRCodeTable`.
+     - Pages d'authentification (`login`, `register`, `2fa`) et studio (`QRStudioView`).
+
+3. **Internationalisation & Dictionnaires** :
+   - Ajout dans `messages/fr.json` et `messages/en.json` (section `common`) des clés d'état : `notFoundTitle`, `notFoundDesc`, `errorTitle`, `errorDesc`, `forbiddenTitle`, `forbiddenDesc`, `unauthorizedTitle`, `unauthorizedDesc`, `backToHome`, `tryAgain`, `goToLogin`.
+   - Parité stricte 100% validée.
+
+4. **Validation Qualité & Compilation** :
+   - **55/55 tests unitaires réussis** sur 12 suites de tests sous Vitest (`pnpm test`).
+   - Vérification des types sans aucune erreur (`pnpm run typecheck` / `tsc --noEmit`).
+   - Compilation de production Next.js 16 validée avec succès (`pnpm build`).
+
+---
+
 ## 🔒 Directives pour les Futurs Commits
 Chaque agent intervenant sur le dépôt doit :
 1. Renseigner l'entrée correspondante dans ce fichier `WALKTROUGH.md`.

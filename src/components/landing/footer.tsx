@@ -35,7 +35,7 @@ export function LandingFooter() {
             <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">{t('footerNav')}</h4>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li>
-                <Link href="/studio" className="hover:text-primary transition-colors">
+                <Link href="/dashboard/studio" className="hover:text-primary transition-colors">
                   {t('footerNavStudio')}
                 </Link>
               </li>

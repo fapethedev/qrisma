@@ -48,7 +48,7 @@ export function HeroSection() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
-              <Link href="/studio" className="w-full sm:w-auto">
+              <Link href="/dashboard/studio" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full sm:w-auto font-semibold gap-2 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 cursor-pointer h-12 px-6">
                   <span>{t('ctaCreate')}</span>
                   <ArrowRight className="h-4 w-4" />
@@ -160,7 +160,7 @@ export function HeroSection() {
                 </div>
               </div>
 
-              <Link href="/studio" className="block">
+              <Link href="/dashboard/studio" className="block">
                 <Button className="w-full text-xs font-semibold h-10 gap-1.5 shadow-sm cursor-pointer">
                   <span>{t('sandboxOpenStudio')}</span>
                   <ArrowRight className="h-3.5 w-3.5" />

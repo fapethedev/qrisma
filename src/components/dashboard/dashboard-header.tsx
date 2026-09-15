@@ -69,7 +69,7 @@ export function DashboardHeader({
           <LanguageToggle />
           <ThemeToggle />
 
-          <Link href="/studio">
+          <Link href="/dashboard/studio">
             <Button size="sm" className="gap-2 shadow-sm font-medium">
               <Plus className="w-4 h-4" aria-hidden="true" />
               <span className="hidden sm:inline">{t('createQR')}</span>

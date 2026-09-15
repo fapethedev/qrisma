@@ -54,7 +54,7 @@ export default function RegisterPage() {
         name: name.trim(),
         email: email.trim(),
         password,
-        callbackURL: `${window.location.origin}/studio`,
+        callbackURL: `${window.location.origin}/dashboard/studio`,
       });
 
       if (result.error) {
@@ -65,7 +65,7 @@ export default function RegisterPage() {
         toast.success(t('successToast'), {
           description: t('redirecting'),
         });
-        router.push('/studio');
+        router.push('/dashboard/studio');
       }
     } catch {
       toast.error(tCommon('errorOccurred'));

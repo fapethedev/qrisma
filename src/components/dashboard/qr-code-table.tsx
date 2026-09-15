@@ -106,7 +106,7 @@ export function QRCodeTable({
         <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
           {t('emptyDesc')}
         </p>
-        <Link href="/studio">
+        <Link href="/dashboard/studio">
           <Button size="sm" className="mt-5 gap-2">
             <Plus className="w-4 h-4" />
             {t('createFirst')}
@@ -238,7 +238,7 @@ export function QRCodeTable({
                           <span>{t('copyLink')}</span>
                         </DropdownMenuItem>
 
-                        <Link href={`/studio?edit=${qr.id}`}>
+                        <Link href={`/dashboard/studio?edit=${qr.id}`}>
                           <DropdownMenuItem className="gap-2 cursor-pointer">
                             <Edit className="w-4 h-4" />
                             <span>{t('editStyle')}</span>

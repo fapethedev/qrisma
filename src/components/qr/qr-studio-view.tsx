@@ -82,7 +82,7 @@ export function QRStudioView() {
   const handleSaveToAccount = async () => {
     if (!session?.user) {
       toast.error(t('loginRequiredSave'));
-      window.location.href = '/login?callbackUrl=/studio';
+      window.location.href = '/login?callbackUrl=/dashboard/studio';
       return;
     }
     try {
@@ -147,7 +147,7 @@ export function QRStudioView() {
               size="sm"
               onClick={() => {
                 if (!session?.user) {
-                  window.location.href = '/login?callbackUrl=/studio';
+                  window.location.href = '/login?callbackUrl=/dashboard/studio';
                 } else {
                   setSaveOpen(true);
                 }

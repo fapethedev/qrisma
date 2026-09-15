@@ -28,7 +28,18 @@
     "close": "Close",
     "errorOccurred": "An error occurred.",
     "requiredFields": "Please fill in all required fields.",
-    "showcase": "Showcase"
+    "showcase": "Showcase",
+    "backToHome": "Back to Home",
+    "tryAgain": "Try again",
+    "goToLogin": "Sign in",
+    "notFoundTitle": "Page Not Found",
+    "notFoundDesc": "The page you are looking for does not exist or has been moved.",
+    "errorTitle": "An error occurred",
+    "errorDesc": "An unexpected problem occurred. Please try again.",
+    "forbiddenTitle": "Access Forbidden",
+    "forbiddenDesc": "You do not have the required permissions to access this page (403).",
+    "unauthorizedTitle": "Authentication Required",
+    "unauthorizedDesc": "You must be signed in to access this area (401)."
   },
   "landing": {
     "metaTitle": "QRCraft | Custom & Trackable QR Code Generator",

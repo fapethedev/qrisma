@@ -54,7 +54,7 @@ export default function TwoFactorPage() {
           toast.error(t('invalidBackupCode'), { description: res.error.message });
         } else {
           toast.success(t('successToast'));
-          router.push('/studio');
+          router.push('/dashboard/studio');
         }
       } else {
         const res = await twoFactor.verifyTotp({
@@ -67,7 +67,7 @@ export default function TwoFactorPage() {
           });
         } else {
           toast.success(t('successToast'));
-          router.push('/studio');
+          router.push('/dashboard/studio');
         }
       }
     } catch {
