@@ -5,15 +5,19 @@ import { QRShapePicker } from '@/components/qr/qr-shape-picker';
 import { QRFinderPicker } from '@/components/qr/qr-finder-picker';
 import { OverviewStatsCards } from '@/components/dashboard/overview-stats-cards';
 import { QRCodeTable } from '@/components/dashboard/qr-code-table';
+import { NextIntlClientProvider } from 'next-intl';
+import frMessages from '@/../messages/fr.json';
 
 describe('WCAG & Web Interface Guidelines Accessibility Compliance', () => {
   describe('QRShapePicker', () => {
     it('rend les boutons de formes avec aria-label et aria-pressed', () => {
       const html = renderToString(
-        <QRShapePicker
-          settings={{ style: 'rounded', size: 1 }}
-          onChange={() => {}}
-        />
+        <NextIntlClientProvider locale="fr" messages={frMessages} timeZone="Europe/Paris">
+          <QRShapePicker
+            settings={{ style: 'rounded', size: 1 }}
+            onChange={() => {}}
+          />
+        </NextIntlClientProvider>
       );
 
       // Vérifie la présence de boutons interactifs avec aria-label
@@ -31,12 +35,14 @@ describe('WCAG & Web Interface Guidelines Accessibility Compliance', () => {
   describe('QRFinderPicker', () => {
     it('rend les sélecteurs de coins avec des libellés explicites et aria-pressed', () => {
       const html = renderToString(
-        <QRFinderPicker
-          outerSettings={{ style: 'rounded' }}
-          innerSettings={{ style: 'circle' }}
-          onOuterChange={() => {}}
-          onInnerChange={() => {}}
-        />
+        <NextIntlClientProvider locale="fr" messages={frMessages} timeZone="Europe/Paris">
+          <QRFinderPicker
+            outerSettings={{ style: 'rounded' }}
+            innerSettings={{ style: 'circle' }}
+            onOuterChange={() => {}}
+            onInnerChange={() => {}}
+          />
+        </NextIntlClientProvider>
       );
 
       // Vérifie les libellés descriptifs
@@ -50,13 +56,15 @@ describe('WCAG & Web Interface Guidelines Accessibility Compliance', () => {
   describe('OverviewStatsCards', () => {
     it('applique la classe tabular-nums pour l\'alignement optique des métriques chiffrées', () => {
       const html = renderToString(
-        <OverviewStatsCards
-          totalQRCodes={42}
-          totalScans={1337}
-          recentScans7d={256}
-          topQRCodeTitle="Menu Restaurant"
-          topQRCodeScans={850}
-        />
+        <NextIntlClientProvider locale="fr" messages={frMessages} timeZone="Europe/Paris">
+          <OverviewStatsCards
+            totalQRCodes={42}
+            totalScans={1337}
+            recentScans7d={256}
+            topQRCodeTitle="Menu Restaurant"
+            topQRCodeScans={850}
+          />
+        </NextIntlClientProvider>
       );
 
       expect(html).toContain('tabular-nums');
@@ -82,11 +90,13 @@ describe('WCAG & Web Interface Guidelines Accessibility Compliance', () => {
       ];
 
       const html = renderToString(
-        <QRCodeTable
-          items={mockItems}
-          onSelectAnalytics={() => {}}
-          onDelete={async () => {}}
-        />
+        <NextIntlClientProvider locale="fr" messages={frMessages} timeZone="Europe/Paris">
+          <QRCodeTable
+            items={mockItems}
+            onSelectAnalytics={() => {}}
+            onDelete={async () => {}}
+          />
+        </NextIntlClientProvider>
       );
 
       // Bouton Copier avec aria-label

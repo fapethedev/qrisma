@@ -72,15 +72,27 @@ export const DEFAULT_PAYLOAD_DATA: QRPayloadData = {
   },
 };
 
+export function getAppOrigin(): string {
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return window.location.origin;
+  }
+  return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+}
+
 interface QRStudioState {
   // Payload & Source
   payloadType: QRPayloadType;
   payloadData: QRPayloadData;
+  realDestinationUrl: string;
   encodedValue: string;
 
   // Dynamic QR
   isDynamic: boolean;
   shortSlug: string;
+
+  // Mode Édition
+  editingId: string | null;
+  editingTitle: string;
 
   // Design Settings
   design: QRDesignConfig;
@@ -93,6 +105,15 @@ interface QRStudioState {
   updatePayloadData: <K extends keyof QRPayloadData>(key: K, data: QRPayloadData[K]) => void;
   toggleDynamic: (isDynamic: boolean) => void;
   setShortSlug: (slug: string) => void;
+  setEditingTitle: (title: string) => void;
+  loadExistingQRCode: (qr: {
+    id: string;
+    title: string;
+    shortSlug: string;
+    destinationUrl: string;
+    isDynamic: boolean;
+    design: QRDesignConfig | string;
+  }) => void;
   updateDesign: (partial: Partial<QRDesignConfig>) => void;
   updateDataModules: (settings: Partial<QRDesignConfig['dataModulesSettings']>) => void;
   updateFinderOuter: (settings: Partial<QRDesignConfig['finderPatternOuterSettings']>) => void;
@@ -103,13 +124,19 @@ interface QRStudioState {
   resetStudio: () => void;
 }
 
+const initialPayloadValue = buildQRPayload('url', DEFAULT_PAYLOAD_DATA);
+
 export const useQRStudioStore = create<QRStudioState>((set, get) => ({
   payloadType: 'url',
   payloadData: DEFAULT_PAYLOAD_DATA,
-  encodedValue: buildQRPayload('url', DEFAULT_PAYLOAD_DATA),
+  realDestinationUrl: initialPayloadValue,
+  encodedValue: initialPayloadValue,
 
   isDynamic: false,
   shortSlug: 'demo-qr',
+
+  editingId: null,
+  editingTitle: '',
 
   design: DEFAULT_DESIGN_CONFIG,
   activePresetId: 'modern-indigo',
@@ -117,13 +144,15 @@ export const useQRStudioStore = create<QRStudioState>((set, get) => ({
   setPayloadType: (type: QRPayloadType) => {
     const { payloadData, isDynamic, shortSlug } = get();
     const updatedData = { ...payloadData, type };
+    const realUrl = buildQRPayload(type, updatedData);
     const value = isDynamic
-      ? `https://qrcraft.dev/s/${shortSlug}`
-      : buildQRPayload(type, updatedData);
+      ? `${getAppOrigin()}/s/${shortSlug}`
+      : realUrl;
 
     set({
       payloadType: type,
       payloadData: updatedData,
+      realDestinationUrl: realUrl,
       encodedValue: value,
     });
   },
@@ -131,21 +160,23 @@ export const useQRStudioStore = create<QRStudioState>((set, get) => ({
   updatePayloadData: (key, data) => {
     const { payloadType, payloadData, isDynamic, shortSlug } = get();
     const updated = { ...payloadData, [key]: data };
+    const realUrl = buildQRPayload(payloadType, updated);
     const value = isDynamic
-      ? `https://qrcraft.dev/s/${shortSlug}`
-      : buildQRPayload(payloadType, updated);
+      ? `${getAppOrigin()}/s/${shortSlug}`
+      : realUrl;
 
     set({
       payloadData: updated,
+      realDestinationUrl: realUrl,
       encodedValue: value,
     });
   },
 
   toggleDynamic: (isDynamic: boolean) => {
-    const { payloadType, payloadData, shortSlug } = get();
+    const { realDestinationUrl, shortSlug } = get();
     const value = isDynamic
-      ? `https://qrcraft.dev/s/${shortSlug}`
-      : buildQRPayload(payloadType, payloadData);
+      ? `${getAppOrigin()}/s/${shortSlug}`
+      : realDestinationUrl;
 
     set({
       isDynamic,
@@ -157,7 +188,36 @@ export const useQRStudioStore = create<QRStudioState>((set, get) => ({
     const { isDynamic } = get();
     set({
       shortSlug,
-      ...(isDynamic ? { encodedValue: `https://qrcraft.dev/s/${shortSlug}` } : {}),
+      ...(isDynamic ? { encodedValue: `${getAppOrigin()}/s/${shortSlug}` } : {}),
+    });
+  },
+
+  setEditingTitle: (title: string) => {
+    set({ editingTitle: title });
+  },
+
+  loadExistingQRCode: (qr) => {
+    const parsedDesign = typeof qr.design === 'string' ? JSON.parse(qr.design) : qr.design;
+    const origin = getAppOrigin();
+    const realUrl = qr.destinationUrl;
+    const encoded = qr.isDynamic ? `${origin}/s/${qr.shortSlug}` : realUrl;
+
+    set({
+      editingId: qr.id,
+      editingTitle: qr.title,
+      isDynamic: qr.isDynamic,
+      shortSlug: qr.shortSlug,
+      realDestinationUrl: realUrl,
+      encodedValue: encoded,
+      payloadData: {
+        ...DEFAULT_PAYLOAD_DATA,
+        url: realUrl,
+      },
+      design: {
+        ...DEFAULT_DESIGN_CONFIG,
+        ...parsedDesign,
+      },
+      activePresetId: null,
     });
   },
 
@@ -256,12 +316,16 @@ export const useQRStudioStore = create<QRStudioState>((set, get) => ({
   },
 
   resetStudio: () => {
+    const initialReal = buildQRPayload('url', DEFAULT_PAYLOAD_DATA);
     set({
       payloadType: 'url',
       payloadData: DEFAULT_PAYLOAD_DATA,
-      encodedValue: buildQRPayload('url', DEFAULT_PAYLOAD_DATA),
+      realDestinationUrl: initialReal,
+      encodedValue: initialReal,
       isDynamic: false,
       shortSlug: 'demo-qr',
+      editingId: null,
+      editingTitle: '',
       design: DEFAULT_DESIGN_CONFIG,
       activePresetId: 'modern-indigo',
     });

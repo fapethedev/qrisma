@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET as listQR, POST as createQR } from '@/app/api/qr/route';
 import { GET as getSingleQR, PUT as updateQR, DELETE as deleteQR } from '@/app/api/qr/[id]/route';
+import { POST as cloneQR } from '@/app/api/qr/[id]/clone/route';
 import { auth } from '@/lib/auth/auth';
 import { qrRepository } from '@/lib/db/qr-repository';
 
@@ -54,10 +55,11 @@ describe('QR Management API Routes (/api/qr)', () => {
 
   it('creates a new QR code via POST', async () => {
     vi.spyOn(auth.api, 'getSession').mockResolvedValueOnce({
-      user: { id: 'user-test', email: 'test@example.com' },
+      user: { id: 'user-test', email: 'test@example.com', plan: 'free' },
       session: { activeOrganizationId: null },
     } as any);
 
+    vi.spyOn(qrRepository, 'listByUser').mockResolvedValueOnce([]);
     vi.spyOn(qrRepository, 'findBySlug').mockResolvedValueOnce(null);
     vi.spyOn(qrRepository, 'create').mockResolvedValueOnce({
       id: 'qr-new',
@@ -90,12 +92,41 @@ describe('QR Management API Routes (/api/qr)', () => {
     expect(json.data.shortSlug).toBe('mon-slug');
   });
 
-  it('prevents creating QR code with duplicate slug', async () => {
+  it('enforces freemium quota when user reaches 5 QR codes', async () => {
     vi.spyOn(auth.api, 'getSession').mockResolvedValueOnce({
-      user: { id: 'user-test', email: 'test@example.com' },
+      user: { id: 'user-test', email: 'test@example.com', plan: 'free' },
       session: { activeOrganizationId: null },
     } as any);
 
+    const mockFiveQRs = Array.from({ length: 5 }, (_, i) => ({
+      id: `qr-${i}`,
+      title: `QR ${i}`,
+      userId: 'user-test',
+    })) as any;
+
+    vi.spyOn(qrRepository, 'listByUser').mockResolvedValueOnce(mockFiveQRs);
+
+    const req = new NextRequest('http://localhost:3000/api/qr', {
+      method: 'POST',
+      body: JSON.stringify({
+        title: 'Sixième QR',
+        destinationUrl: 'https://mysite.com',
+      }),
+    });
+
+    const res = await createQR(req);
+    expect(res.status).toBe(403);
+    const json = await res.json();
+    expect(json.limit).toBe(5);
+  });
+
+  it('prevents creating QR code with duplicate slug', async () => {
+    vi.spyOn(auth.api, 'getSession').mockResolvedValueOnce({
+      user: { id: 'user-test', email: 'test@example.com', plan: 'free' },
+      session: { activeOrganizationId: null },
+    } as any);
+
+    vi.spyOn(qrRepository, 'listByUser').mockResolvedValueOnce([]);
     vi.spyOn(qrRepository, 'findBySlug').mockResolvedValueOnce({
       id: 'qr-existing',
       shortSlug: 'taken-slug',
@@ -112,6 +143,58 @@ describe('QR Management API Routes (/api/qr)', () => {
 
     const res = await createQR(req);
     expect(res.status).toBe(409);
+  });
+
+  it('clones a QR code successfully with status 201', async () => {
+    vi.spyOn(auth.api, 'getSession').mockResolvedValueOnce({
+      user: { id: 'user-test', email: 'test@example.com', plan: 'free' },
+      session: { activeOrganizationId: null },
+    } as any);
+
+    vi.spyOn(qrRepository, 'findById').mockResolvedValueOnce({
+      id: 'qr-source',
+      title: 'Original QR',
+      destinationUrl: 'https://target.com',
+      isDynamic: true,
+      design: '{}',
+      userId: 'user-test',
+      organizationId: null,
+    } as any);
+
+    vi.spyOn(qrRepository, 'listByUser').mockResolvedValueOnce([]);
+    vi.spyOn(qrRepository, 'findBySlug').mockResolvedValueOnce(null);
+
+    const createSpy = vi.spyOn(qrRepository, 'create').mockResolvedValueOnce({
+      id: 'qr-cloned',
+      title: 'Original QR (Copie)',
+      shortSlug: 'abc12345',
+      destinationUrl: 'https://target.com',
+      isDynamic: true,
+      design: '{}',
+      scanCount: 0,
+      userId: 'user-test',
+      organizationId: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const req = new NextRequest('http://localhost:3000/api/qr/qr-source/clone', {
+      method: 'POST',
+    });
+
+    const res = await cloneQR(req, {
+      params: Promise.resolve({ id: 'qr-source' }),
+    });
+
+    expect(res.status).toBe(201);
+    const json = await res.json();
+    expect(json.data.id).toBe('qr-cloned');
+    expect(createSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Original QR (Copie)',
+        destinationUrl: 'https://target.com',
+      })
+    );
   });
 
   it('deletes a QR code when owned by authenticated user', async () => {

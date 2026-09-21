@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { Image as ImageIcon, Trash2, Upload, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -47,6 +48,7 @@ export function QRLogoUploader({
   onSetLogo,
   onRemoveLogo,
 }: QRLogoUploaderProps) {
+  const t = useTranslations('studio.logo');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const hasLogo = Boolean(imageSettings?.src);
   const logoSize = imageSettings?.width ?? 48;
@@ -72,7 +74,7 @@ export function QRLogoUploader({
       {/* Zone de téléversement */}
       <div className="space-y-2">
         <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Logo central
+          {t('title')}
         </Label>
 
         {hasLogo ? (
@@ -87,7 +89,7 @@ export function QRLogoUploader({
                 />
               </div>
               <div className="text-xs">
-                <p className="font-medium text-foreground">Logo actif</p>
+                <p className="font-medium text-foreground">{t('active')}</p>
                 <p className="text-muted-foreground text-[11px]">{logoSize}x{logoSize} px</p>
               </div>
             </div>
@@ -99,7 +101,7 @@ export function QRLogoUploader({
               className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20 h-8 gap-1.5 cursor-pointer"
             >
               <Trash2 className="h-3.5 w-3.5" />
-              <span>Retirer</span>
+              <span>{t('remove')}</span>
             </Button>
           </div>
         ) : (
@@ -111,8 +113,8 @@ export function QRLogoUploader({
               <Upload className="h-5 w-5" />
             </div>
             <div className="text-xs">
-              <span className="font-semibold text-primary">Cliquez pour importer</span> ou glissez votre logo
-              <p className="text-[11px] text-muted-foreground mt-0.5">PNG, SVG, JPG (Recommandé: fond transparent)</p>
+              <span className="font-semibold text-primary">{t('uploadClick')}</span> {t('uploadOr')}
+              <p className="text-[11px] text-muted-foreground mt-0.5">{t('uploadHint')}</p>
             </div>
           </div>
         )}
@@ -128,7 +130,7 @@ export function QRLogoUploader({
 
       {/* Logothèque rapide de marques */}
       <div className="space-y-2">
-        <Label className="text-xs text-muted-foreground">Ou choisissez un logo officiel</Label>
+        <Label className="text-xs text-muted-foreground">{t('presetTitle')}</Label>
         <div className="flex flex-wrap gap-2">
           {PRESET_LOGOS.map((preset) => (
             <button
@@ -151,7 +153,7 @@ export function QRLogoUploader({
           {/* Slider de taille */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <Label className="text-muted-foreground">Taille du logo</Label>
+              <Label className="text-muted-foreground">{t('size')}</Label>
               <span className="font-mono font-medium">{logoSize} px</span>
             </div>
             <Slider
@@ -167,10 +169,10 @@ export function QRLogoUploader({
           <div className="flex items-center justify-between p-3 rounded-lg border border-border/50 bg-background/50">
             <div className="space-y-0.5">
               <Label htmlFor="excavate-switch" className="text-xs font-medium cursor-pointer">
-                Excavation automatique
+                {t('excavate')}
               </Label>
               <p className="text-[11px] text-muted-foreground">
-                Dégage les modules QR situés directement sous le logo pour maximiser la lisibilité.
+                {t('excavateDesc')}
               </p>
             </div>
             <Switch

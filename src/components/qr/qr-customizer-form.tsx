@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Coins,
   Globe,
@@ -37,18 +38,20 @@ import { QRLogoUploader } from './qr-logo-uploader';
 import { QRShapePicker } from './qr-shape-picker';
 import type { ErrorCorrectionLevel, QRPayloadType } from '@/lib/qr/types';
 
-const PAYLOAD_TYPES: { id: QRPayloadType; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { id: 'url', label: 'Lien Web', icon: Globe },
-  { id: 'vcard', label: 'Contact vCard', icon: User },
-  { id: 'wifi', label: 'Réseau Wi-Fi', icon: Wifi },
-  { id: 'text', label: 'Texte Libre', icon: Type },
-  { id: 'email', label: 'Email', icon: Mail },
-  { id: 'phone', label: 'Téléphone', icon: Phone },
-  { id: 'sms', label: 'SMS', icon: Share2 },
-  { id: 'crypto', label: 'Crypto', icon: Coins },
+const PAYLOAD_TYPES: { id: QRPayloadType; icon: React.ComponentType<{ className?: string }> }[] = [
+  { id: 'url', icon: Globe },
+  { id: 'vcard', icon: User },
+  { id: 'wifi', icon: Wifi },
+  { id: 'text', icon: Type },
+  { id: 'email', icon: Mail },
+  { id: 'phone', icon: Phone },
+  { id: 'sms', icon: Share2 },
+  { id: 'crypto', icon: Coins },
 ];
 
 export function QRCustomizerForm() {
+  const t = useTranslations('studio');
+  const tCust = useTranslations('studio.customizer');
   const {
     payloadType,
     payloadData,
@@ -76,23 +79,23 @@ export function QRCustomizerForm() {
         <TabsList className="grid grid-cols-5 w-full h-11 p-1 bg-muted/60 rounded-xl">
           <TabsTrigger value="content" className="text-xs font-medium gap-1.5 cursor-pointer">
             <QrCode className="h-3.5 w-3.5 hidden sm:inline-block" />
-            <span>Contenu</span>
+            <span>{t('tabs.content')}</span>
           </TabsTrigger>
           <TabsTrigger value="style" className="text-xs font-medium gap-1.5 cursor-pointer">
             <Shapes className="h-3.5 w-3.5 hidden sm:inline-block" />
-            <span>Formes</span>
+            <span>{t('tabs.shapes')}</span>
           </TabsTrigger>
           <TabsTrigger value="colors" className="text-xs font-medium gap-1.5 cursor-pointer">
             <Palette className="h-3.5 w-3.5 hidden sm:inline-block" />
-            <span>Couleurs</span>
+            <span>{t('tabs.colors')}</span>
           </TabsTrigger>
           <TabsTrigger value="logo" className="text-xs font-medium gap-1.5 cursor-pointer">
             <Sparkles className="h-3.5 w-3.5 hidden sm:inline-block" />
-            <span>Logo</span>
+            <span>{t('tabs.logo')}</span>
           </TabsTrigger>
           <TabsTrigger value="presets" className="text-xs font-medium gap-1.5 cursor-pointer">
             <Sliders className="h-3.5 w-3.5 hidden sm:inline-block" />
-            <span>Thèmes</span>
+            <span>{t('tabs.presets')}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -105,14 +108,14 @@ export function QRCustomizerForm() {
             <div className="space-y-0.5">
               <div className="flex items-center gap-2">
                 <Label htmlFor="dynamic-toggle" className="text-xs font-bold cursor-pointer text-foreground">
-                  Mode QR Code Dynamique
+                  {tCust('dynamicTitle')}
                 </Label>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary text-primary-foreground uppercase tracking-wide">
-                  Pro / SaaS
+                  {tCust('dynamicBadge')}
                 </span>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Permet de modifier l’URL cible sans réimprimer le QR code et suit le nombre de scans en direct.
+                {tCust('dynamicDesc')}
               </p>
             </div>
             <Switch
@@ -125,17 +128,17 @@ export function QRCustomizerForm() {
           {isDynamic && (
             <div className="p-3.5 rounded-xl border border-border bg-muted/20 space-y-2 animate-in fade-in-50">
               <Label htmlFor="slug-input" className="text-xs font-semibold text-muted-foreground">
-                Lien court de redirection
+                {tCust('shortSlugLabel')}
               </Label>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono text-muted-foreground bg-muted px-2.5 py-2 rounded-lg border border-border">
-                  https://qrcraft.dev/s/
+                  {tCust('shortSlugPrefix')}
                 </span>
                 <Input
                   id="slug-input"
                   value={shortSlug}
                   onChange={(e) => setShortSlug(e.target.value)}
-                  placeholder="mon-lien"
+                  placeholder={tCust('shortSlugPlaceholder')}
                   className="font-mono text-xs h-9"
                 />
               </div>
@@ -145,12 +148,13 @@ export function QRCustomizerForm() {
           {/* Sélecteur de type de contenu */}
           <div className="space-y-2.5">
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Type de contenu
+              {tCust('contentType')}
             </Label>
             <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
               {PAYLOAD_TYPES.map((type) => {
                 const Icon = type.icon;
                 const isSelected = payloadType === type.id;
+                const label = tCust(`types.${type.id}` as any);
                 return (
                   <button
                     key={type.id}
@@ -163,7 +167,7 @@ export function QRCustomizerForm() {
                     }`}
                   >
                     <Icon className="h-4 w-4 mb-1" />
-                    <span className="truncate w-full text-center">{type.label}</span>
+                    <span className="truncate w-full text-center">{label}</span>
                   </button>
                 );
               })}
@@ -174,12 +178,12 @@ export function QRCustomizerForm() {
           <div className="space-y-4 pt-2">
             {payloadType === 'url' && (
               <div className="space-y-1.5">
-                <Label htmlFor="url-input" className="text-xs font-medium">Adresse Web cible (URL)</Label>
+                <Label htmlFor="url-input" className="text-xs font-medium">{tCust('url.label')}</Label>
                 <Input
                   id="url-input"
                   value={payloadData.url}
                   onChange={(e) => updatePayloadData('url', e.target.value)}
-                  placeholder="https://example.com"
+                  placeholder={tCust('url.placeholder')}
                   className="h-10 text-sm"
                 />
               </div>
@@ -188,68 +192,68 @@ export function QRCustomizerForm() {
             {payloadType === 'vcard' && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label className="text-xs">Prénom</Label>
+                  <Label className="text-xs">{tCust('vcard.firstName')}</Label>
                   <Input
                     value={payloadData.vcard.firstName}
                     onChange={(e) =>
                       updatePayloadData('vcard', { ...payloadData.vcard, firstName: e.target.value })
                     }
-                    placeholder="Alexandre"
+                    placeholder={tCust('vcard.firstNamePlaceholder')}
                     className="h-9 text-xs"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Nom</Label>
+                  <Label className="text-xs">{tCust('vcard.lastName')}</Label>
                   <Input
                     value={payloadData.vcard.lastName}
                     onChange={(e) =>
                       updatePayloadData('vcard', { ...payloadData.vcard, lastName: e.target.value })
                     }
-                    placeholder="Durand"
+                    placeholder={tCust('vcard.lastNamePlaceholder')}
                     className="h-9 text-xs"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Entreprise</Label>
+                  <Label className="text-xs">{tCust('vcard.org')}</Label>
                   <Input
                     value={payloadData.vcard.organization || ''}
                     onChange={(e) =>
                       updatePayloadData('vcard', { ...payloadData.vcard, organization: e.target.value })
                     }
-                    placeholder="Nom de l'entreprise"
+                    placeholder={tCust('vcard.orgPlaceholder')}
                     className="h-9 text-xs"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Poste</Label>
+                  <Label className="text-xs">{tCust('vcard.title')}</Label>
                   <Input
                     value={payloadData.vcard.title || ''}
                     onChange={(e) =>
                       updatePayloadData('vcard', { ...payloadData.vcard, title: e.target.value })
                     }
-                    placeholder="Directeur Artistique"
+                    placeholder={tCust('vcard.titlePlaceholder')}
                     className="h-9 text-xs"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Email</Label>
+                  <Label className="text-xs">{tCust('vcard.email')}</Label>
                   <Input
                     value={payloadData.vcard.email || ''}
                     onChange={(e) =>
                       updatePayloadData('vcard', { ...payloadData.vcard, email: e.target.value })
                     }
-                    placeholder="contact@exemple.com"
+                    placeholder={tCust('vcard.emailPlaceholder')}
                     className="h-9 text-xs"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Téléphone mobile</Label>
+                  <Label className="text-xs">{tCust('vcard.phone')}</Label>
                   <Input
                     value={payloadData.vcard.cellPhone || ''}
                     onChange={(e) =>
                       updatePayloadData('vcard', { ...payloadData.vcard, cellPhone: e.target.value })
                     }
-                    placeholder="+33 6 12 34 56 78"
+                    placeholder={tCust('vcard.phonePlaceholder')}
                     className="h-9 text-xs"
                   />
                 </div>
@@ -259,31 +263,31 @@ export function QRCustomizerForm() {
             {payloadType === 'wifi' && (
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <Label className="text-xs">Nom du réseau (SSID)</Label>
+                  <Label className="text-xs">{tCust('wifi.ssid')}</Label>
                   <Input
                     value={payloadData.wifi.ssid}
                     onChange={(e) =>
                       updatePayloadData('wifi', { ...payloadData.wifi, ssid: e.target.value })
                     }
-                    placeholder="Mon_Reseau_Wifi"
+                    placeholder={tCust('wifi.ssidPlaceholder')}
                     className="h-9 text-xs"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Mot de passe</Label>
+                  <Label className="text-xs">{tCust('wifi.password')}</Label>
                   <Input
                     type="password"
                     value={payloadData.wifi.password || ''}
                     onChange={(e) =>
                       updatePayloadData('wifi', { ...payloadData.wifi, password: e.target.value })
                     }
-                    placeholder="CleSecrete123!"
+                    placeholder={tCust('wifi.passwordPlaceholder')}
                     className="h-9 text-xs"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3 pt-1">
                   <div className="space-y-1">
-                    <Label className="text-xs">Sécurité</Label>
+                    <Label className="text-xs">{tCust('wifi.security')}</Label>
                     <Select
                       value={payloadData.wifi.encryption}
                       onValueChange={(val: 'WPA' | 'WEP' | 'nopass') =>
@@ -296,7 +300,7 @@ export function QRCustomizerForm() {
                       <SelectContent>
                         <SelectItem value="WPA">WPA/WPA2/WPA3</SelectItem>
                         <SelectItem value="WEP">WEP</SelectItem>
-                        <SelectItem value="nopass">Aucun mot de passe</SelectItem>
+                        <SelectItem value="nopass">None</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -309,7 +313,7 @@ export function QRCustomizerForm() {
                       }
                     />
                     <Label htmlFor="hidden-ssid" className="text-xs cursor-pointer">
-                      Réseau masqué
+                      {tCust('wifi.hidden')}
                     </Label>
                   </div>
                 </div>
@@ -318,12 +322,12 @@ export function QRCustomizerForm() {
 
             {payloadType === 'text' && (
               <div className="space-y-1.5">
-                <Label htmlFor="text-input" className="text-xs">Texte à afficher</Label>
+                <Label htmlFor="text-input" className="text-xs">{tCust('text.label')}</Label>
                 <Textarea
                   id="text-input"
                   value={payloadData.text}
                   onChange={(e) => updatePayloadData('text', e.target.value)}
-                  placeholder="Saisissez votre texte..."
+                  placeholder={tCust('text.placeholder')}
                   rows={4}
                   className="text-xs"
                 />
@@ -333,35 +337,35 @@ export function QRCustomizerForm() {
             {payloadType === 'email' && (
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <Label className="text-xs">Destinataire</Label>
+                  <Label className="text-xs">{tCust('email.to')}</Label>
                   <Input
                     value={payloadData.email.to}
                     onChange={(e) =>
                       updatePayloadData('email', { ...payloadData.email, to: e.target.value })
                     }
-                    placeholder="contact@domaine.com"
+                    placeholder={tCust('email.toPlaceholder')}
                     className="h-9 text-xs"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Sujet de l’email</Label>
+                  <Label className="text-xs">{tCust('email.subject')}</Label>
                   <Input
                     value={payloadData.email.subject || ''}
                     onChange={(e) =>
                       updatePayloadData('email', { ...payloadData.email, subject: e.target.value })
                     }
-                    placeholder="Prise de contact"
+                    placeholder={tCust('email.subjectPlaceholder')}
                     className="h-9 text-xs"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Corps du message</Label>
+                  <Label className="text-xs">{tCust('email.body')}</Label>
                   <Textarea
                     value={payloadData.email.body || ''}
                     onChange={(e) =>
                       updatePayloadData('email', { ...payloadData.email, body: e.target.value })
                     }
-                    placeholder="Bonjour..."
+                    placeholder={tCust('email.bodyPlaceholder')}
                     rows={3}
                     className="text-xs"
                   />
@@ -371,12 +375,12 @@ export function QRCustomizerForm() {
 
             {payloadType === 'phone' && (
               <div className="space-y-1.5">
-                <Label htmlFor="phone-input" className="text-xs">Numéro de téléphone</Label>
+                <Label htmlFor="phone-input" className="text-xs">{tCust('phone.label')}</Label>
                 <Input
                   id="phone-input"
                   value={payloadData.phone}
                   onChange={(e) => updatePayloadData('phone', e.target.value)}
-                  placeholder="+33 1 23 45 67 89"
+                  placeholder={tCust('phone.placeholder')}
                   className="h-9 text-xs"
                 />
               </div>
@@ -385,24 +389,24 @@ export function QRCustomizerForm() {
             {payloadType === 'sms' && (
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <Label className="text-xs">Numéro du destinataire</Label>
+                  <Label className="text-xs">{tCust('sms.phone')}</Label>
                   <Input
                     value={payloadData.sms.phone}
                     onChange={(e) =>
                       updatePayloadData('sms', { ...payloadData.sms, phone: e.target.value })
                     }
-                    placeholder="+33 6 12 34 56 78"
+                    placeholder={tCust('sms.phonePlaceholder')}
                     className="h-9 text-xs"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Message prédéfini</Label>
+                  <Label className="text-xs">{tCust('sms.message')}</Label>
                   <Textarea
                     value={payloadData.sms.message || ''}
                     onChange={(e) =>
                       updatePayloadData('sms', { ...payloadData.sms, message: e.target.value })
                     }
-                    placeholder="Votre message SMS..."
+                    placeholder={tCust('sms.messagePlaceholder')}
                     rows={3}
                     className="text-xs"
                   />
@@ -413,7 +417,7 @@ export function QRCustomizerForm() {
             {payloadType === 'crypto' && (
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <Label className="text-xs">Cryptomonnaie</Label>
+                  <Label className="text-xs">{tCust('crypto.currency')}</Label>
                   <Select
                     value={payloadData.crypto.currency}
                     onValueChange={(val: 'bitcoin' | 'ethereum' | 'solana') =>
@@ -431,18 +435,18 @@ export function QRCustomizerForm() {
                   </Select>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Adresse publique de réception</Label>
+                  <Label className="text-xs">{tCust('crypto.address')}</Label>
                   <Input
                     value={payloadData.crypto.address}
                     onChange={(e) =>
                       updatePayloadData('crypto', { ...payloadData.crypto, address: e.target.value })
                     }
-                    placeholder="Adresse wallet"
+                    placeholder={tCust('crypto.addressPlaceholder')}
                     className="h-9 text-xs font-mono"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Montant demandé (optionnel)</Label>
+                  <Label className="text-xs">{tCust('crypto.amount')}</Label>
                   <Input
                     type="number"
                     step="any"
@@ -453,7 +457,7 @@ export function QRCustomizerForm() {
                         amount: e.target.value ? parseFloat(e.target.value) : undefined,
                       })
                     }
-                    placeholder="0.05"
+                    placeholder={tCust('crypto.amountPlaceholder')}
                     className="h-9 text-xs font-mono"
                   />
                 </div>
@@ -484,7 +488,7 @@ export function QRCustomizerForm() {
             {/* Niveau de correction d'erreur */}
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Niveau de tolérance & correction d’erreur
+                {tCust('errorCorrection')}
               </Label>
               <Select
                 value={design.level}
@@ -494,10 +498,10 @@ export function QRCustomizerForm() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="L">Niveau L (7% tolérance - Très aéré)</SelectItem>
-                  <SelectItem value="M">Niveau M (15% tolérance - Équilibré standard)</SelectItem>
-                  <SelectItem value="Q">Niveau Q (25% tolérance - Recommandé avec logo)</SelectItem>
-                  <SelectItem value="H">Niveau H (30% tolérance - Robuste & Sécurisé)</SelectItem>
+                  <SelectItem value="L">{tCust('levels.L')}</SelectItem>
+                  <SelectItem value="M">{tCust('levels.M')}</SelectItem>
+                  <SelectItem value="Q">{tCust('levels.Q')}</SelectItem>
+                  <SelectItem value="H">{tCust('levels.H')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -505,8 +509,8 @@ export function QRCustomizerForm() {
             {/* Marge extérieure */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <Label className="text-muted-foreground">Marge blanche extérieure</Label>
-                <span className="font-mono font-medium">{design.marginSize} modules</span>
+                <Label className="text-muted-foreground">{tCust('margin')}</Label>
+                <span className="font-mono font-medium">{tCust('modules', { count: design.marginSize })}</span>
               </div>
               <Slider
                 min={0}
@@ -550,10 +554,10 @@ export function QRCustomizerForm() {
         <TabsContent value="presets" className="space-y-4 pt-4">
           <div className="space-y-1">
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Styles et ambiances préconfigurés
+              {tCust('presetsTitle')}
             </Label>
             <p className="text-xs text-muted-foreground">
-              Appliquez en un clic des palettes de couleurs et formes harmonieuses créées par nos designers.
+              {tCust('presetsDesc')}
             </p>
           </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { Suspense, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Canvas } from '@react-three/fiber';
 import { ContactShadows, OrbitControls } from '@react-three/drei';
 import { Coffee, CreditCard, Frame, Loader2, RotateCcw, Smartphone } from 'lucide-react';
@@ -20,14 +21,15 @@ interface QRScene3DProps {
   className?: string;
 }
 
-const MOCKUP_OPTIONS: { id: MockupType; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { id: 'phone', label: 'Smartphone', icon: Smartphone },
-  { id: 'poster', label: 'Affiche', icon: Frame },
-  { id: 'mug', label: 'Mug Café', icon: Coffee },
-  { id: 'card', label: 'Carte Visite', icon: CreditCard },
+const MOCKUP_TYPES: { id: MockupType; key: 'phone' | 'poster' | 'mug' | 'card'; icon: React.ComponentType<{ className?: string }> }[] = [
+  { id: 'phone', key: 'phone', icon: Smartphone },
+  { id: 'poster', key: 'poster', icon: Frame },
+  { id: 'mug', key: 'mug', icon: Coffee },
+  { id: 'card', key: 'card', icon: CreditCard },
 ];
 
 export function QRScene3D({ svgElement, design, className = '' }: QRScene3DProps) {
+  const t = useTranslations('studio.scene3d');
   const [activeMockup, setActiveMockup] = useState<MockupType>('phone');
   const [resetKey, setResetKey] = useState(0);
   const texture = useQRTexture(svgElement, design);
@@ -37,7 +39,7 @@ export function QRScene3D({ svgElement, design, className = '' }: QRScene3DProps
       {/* Sélecteur de mockups 3D */}
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-xl border border-border/70">
-          {MOCKUP_OPTIONS.map((opt) => {
+          {MOCKUP_TYPES.map((opt) => {
             const Icon = opt.icon;
             const isSelected = activeMockup === opt.id;
             return (
@@ -52,7 +54,7 @@ export function QRScene3D({ svgElement, design, className = '' }: QRScene3DProps
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">{opt.label}</span>
+                <span className="hidden sm:inline">{t(opt.key)}</span>
               </button>
             );
           })}
@@ -63,10 +65,10 @@ export function QRScene3D({ svgElement, design, className = '' }: QRScene3DProps
           size="sm"
           onClick={() => setResetKey((k) => k + 1)}
           className="text-xs h-8 gap-1.5 border-border/70 cursor-pointer"
-          title="Réinitialiser l’angle de vue"
+          title={t('resetTitle')}
         >
           <RotateCcw className="h-3 w-3" />
-          <span className="hidden sm:inline">Recentrer</span>
+          <span className="hidden sm:inline">{t('recenter')}</span>
         </Button>
       </div>
 

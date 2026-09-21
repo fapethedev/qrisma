@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -20,29 +21,36 @@ interface ScanTimelineChartProps {
 
 export function ScanTimelineChart({
   data,
-  title = 'Évolution des Scans',
-  description = 'Nombre de scans enregistrés par jour',
+  title,
+  description,
 }: ScanTimelineChartProps) {
+  const t = useTranslations('dashboard.charts');
+  const locale = useLocale();
+  const dateLocale = locale === 'en' ? 'en-US' : 'fr-FR';
+
+  const chartTitle = title || t('timelineTitle');
+  const chartDesc = description || t('timelineDesc');
+
   // Remplir les jours vides si peu ou pas de données pour un affichage propre
   const formattedData =
     data && data.length > 0
       ? data.map((d) => ({
           ...d,
-          formattedDate: new Date(d.date).toLocaleDateString('fr-FR', {
+          formattedDate: new Date(d.date).toLocaleDateString(dateLocale, {
             day: '2-digit',
             month: 'short',
           }),
         }))
       : [
-          { date: new Date().toISOString().split('T')[0], formattedDate: "Aujourd'hui", scans: 0 },
+          { date: new Date().toISOString().split('T')[0], formattedDate: t('today'), scans: 0 },
         ];
 
   return (
     <Card className="border-border/60 shadow-sm bg-card/60 backdrop-blur-sm col-span-1 lg:col-span-2">
       <CardHeader>
-        <CardTitle className="text-base font-semibold">{title}</CardTitle>
+        <CardTitle className="text-base font-semibold">{chartTitle}</CardTitle>
         <CardDescription className="text-xs text-muted-foreground">
-          {description}
+          {chartDesc}
         </CardDescription>
       </CardHeader>
       <CardContent className="h-[280px] w-full pt-2">

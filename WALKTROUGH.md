@@ -333,6 +333,215 @@ Améliorer l'ergonomie, la navigabilité au clavier, la compatibilité avec les 
 
 ---
 
+## [2026-09-14] - Automatisation des Migrations Better Auth au Build Vercel (CI/CD)
+
+### 📌 Contexte & Objectif
+Permettre l'initialisation automatique d'une base de données PostgreSQL vierge lors du déploiement sur Vercel sans manipulation manuelle, tout en garantissant une idempotence totale pour les déploiements futurs sans risque de perte de données.
+
+### 🛠️ Actions Réalisées
+1. **Script de Migration Résilient (`scripts/migrate.mjs`)** :
+   - Détection conditionnelle de `DATABASE_URL`.
+   - Exécution de `better-auth migrate --config src/lib/auth/auth.ts --yes`.
+   - Idempotence garantie : vérifie le schéma existant et n'altère aucune table/donnée existante (`No migrations needed`).
+   - Tolérance aux builds sans base de données (développement hors-ligne ou CI).
+   - Arrêt avec code d'erreur (`process.exit(1)`) en cas de problème de connexion DB en production pour éviter de déployer un site avec une base non synchronisée.
+
+2. **Configuration `package.json`** :
+   - Mise à jour du script de build : `"build": "node scripts/migrate.mjs && next build"`.
+   - Ajout d'un raccourci manuel : `"db:migrate": "better-auth migrate --config src/lib/auth/auth.ts --yes"`.
+   - Déplacement de `@better-auth/cli` vers `dependencies` pour garantir sa disponibilité dans tous les environnements de production.
+
+3. **Validation & Tests** :
+   - Validation de l'exécution avec base locale (`Tables synchronisées avec succès`).
+   - Validation du repli gracieux sans `DATABASE_URL` (code 0).
+   - **55/55 tests unitaires passés avec succès** sous Vitest.
+   - Compilation de production Next.js 16 validée (`pnpm build`).
+
+---
+
+## [2026-09-14] - Intégration Complète et Propre de l'Internationalisation (next-intl)
+
+### 📌 Contexte & Objectif
+Parcourir l'ensemble de l'arborescence `src/app` et tous les composants UI connectés pour éliminer toute chaîne textuelle codée en dur, harmoniser l'App Router Next.js 16 avec `next-intl` (mode `localePrefix: 'never'` basé sur le cookie `NEXT_LOCALE`), et assurer une parité stricte à 100% entre les dictionnaires français (`messages/fr.json`) et anglais (`messages/en.json`).
+
+### 🛠️ Actions Réalisées
+1. **Harmonisation et Parité des Dictionnaires (`messages/fr.json` & `messages/en.json`)** :
+   - Préservation stricte de la structure racine à 5 domaines : `auth`, `common`, `dashboard`, `landing`, `studio`.
+   - Ajout des clés complètes pour :
+     - *Studio* : `studio.customizer` (modes dynamiques, types de payload URL/vCard/Wi-Fi/Text/Email/Phone/SMS/Crypto, tolérance/niveaux d'erreur L/M/Q/H, marge extérieure et thèmes prédéfinis), `studio.shapes`, `studio.finder`, `studio.colors`, `studio.logo`, `studio.scene3d`, `studio.saveDialog.defaultTitle`.
+     - *Auth & Sécurité* : `auth.twoFactorSetup` (dialogue modal 2FA, codes de secours, validation TOTP), `auth.twoFactor.invalidCode`.
+     - *Landing & Navigation* : `common.showcase`, `landing.sandboxUrlPlaceholder`.
+   - **Parité stricte à 100%** validée par le test unitaire `test/unit/i18n/i18n.test.ts` (mêmes clés de premier niveau et ensemble identique de feuilles arborescentes).
+
+2. **Refactorisation de l'App Router (`src/app/`)** :
+   - `src/app/layout.tsx` : Fourniture globale de `<NextIntlClientProvider>` avec `locale`, `messages`, et configuration explicite de `timeZone: 'Europe/Paris'` pour éliminer tout avertissement `ENVIRONMENT_FALLBACK`.
+   - `src/app/page.tsx` : Génération des métadonnées SEO localisées via `getTranslations('landing')`.
+   - `src/app/studio/page.tsx` : Métadonnées SEO dynamiques via `getTranslations('studio')`.
+   - `src/app/dashboard/layout.tsx` : Métadonnées du tableau de bord via `getTranslations('dashboard')`.
+   - `src/app/dashboard/page.tsx` : Vue unifiée du dashboard avec traductions des titres, recherche et métriques.
+   - Routes d'authentification (`src/app/login/`, `src/app/register/`, `src/app/forgot-password/`, `src/app/2fa/`) : formulaires, placeholders, libellés et notifications toasts 100% localisés.
+
+3. **Refactorisation des Composants Studio & UI** :
+   - `src/components/qr/qr-studio-view.tsx` : Titre par défaut localisé, composant `Studio3DLoading` avec traduction `studio.loading3d`, bouton d'export via `common.export`.
+   - `src/components/qr/qr-customizer-form.tsx` : Remplacement de toutes les chaînes résiduelles (niveaux d'erreur, marges en modules, en-tête des presets) par les clés `studio.customizer`.
+   - `src/components/auth/two-factor-setup-dialog.tsx` : Remplacement de l'ensemble des toasts et textes de l'assistant de configuration TOTP par `useTranslations('auth.twoFactorSetup')`.
+
+4. **Validation Qualité, Tests & Production** :
+   - **55/55 tests unitaires réussis avec succès** sur 12 suites de tests sous Vitest (`pnpm test`).
+   - Élimination des avertissements `ENVIRONMENT_FALLBACK` dans les tests d'accessibilité (`test/unit/a11y/accessibility.test.tsx`).
+   - Vérification des types TypeScript sans aucune erreur (`pnpm run typecheck` / `tsc --noEmit`).
+   - Compilation de production Next.js 16 validée avec succès (`pnpm build`), avec 0 avertissement `MISSING_MESSAGE` et génération complète des 12 routes statiques et dynamiques.
+
+---
+
+## [2026-09-15] - Séparation des Routes par Route Groups Next.js 16 ((marketing), (auth), (admin))
+
+### 📌 Contexte & Objectif
+Réorganiser l'arborescence des routes Next.js avec des Route Groups (`(...)`) pour isoler les domaines de l'application :
+- `(marketing)` pour les pages vitrines publiques (`/`).
+- `(auth)` pour les flux d'authentification et de sécurité (`/login`, `/register`, `/forgot-password`, `/2fa`).
+- `(admin)` pour les espaces applicatifs connectés, en intégrant le studio de création sous le dashboard (`/dashboard` et `/dashboard/studio`).
+- Équiper **chaque groupe de routes** de sa batterie complète de pages d'état conventionnelles Next.js 16 : `loading.tsx`, `error.tsx`, `not-found.tsx`, `forbidden.tsx` (403), et `unauthorized.tsx` (401).
+
+### 🛠️ Actions Réalisées
+1. **Architecture des Route Groups (`src/app/`)** :
+   - **Groupe `(marketing)`** :
+     - Déplacement de `src/app/page.tsx` vers `src/app/(marketing)/page.tsx`.
+     - Création de `loading.tsx` (skeleton de landing page), `error.tsx` (boundary d'erreur avec bouton réessayer), `not-found.tsx` (404 vitrine), `forbidden.tsx` (403 vitrine) et `unauthorized.tsx` (401 avec accès direct à la connexion).
+   - **Groupe `(auth)`** :
+     - Déplacement de `/login`, `/register`, `/forgot-password`, `/2fa` dans `src/app/(auth)/`.
+     - Création de `loading.tsx` (skeleton de formulaire auth), `error.tsx`, `not-found.tsx`, `forbidden.tsx` et `unauthorized.tsx`.
+   - **Groupe `(admin)`** :
+     - Déplacement de `dashboard/` dans `src/app/(admin)/dashboard/`.
+     - Intégration du Studio dans le Dashboard : `src/app/(admin)/dashboard/studio/page.tsx`.
+     - Création de `loading.tsx` (skeleton KPI + graphiques + table), `error.tsx`, `not-found.tsx`, `forbidden.tsx` (403 accès admin refusé) et `unauthorized.tsx` (401 session expirée).
+
+2. **Routage, Redirections & Liens d'Application** :
+   - Ajout d'une règle de redirection automatique dans `next.config.ts` : `/studio` → `/dashboard/studio` (307).
+   - Mise à jour des liens internes vers `/dashboard/studio` dans :
+     - `LandingNavbar`, `HeroSection`, `PricingSection`, `LandingFooter`.
+     - `DashboardHeader`, `QRCodeTable`.
+     - Pages d'authentification (`login`, `register`, `2fa`) et studio (`QRStudioView`).
+
+3. **Internationalisation & Dictionnaires** :
+   - Ajout dans `messages/fr.json` et `messages/en.json` (section `common`) des clés d'état : `notFoundTitle`, `notFoundDesc`, `errorTitle`, `errorDesc`, `forbiddenTitle`, `forbiddenDesc`, `unauthorizedTitle`, `unauthorizedDesc`, `backToHome`, `tryAgain`, `goToLogin`.
+   - Parité stricte 100% validée.
+
+4. **Validation Qualité & Compilation** :
+   - **55/55 tests unitaires réussis** sur 12 suites de tests sous Vitest (`pnpm test`).
+   - Vérification des types sans aucune erreur (`pnpm run typecheck` / `tsc --noEmit`).
+   - Compilation de production Next.js 16 validée avec succès (`pnpm build`).
+
+---
+
+## [2026-09-15] - Refonte Typographique Complète (Quantico, DynaPuff, Source Code Pro) dans `src/app/font.ts`
+
+### 📌 Contexte & Objectif
+Remplacer intégralement les polices historiques par une triade typographique cohérente, distinctive et hautement sémantique :
+1. **Quantico** (Google Fonts) : Typographie géométrique, cybernétique et technologique, aux angles biseautés distinctifs. Rôle : En-têtes `h1-h6`, identité de marque (`QRCraft`), métriques numériques KPI haute visibilité, prix des offres SaaS, titres de modales et de cartes.
+2. **DynaPuff** (Google Fonts) : Typographie display ludique, organique et "bubbly". Rôle : Badges de mise en avant, pastilles marketing (`bentoBadge`, `pricingBadge`, `showcaseBadge`, `faqBadge`), réductions promotionnelles (`-25% de remise`), label "Le Plus Populaire", badges "Studio" et types de QR dynamiques/statiques.
+3. **Source Code Pro** (Google Fonts) : Typographie monospace technique, épurée et ultra-lisible. Rôle : Corps de texte technique, formulaires d'authentification (champs email, mot de passe, slots OTP 2FA), compteurs de scans (`tabular-nums`), URLs, slugs de redirection (`/s/[slug]`) et blocs de code.
+
+Le fichier de configuration devait être strictement localisé dans `src/app/font.ts`.
+
+### 🛠️ Actions Réalisées
+1. **Création de `src/app/font.ts`** :
+   - Export de `fontQuantico` via `Quantico` de `next/font/google` avec `weight: ['400', '700']`, `subsets: ['latin']`, variable `--font-quantico`, `display: 'swap'`.
+   - Export de `fontDynaPuff` via `DynaPuff` de `next/font/google` avec `subsets: ['latin']`, variable `--font-dynapuff`, `display: 'swap'`.
+   - Export de `fontSourceCodePro` via `Source_Code_Pro` de `next/font/google` avec `subsets: ['latin']`, variable `--font-source-code-pro`, `display: 'swap'`.
+
+2. **Raccordement dans `src/app/layout.tsx`** :
+   - Importation directe depuis `./font`.
+   - Injection des variables CSS (`fontQuantico.variable`, `fontDynaPuff.variable`, `fontSourceCodePro.variable`) et de la classe `font-sans` sur `<html>`.
+   - Suppression définitive de tous les imports de polices héritées (`Geist`, `Geist_Mono`, `IBM_Plex_Sans`, `EB_Garamond`).
+
+3. **Mappage CSS Moderne Tailwind CSS v4 (`src/app/globals.css`)** :
+   - Déclaration des tokens de thèmes dans `@theme inline` :
+     - `--font-sans: var(--font-source-code-pro), monospace;`
+     - `--font-heading: var(--font-quantico), sans-serif;`
+     - `--font-mono: var(--font-source-code-pro), monospace;`
+     - `--font-accent: var(--font-dynapuff), cursive, sans-serif;`
+   - Application des règles de base `@layer base` : `body` et `html` en `font-sans`, titres `h1-h6` en `font-heading tracking-tight`, code/kbd en `font-mono`.
+
+4. **Intégration Sémantique Fois-par-Fois dans les Composants UI** :
+   - **Composants Marketing & Landing** :
+     - `src/components/landing/navbar.tsx` : Logo `QRCraft` en `font-heading font-extrabold tracking-wider`, pastille `SaaS` en `font-accent font-bold`.
+     - `src/components/landing/hero-section.tsx` : Badge d'introduction et pastille live en `font-accent font-bold`, titre principal et titre du bac à sable en `font-heading font-extrabold`.
+     - `src/components/landing/bento-features.tsx` : Badge de section en `font-accent`, étiquettes de formats vectoriels (SVG, PNG 4K, PDF A4) en `font-heading`, statistiques chiffrées en `font-heading font-extrabold tabular-nums`, badge 3D en `font-accent font-bold`.
+     - `src/components/landing/pricing-section.tsx` : Badge tarifaire, remise `-25%` et étiquette "Le Plus Populaire" en `font-accent font-bold`, prix et titres de plans en `font-heading font-extrabold tabular-nums`.
+     - `src/components/landing/parallax-showcase.tsx` : Badge de galerie en `font-accent`, titres et étiquettes de styles (Cyberpunk, Modern, Gold) en `font-heading font-bold`.
+     - `src/components/landing/faq-section.tsx` : Badge FAQ en `font-accent font-bold`, questions en `font-heading font-semibold`.
+     - `src/components/landing/footer.tsx` : Logo `QRCraft` et en-têtes de colonnes en `font-heading`.
+   - **Composants Dashboard & Administration** :
+     - `src/components/dashboard/dashboard-header.tsx` : Marque `QRCraft` en `font-heading font-extrabold`, pastille d'organisation active en `font-accent font-semibold`, barre de recherche en `font-mono`.
+     - `src/components/dashboard/overview-stats-cards.tsx` : Titres de cartes et valeurs numériques KPI en `font-heading font-extrabold tabular-nums`.
+     - `src/components/dashboard/qr-code-table.tsx` : Badges dynamiques/statiques en `font-accent font-semibold`, compteurs de scans en `font-heading font-bold tabular-nums`, slugs `/s/...` en `font-mono`.
+   - **Studio de Création** :
+     - `src/components/qr/qr-studio-view.tsx` : Logo `QRCraft` en `font-heading`, pastille `Studio` en `font-accent font-bold`, titre `h1` en `font-heading font-extrabold`.
+   - **Flux d'Authentification & Sécurité (`src/app/(auth)/`)** :
+     - `login`, `register`, `forgot-password`, `2fa` : En-têtes et logos en `font-heading font-extrabold`, boutons de soumission en `font-heading font-bold`, champs email et mot de passe en `font-mono`, slots de code OTP 2FA en `font-mono font-bold`.
+
+5. **Validation Qualité & Build de Production** :
+   - **55/55 tests unitaires réussis** sur 12 suites sous Vitest (`pnpm test`).
+   - **0 erreur TypeScript** (`tsc --noEmit`).
+   - Compilation de production Next.js 16 validée avec succès (`pnpm build`).
+
+---
+
+## [2026-09-15] - Audit Exhaustif, Correction des 5 Bugs Critiques, Quotas Freemium, Page Paramètres & Duplication QR
+
+### 📌 Contexte & Objectif
+À la suite d'un audit forensique complet confrontant `CODING_AGENT_MASTER_PROMPT.md`, `AGENTS.md` et le codebase effectif, remédiation ciblée des 5 bugs critiques et des lacunes fonctionnelles majeures identifiées dans `audit_and_gap_analysis_plan.md` :
+- Boucle infinie de redirection des QR codes dynamiques.
+- Édition de QR code inopérante depuis le tableau de bord (`?edit=...` ignoré).
+- Absence d'interface pour le profil utilisateur et la configuration 2FA TOTP (`TwoFactorSetupDialog` orphelin).
+- Quotas Freemium non vérifiés (créations illimitées sur forfait gratuit).
+- URL de redirection codée en dur `https://qrcraft.dev` dans le store.
+- Fonctionnalité de duplication/clonage manquante.
+- Non-déclenchement des emails transactionnels (Bienvenue et Jalons de scans).
+
+### 🛠️ Actions Réalisées
+
+1. **Éradication de la Boucle de Redirection & Résolution Dynamique de l'Hôte (`qr-studio-store.ts`)** :
+   - Découplage strict entre la valeur saisie par l'utilisateur (`realDestinationUrl`) et la valeur encodée dans le SVG (`encodedValue`).
+   - Si le QR code est dynamique, `encodedValue` devient `${origin}/s/${slug}` tout en conservant intacte l'URL de destination finale, empêchant toute redirection circulaire vers le shortlink lui-même.
+   - Remplacement de l'URL en dur `https://qrcraft.dev` par la fonction utilitaire `getAppOrigin()`, détectant automatiquement `window.location.origin` côté navigateur ou `NEXT_PUBLIC_APP_URL` côté serveur.
+
+2. **Studio d'Édition Réactif & Mode Modification (`qr-studio-view.tsx` & `qr-studio-store.ts`)** :
+   - Intégration de `useSearchParams().get('edit')` dans `QRStudioView` (enveloppé sous `<React.Suspense>`).
+   - Récupération des métadonnées du QR code via `GET /api/qr/[id]` et hydratation complète de l'état Zustand (`loadExistingQRCode`).
+   - Affichage d'un bandeau d'alerte visuel informant l'utilisateur du mode édition.
+   - Bascule automatique de la sauvegarde vers une requête HTTP `PUT /api/qr/[editingId]`.
+
+3. **Page Paramètres & Profil Utilisateur (`/dashboard/settings`)** :
+   - Création de `src/app/(admin)/dashboard/settings/page.tsx` articulée autour de 3 onglets shadcn :
+     - **Profil** : Modification du nom (`authClient.updateUser`) et affichage sécurisé de l'adresse email.
+     - **Sécurité** : Modification du mot de passe (`authClient.changePassword`), statut 2FA et dialogue interactif d'appairage TOTP `TwoFactorSetupDialog`.
+     - **Abonnement** : Badge de plan (`Free` / `Pro`), jauge de progression d'utilisation des QR codes (`X / 5` pour le plan Gratuit via `Progress`), et incitation au surclassement Pro.
+   - Bouton d'accès direct avec icône `Settings` dans la barre supérieure `DashboardHeader`.
+   - Internationalisation à parité 100% FR / EN (`messages/fr.json` et `messages/en.json`).
+
+4. **Contrôle et Application des Quotas Freemium (`src/lib/auth/permissions.ts` & `src/app/api/qr/route.ts`)** :
+   - Définition centralisée de `PLAN_LIMITS` : plan Free limité à 5 QR codes, résolutions standard (512px, 1024px) ; plan Pro avec QR illimités, exports vectoriels/4K et logos personnalisés sans filigrane.
+   - Validation stricte dans le gestionnaire `POST /api/qr` : rejet avec code HTTP 403 et message explicatif si le quota de 5 QR codes est atteint par un compte gratuit.
+
+5. **Duplication de QR Code & Filtres du Tableau de Bord (`src/app/api/qr/[id]/clone/route.ts` & `dashboard/page.tsx`)** :
+   - Route de clonage `POST /api/qr/[id]/clone` : vérification d'authentification, contrôle des quotas Freemium, génération d'un slug aléatoire unique et création d'une copie sous le titre `${titre} (Copie)`.
+   - Action "Dupliquer" ajoutée au menu dropdown de chaque QR code dans `QRCodeTable`.
+   - Filtres instantanés par onglets rapides (Tous / Dynamiques / Statiques) avec compteurs en temps réel dans l'en-tête du tableau de bord.
+
+6. **Déclenchement Automatisé des Emails Transactionnels (`auth.ts` & `/s/[slug]/route.ts`)** :
+   - Configuration du hook Better Auth `databaseHooks.user.create.after` pour déclencher systématiquement `sendWelcomeNotification` lors de la création d'un utilisateur.
+   - Ajout dans `src/app/s/[slug]/route.ts` d'une tâche d'arrière-plan vérifiant les seuils de scans clés (10, 50, 100, 500, 1000 scans) et déclenchant `sendScanMilestoneNotification`.
+   - Ajout de la méthode `qrRepository.findUserById` pour la résolution optimisée de l'email du propriétaire.
+
+7. **Validation Qualité & Assurance Régression** :
+   - **57/57 tests unitaires réussis** sur 12 suites Vitest (`pnpm test`).
+   - **0 erreur TypeScript** (`npx tsc --noEmit`).
+   - **Compilation de production Next.js 16 validée sans avertissement** (`pnpm run build`).
+
+---
+
 ## 🔒 Directives pour les Futurs Commits
 Chaque agent intervenant sur le dépôt doit :
 1. Renseigner l'entrée correspondante dans ce fichier `WALKTROUGH.md`.

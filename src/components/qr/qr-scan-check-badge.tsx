@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { AlertTriangle, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { ErrorCorrectionLevel, ImageSettings } from '@/lib/qr/types';
@@ -18,14 +19,16 @@ export function QRScanCheckBadge({
   imageSettings,
   dataLength,
 }: QRScanCheckBadgeProps) {
+  const t = useTranslations('studio.scanBadge');
+
   // Évaluation de la robustesse de scannabilité
   const getScannabilityReport = () => {
     // Si logo présent mais correction d'erreur faible ('L' ou 'M')
     if (hasLogo && (level === 'L' || level === 'M')) {
       return {
         variant: 'warning' as const,
-        label: 'Attention : Scannabilité réduite',
-        description: 'Un logo requiert une correction d’erreur Q (25%) ou H (30%).',
+        label: t('warningLabel'),
+        description: t('warningDesc'),
         icon: AlertTriangle,
       };
     }
@@ -34,8 +37,8 @@ export function QRScanCheckBadge({
     if (dataLength > 500) {
       return {
         variant: 'info' as const,
-        label: 'Forte densité de données',
-        description: 'Densité élevée : préférez un affichage ou une impression large.',
+        label: t('densityLabel'),
+        description: t('densityDesc'),
         icon: ShieldCheck,
       };
     }
@@ -43,8 +46,8 @@ export function QRScanCheckBadge({
     if (level === 'H') {
       return {
         variant: 'success' as const,
-        label: 'Scannabilité Optimale (30% tolérance)',
-        description: 'Lisible même si 30% de la surface est endommagée ou masquée.',
+        label: t('optimalLabel'),
+        description: t('optimalDesc'),
         icon: CheckCircle2,
       };
     }
@@ -52,16 +55,16 @@ export function QRScanCheckBadge({
     if (level === 'Q') {
       return {
         variant: 'success' as const,
-        label: 'Haute Fiabilité (25% tolérance)',
-        description: 'Idéal avec logo ou personnalisation graphique poussée.',
+        label: t('highLabel'),
+        description: t('highDesc'),
         icon: CheckCircle2,
       };
     }
 
     return {
       variant: 'default' as const,
-      label: 'Scannabilité Standard (15% tolérance)',
-      description: 'Recommandé pour les liens web et textes courts.',
+      label: t('standardLabel'),
+      description: t('standardDesc'),
       icon: CheckCircle2,
     };
   };

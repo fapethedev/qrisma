@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useSession } from '@/lib/auth/auth-client';
 import { DashboardHeader } from '@/components/dashboard/dashboard-header';
 import { OverviewStatsCards } from '@/components/dashboard/overview-stats-cards';
@@ -15,6 +16,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { QrCode, BarChart3, History, Globe } from 'lucide-react';
 
 export default function DashboardPage() {
+  const t = useTranslations('dashboard');
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
@@ -37,6 +39,7 @@ export default function DashboardPage() {
     countries: [],
   });
 
+  const [filterType, setFilterType] = useState<'all' | 'dynamic' | 'static'>('all');
   const [selectedQRForAnalytics, setSelectedQRForAnalytics] = useState<QRCodeItem | null>(null);
 
   // Redirection si non connecté
@@ -90,6 +93,16 @@ export default function DashboardPage() {
       .then((j) => j.data && setOverview(j.data));
   };
 
+  // Duplication d'un QR code
+  const handleDuplicateQRCode = async (id: string) => {
+    const res = await fetch(`/api/qr/${id}/clone`, { method: 'POST' });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Erreur lors de la duplication');
+    }
+    await loadDashboardData();
+  };
+
   if (isPending || (!session?.user && loading)) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
@@ -107,8 +120,10 @@ export default function DashboardPage() {
     );
   }
 
-  // Filtrer les QR codes par la recherche
+  // Filtrer les QR codes par type et recherche
   const filteredQRCodes = qrCodes.filter((qr) => {
+    if (filterType === 'dynamic' && !qr.isDynamic) return false;
+    if (filterType === 'static' && qr.isDynamic) return false;
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -142,25 +157,61 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <ScanTimelineChart
             data={overview.timeline || []}
-            title="Activité Globale des Scans (30 derniers jours)"
-            description="Trafic total redirigé via vos liens courts"
+            title={t('charts.timelineTitle')}
+            description={t('charts.timelineDesc')}
           />
 
           <DeviceBreakdownChart
             countries={overview.countries || []}
-            title="Top Pays d'Origine"
-            description="Répartition géographique des scans"
+            title={t('charts.geoTitle')}
+            description={t('charts.geoDesc')}
           />
         </div>
 
         {/* Onglets de Gestion */}
         <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold tracking-tight">Mes QR Codes</h2>
+              <h2 className="text-xl font-bold tracking-tight">{t('table.title')}</h2>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Gérez vos liens dynamiques, modifiez les destinations et inspectez vos performances.
+                {t('table.subtitle')}
               </p>
+            </div>
+
+            <div className="flex items-center gap-1.5 p-1 bg-secondary/50 rounded-lg border border-border/60 text-xs self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setFilterType('all')}
+                className={`px-3 py-1 rounded-md transition-all font-medium ${
+                  filterType === 'all'
+                    ? 'bg-background text-foreground shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {t('filter.all')} ({qrCodes.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterType('dynamic')}
+                className={`px-3 py-1 rounded-md transition-all font-medium ${
+                  filterType === 'dynamic'
+                    ? 'bg-background text-foreground shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {t('filter.dynamic')} ({qrCodes.filter((q) => q.isDynamic).length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterType('static')}
+                className={`px-3 py-1 rounded-md transition-all font-medium ${
+                  filterType === 'static'
+                    ? 'bg-background text-foreground shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {t('filter.static')} ({qrCodes.filter((q) => !q.isDynamic).length})
+              </button>
             </div>
           </div>
 
@@ -168,6 +219,7 @@ export default function DashboardPage() {
             items={filteredQRCodes}
             onSelectAnalytics={(qr) => setSelectedQRForAnalytics(qr)}
             onDelete={handleDeleteQRCode}
+            onDuplicate={handleDuplicateQRCode}
           />
         </div>
       </main>

@@ -2,9 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, QrCode, Sparkles, Building2, LogOut } from 'lucide-react';
+import { Plus, Search, QrCode, Sparkles, Building2, LogOut, Settings } from 'lucide-react';
 import { signOut } from '@/lib/auth/auth-client';
 import { ThemeToggle } from '@/components/shared/theme-toggle';
 import { LanguageToggle } from '@/components/language-toggle';
@@ -24,6 +25,8 @@ export function DashboardHeader({
   userName,
   activeOrgName,
 }: DashboardHeaderProps) {
+  const t = useTranslations('dashboard');
+
   return (
     <header className="border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
@@ -33,13 +36,13 @@ export function DashboardHeader({
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
               <QrCode className="w-5 h-5" />
             </div>
-            <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            <span className="font-heading font-extrabold text-lg tracking-wider bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               QRCraft
             </span>
           </Link>
 
           {activeOrgName && (
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/80 text-xs font-medium text-muted-foreground border border-border">
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/80 text-xs font-accent font-semibold text-muted-foreground border border-border">
               <Building2 className="w-3.5 h-3.5" />
               <span>{activeOrgName}</span>
             </div>
@@ -52,11 +55,11 @@ export function DashboardHeader({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
               type="text"
-              placeholder="Rechercher par titre, destination, slug…"
-              aria-label="Rechercher des QR codes"
+              placeholder={t('searchPlaceholder')}
+              aria-label={t('searchAria')}
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-9 bg-secondary/40 border-border/60 focus:bg-background h-9 rounded-lg text-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+              className="pl-9 bg-secondary/40 border-border/60 focus:bg-background h-9 rounded-lg text-xs font-mono focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
             />
           </div>
         </div>
@@ -66,10 +69,10 @@ export function DashboardHeader({
           <LanguageToggle />
           <ThemeToggle />
 
-          <Link href="/studio">
+          <Link href="/dashboard/studio">
             <Button size="sm" className="gap-2 shadow-sm font-medium">
               <Plus className="w-4 h-4" aria-hidden="true" />
-              <span className="hidden sm:inline">Créer un QR</span>
+              <span className="hidden sm:inline">{t('createQR')}</span>
             </Button>
           </Link>
 
@@ -84,6 +87,18 @@ export function DashboardHeader({
             </span>
           </div>
 
+          <Link href="/dashboard/settings">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              title={t('settings')}
+              aria-label={t('settings')}
+              className="text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
+            >
+              <Settings className="w-4 h-4" aria-hidden="true" />
+            </Button>
+          </Link>
+
           <Button
             variant="ghost"
             size="icon-sm"
@@ -96,8 +111,8 @@ export function DashboardHeader({
                 },
               })
             }
-            title="Se déconnecter"
-            aria-label="Se déconnecter"
+            title={t('logout')}
+            aria-label={t('logout')}
             className="text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden"
           >
             <LogOut className="w-4 h-4" aria-hidden="true" />

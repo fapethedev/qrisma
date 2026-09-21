@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { ArrowRight, Loader2, Lock, Mail, QrCode } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,9 @@ import { signIn } from '@/lib/auth/auth-client';
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useTranslations('auth.login');
+  const tCommon = useTranslations('common');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,7 +31,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      toast.error('Veuillez remplir tous les champs obligatoires.');
+      toast.error(tCommon('requiredFields'));
       return;
     }
 
@@ -36,21 +40,21 @@ export default function LoginPage() {
       const result = await signIn.email({
         email,
         password,
-        callbackURL: `${window.location.origin}/studio`,
+        callbackURL: `${window.location.origin}/dashboard/studio`,
       });
 
       if (result.error) {
-        toast.error('Échec de la connexion', {
-          description: result.error.message || 'Identifiants invalides.',
+        toast.error(t('errorToast'), {
+          description: result.error.message || t('invalidCredentials'),
         });
       } else {
-        toast.success('Connexion réussie !', {
-          description: 'Redirection vers votre studio...',
+        toast.success(t('successToast'), {
+          description: t('redirecting'),
         });
-        router.push('/studio');
+        router.push('/dashboard/studio');
       }
     } catch {
-      toast.error('Erreur inattendue lors de la connexion.');
+      toast.error(tCommon('errorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -64,37 +68,37 @@ export default function LoginPage() {
             <div className="size-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
               <QrCode className="size-5" />
             </div>
-            <span className="font-bold text-xl tracking-tight">QRCraft</span>
+            <span className="font-heading font-extrabold text-xl tracking-wider">QRCraft</span>
           </Link>
           <p className="text-xs text-muted-foreground">
-            Accédez à vos QR codes personnalisés et vos statistiques
+            {t('subtitle')}
           </p>
         </div>
 
         <Card className="rounded-2xl border-border/80 shadow-lg">
           <form onSubmit={handleSubmit}>
             <CardHeader className="flex flex-col gap-1.5">
-              <CardTitle className="text-xl font-bold">Connexion</CardTitle>
+              <CardTitle className="text-xl font-heading font-bold">{t('title')}</CardTitle>
               <CardDescription className="text-xs">
-                Saisissez votre email et mot de passe pour vous connecter
+                {t('formSubtitle')}
               </CardDescription>
             </CardHeader>
 
             <CardContent className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="email" className="text-xs font-medium">
-                  Adresse email
+                  {t('emailLabel')}
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
                   <Input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="alexandre@exemple.com"
+                    placeholder={t('emailPlaceholder')}
                     required
-                    className="pl-9 text-xs h-10"
+                    className="pl-9 text-xs font-mono h-10"
                   />
                 </div>
               </div>
@@ -102,17 +106,17 @@ export default function LoginPage() {
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <Label htmlFor="password" className="font-medium">
-                    Mot de passe
+                    {t('passwordLabel')}
                   </Label>
                   <Link
                     href="/forgot-password"
                     className="text-primary hover:underline text-[11px]"
                   >
-                    Mot de passe oublié ?
+                    {t('forgotPassword')}
                   </Link>
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
                   <Input
                     id="password"
                     type="password"
@@ -120,7 +124,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     required
-                    className="pl-9 text-xs h-10"
+                    className="pl-9 text-xs font-mono h-10"
                   />
                 </div>
               </div>
@@ -130,25 +134,25 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full text-xs font-semibold h-10 gap-2 cursor-pointer"
+                className="w-full text-xs font-heading font-bold h-10 gap-2 cursor-pointer"
               >
                 {loading ? (
                   <>
-                    <Loader2 className="size-4 animate-spin" />
-                    <span>Connexion en cours...</span>
+                    <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                    <span>{t('submitting')}</span>
                   </>
                 ) : (
                   <>
-                    <span>Se connecter</span>
-                    <ArrowRight className="size-3.5" />
+                    <span>{t('submitButton')}</span>
+                    <ArrowRight className="size-3.5" aria-hidden="true" />
                   </>
                 )}
               </Button>
 
               <p className="text-xs text-center text-muted-foreground">
-                Pas encore de compte ?{' '}
+                {t('noAccount')}{' '}
                 <Link href="/register" className="text-primary font-semibold hover:underline">
-                  Créer un compte
+                  {t('createAccount')}
                 </Link>
               </p>
             </CardFooter>

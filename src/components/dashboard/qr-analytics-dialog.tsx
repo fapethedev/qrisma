@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -26,6 +27,10 @@ export function QRCodeAnalyticsDialog({
   open,
   onOpenChange,
 }: QRAnalyticsDialogProps) {
+  const t = useTranslations('dashboard');
+  const locale = useLocale();
+  const numLocale = locale === 'en' ? 'en-US' : 'fr-FR';
+
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<{
     totalScans: number;
@@ -73,15 +78,15 @@ export function QRCodeAnalyticsDialog({
             </div>
             <div>
               <DialogTitle className="text-lg font-bold flex items-center gap-2">
-                <span>{qr.title || 'Mon QR Code'}</span>
+                <span>{qr.title || t('table.noTitle')}</span>
                 {qr.isDynamic && (
                   <Badge variant="default" className="text-[10px] bg-indigo-500/15 text-indigo-500">
-                    Dynamique
+                    {t('table.dynamic')}
                   </Badge>
                 )}
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
-                <span>Redirige vers :</span>
+                <span>{t('dialog.redirectsTo')}</span>
                 <a
                   href={qr.destinationUrl}
                   target="_blank"
@@ -98,7 +103,7 @@ export function QRCodeAnalyticsDialog({
 
         {loading ? (
           <div className="py-16 text-center text-sm text-muted-foreground animate-pulse">
-            Chargement des métriques analytiques...
+            {t('dialog.loadingMetrics')}
           </div>
         ) : (
           <div className="flex flex-col gap-5 pt-3">
@@ -106,16 +111,16 @@ export function QRCodeAnalyticsDialog({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="p-3 rounded-xl bg-secondary/50 border border-border/60">
                 <span className="text-[11px] text-muted-foreground uppercase font-medium flex items-center gap-1">
-                  <ScanLine className="w-3 h-3" /> Scans Totaux
+                  <ScanLine className="w-3 h-3" /> {t('dialog.totalScans')}
                 </span>
                 <p className="text-xl font-bold mt-1 text-foreground">
-                  {(data?.totalScans ?? qr.scanCount).toLocaleString('fr-FR')}
+                  {(data?.totalScans ?? qr.scanCount).toLocaleString(numLocale)}
                 </p>
               </div>
 
               <div className="p-3 rounded-xl bg-secondary/50 border border-border/60">
                 <span className="text-[11px] text-muted-foreground uppercase font-medium flex items-center gap-1">
-                  <Smartphone className="w-3 h-3" /> Top Appareil
+                  <Smartphone className="w-3 h-3" /> {t('dialog.topDevice')}
                 </span>
                 <p className="text-xl font-bold mt-1 text-foreground">
                   {data?.devices?.[0]?.deviceType || 'Mobile'}
@@ -124,7 +129,7 @@ export function QRCodeAnalyticsDialog({
 
               <div className="p-3 rounded-xl bg-secondary/50 border border-border/60">
                 <span className="text-[11px] text-muted-foreground uppercase font-medium flex items-center gap-1">
-                  <Laptop className="w-3 h-3" /> Top OS
+                  <Laptop className="w-3 h-3" /> {t('dialog.topOs')}
                 </span>
                 <p className="text-xl font-bold mt-1 text-foreground">
                   {data?.os?.[0]?.os || 'iOS / Android'}
@@ -133,7 +138,7 @@ export function QRCodeAnalyticsDialog({
 
               <div className="p-3 rounded-xl bg-secondary/50 border border-border/60">
                 <span className="text-[11px] text-muted-foreground uppercase font-medium flex items-center gap-1">
-                  <Globe className="w-3 h-3" /> Top Pays
+                  <Globe className="w-3 h-3" /> {t('dialog.topCountry')}
                 </span>
                 <p className="text-xl font-bold mt-1 text-foreground">
                   {data?.countries?.[0]?.country || 'France'}
@@ -144,15 +149,15 @@ export function QRCodeAnalyticsDialog({
             {/* Graphique temporel */}
             <ScanTimelineChart
               data={data?.timeline || []}
-              title="Scans sur 30 jours"
-              description="Activité journalière enregistrée"
+              title={t('dialog.timeline30d')}
+              description={t('dialog.timelineDesc')}
             />
 
             {/* Répartition par terminal */}
             <DeviceBreakdownChart
               devices={data?.devices || []}
-              title="Répartition par Type de Terminal"
-              description="Origine des scans selon le matériel de l'utilisateur"
+              title={t('dialog.deviceBreakdown')}
+              description={t('dialog.deviceDesc')}
             />
           </div>
         )}

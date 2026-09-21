@@ -2,7 +2,11 @@ import { betterAuth } from 'better-auth';
 import { twoFactor, organization } from 'better-auth/plugins';
 import { qrPlugin } from './plugins/qr-plugin';
 import { Pool } from 'pg';
-import { sendPasswordResetNotification, sendVerificationNotification } from '../email/resend';
+import {
+  sendPasswordResetNotification,
+  sendVerificationNotification,
+  sendWelcomeNotification,
+} from '../email/resend';
 
 // Utilise PostgreSQL si DATABASE_URL est fourni, sinon mémoire pour le build/dev
 const getDatabase = () => {
@@ -59,6 +63,25 @@ export const auth = betterAuth({
         type: 'number',
         defaultValue: 0,
         required: false,
+      },
+    },
+  },
+
+  // Hooks de base de données pour les notifications transactionnelles
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          try {
+            await sendWelcomeNotification({
+              id: user.id,
+              name: user.name,
+              email: user.email,
+            });
+          } catch (e) {
+            console.error('[Welcome Email Error]', e);
+          }
+        },
       },
     },
   },

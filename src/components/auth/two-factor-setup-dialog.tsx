@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { ReactQRCode } from '@lglab/react-qr-code';
-import { Check, Copy, KeyRound, Loader2, ShieldCheck, Sparkles } from 'lucide-react';
+import { Check, Copy, Loader2, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
@@ -29,6 +30,8 @@ export function TwoFactorSetupDialog({
   onOpenChange,
   onSuccess,
 }: TwoFactorSetupDialogProps) {
+  const t = useTranslations('auth.twoFactorSetup');
+  const tCommon = useTranslations('common');
   const [step, setStep] = useState<'password' | 'scan' | 'done'>('password');
   const [password, setPassword] = useState('');
   const [totpURI, setTotpURI] = useState('');
@@ -40,7 +43,7 @@ export function TwoFactorSetupDialog({
   const handleRequestEnable = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!password) {
-      toast.error('Veuillez saisir votre mot de passe.');
+      toast.error(t('errorPassword'));
       return;
     }
 
@@ -51,15 +54,15 @@ export function TwoFactorSetupDialog({
       });
 
       if (res.error) {
-        toast.error('Erreur', { description: res.error.message || 'Mot de passe incorrect.' });
+        toast.error(tCommon('errorOccurred'), { description: res.error.message || t('errorPassword') });
       } else if (res.data && 'totpURI' in res.data) {
         setTotpURI(res.data.totpURI);
         setBackupCodes(res.data.backupCodes || []);
         setStep('scan');
-        toast.info('Scannez le QR code avec votre application 2FA');
+        toast.info(t('toastScan'));
       }
     } catch {
-      toast.error('Une erreur est survenue.');
+      toast.error(tCommon('errorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -68,7 +71,7 @@ export function TwoFactorSetupDialog({
   const handleConfirmCode = async (e: React.FormEvent) => {
     e.preventDefault();
     if (verifyCode.length !== 6) {
-      toast.error('Veuillez entrer les 6 chiffres du code.');
+      toast.error(t('errorCode'));
       return;
     }
 
@@ -79,14 +82,14 @@ export function TwoFactorSetupDialog({
       });
 
       if (res.error) {
-        toast.error('Code invalide', { description: res.error.message });
+        toast.error(t('errorInvalid'), { description: res.error.message });
       } else {
         setStep('done');
-        toast.success('Double authentification activée avec succès !');
+        toast.success(t('successActivated'));
         if (onSuccess) onSuccess();
       }
     } catch {
-      toast.error('Erreur de confirmation.');
+      toast.error(tCommon('errorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -95,7 +98,7 @@ export function TwoFactorSetupDialog({
   const handleCopyBackupCodes = () => {
     navigator.clipboard.writeText(backupCodes.join('\n'));
     setCopied(true);
-    toast.success('Codes de secours copiés dans le presse-papiers');
+    toast.success(t('copiedCodes'));
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -105,10 +108,10 @@ export function TwoFactorSetupDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShieldCheck className="size-5 text-primary" />
-            <span>Activer l’authentification à deux facteurs (2FA)</span>
+            <span>{t('dialogTitle')}</span>
           </DialogTitle>
           <DialogDescription>
-            Protégez votre compte QRCraft contre les accès non autorisés.
+            {t('dialogDesc')}
           </DialogDescription>
         </DialogHeader>
 
@@ -116,7 +119,7 @@ export function TwoFactorSetupDialog({
           <form onSubmit={handleRequestEnable} className="flex flex-col gap-4 py-2">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="current-pwd" className="text-xs font-medium">
-                Confirmez votre mot de passe pour continuer
+                {t('enterPasswordDesc')}
               </Label>
               <Input
                 id="current-pwd"
@@ -136,11 +139,11 @@ export function TwoFactorSetupDialog({
                 onClick={() => onOpenChange(false)}
                 disabled={loading}
               >
-                Annuler
+                {tCommon('cancel')}
               </Button>
               <Button type="submit" disabled={loading} className="gap-2">
                 {loading && <Loader2 className="size-3.5 animate-spin" />}
-                <span>Continuer</span>
+                <span>{t('continue')}</span>
               </Button>
             </DialogFooter>
           </form>
@@ -149,7 +152,7 @@ export function TwoFactorSetupDialog({
         {step === 'scan' && (
           <form onSubmit={handleConfirmCode} className="flex flex-col items-center gap-4 py-2 text-center">
             <p className="text-xs text-muted-foreground">
-              Scannez ce QR code avec votre application (Google Authenticator, Authy, etc.) :
+              {t('scanDesc')}
             </p>
 
             <div className="p-3 bg-white rounded-xl shadow-md border border-border">
@@ -157,7 +160,7 @@ export function TwoFactorSetupDialog({
             </div>
 
             <div className="w-full flex flex-col items-center gap-2 pt-1">
-              <Label className="text-xs font-medium">Entrez le code à 6 chiffres généré :</Label>
+              <Label className="text-xs font-medium">{t('codeLabel')}</Label>
               <InputOTP maxLength={6} value={verifyCode} onChange={setVerifyCode}>
                 <InputOTPGroup className="gap-1.5">
                   <InputOTPSlot index={0} className="size-10 text-sm font-bold rounded border" />
@@ -173,7 +176,7 @@ export function TwoFactorSetupDialog({
             <DialogFooter className="w-full pt-2">
               <Button type="submit" disabled={loading} className="w-full gap-2">
                 {loading && <Loader2 className="size-3.5 animate-spin" />}
-                <span>Valider et activer la 2FA</span>
+                <span>{t('verify')}</span>
               </Button>
             </DialogFooter>
           </form>
@@ -183,11 +186,11 @@ export function TwoFactorSetupDialog({
           <div className="flex flex-col gap-4 py-2">
             <div className="p-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs flex items-center gap-2">
               <Check className="size-4 shrink-0" />
-              <span>Votre compte est désormais sécurisé par double authentification !</span>
+              <span>{t('doneTitle')}</span>
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label className="text-xs font-semibold">Conservez précieusement vos codes de secours :</Label>
+              <Label className="text-xs font-semibold">{t('backupCodesTitle')}</Label>
               <div className="grid grid-cols-2 gap-1.5 p-3 rounded-xl bg-muted font-mono text-[11px] text-center">
                 {backupCodes.map((code, idx) => (
                   <span key={idx} className="p-1 bg-background/80 rounded border border-border/60">
@@ -204,7 +207,7 @@ export function TwoFactorSetupDialog({
               className="gap-2 text-xs h-9"
             >
               {copied ? <Check className="size-3.5 text-emerald-500" /> : <Copy className="size-3.5" />}
-              <span>{copied ? 'Copié !' : 'Copier tous les codes de secours'}</span>
+              <span>{copied ? tCommon('copied') : t('copyCodes')}</span>
             </Button>
 
             <DialogFooter className="pt-2">
@@ -213,7 +216,7 @@ export function TwoFactorSetupDialog({
                 onClick={() => onOpenChange(false)}
                 className="w-full"
               >
-                Terminer
+                {t('close')}
               </Button>
             </DialogFooter>
           </div>

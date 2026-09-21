@@ -16,6 +16,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { useTranslations } from 'next-intl';
 import { useQRStudioStore } from '@/stores/qr-studio-store';
 import { useSession } from '@/lib/auth/auth-client';
 import { toast } from 'sonner';
@@ -25,24 +26,55 @@ import { QRCustomizerForm } from './qr-customizer-form';
 import { QRExportDialog } from './qr-export-dialog';
 import { QRCodePreview2D } from './qr-preview-2d';
 
+function Studio3DLoading() {
+  const t = useTranslations('studio');
+  return (
+    <div className="w-full h-[380px] sm:h-[420px] rounded-3xl border border-border/80 bg-muted/20 flex flex-col items-center justify-center gap-2">
+      <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      <span className="text-xs text-muted-foreground">{t('loading3d')}</span>
+    </div>
+  );
+}
+
 // Chargement différé et dynamique de la scène 3D pour éviter tout conflit SSR / WebGL
 const QRScene3D = dynamic(
   () => import('@/components/3d/qr-scene-3d').then((mod) => mod.QRScene3D),
   {
     ssr: false,
-    loading: () => (
-      <div className="w-full h-[380px] sm:h-[420px] rounded-3xl border border-border/80 bg-muted/20 flex flex-col items-center justify-center gap-2">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-        <span className="text-xs text-muted-foreground">Chargement du studio 3D...</span>
-      </div>
-    ),
+    loading: () => <Studio3DLoading />,
   }
 );
 
 type StudioViewMode = '2d' | '3d';
 
+import { useSearchParams } from 'next/navigation';
+
 export function QRStudioView() {
-  const { encodedValue, design, resetStudio, isDynamic } = useQRStudioStore();
+  return (
+    <React.Suspense fallback={<Studio3DLoading />}>
+      <QRStudioViewContent />
+    </React.Suspense>
+  );
+}
+
+function QRStudioViewContent() {
+  const t = useTranslations('studio');
+  const tCommon = useTranslations('common');
+  const searchParams = useSearchParams();
+  const editParamId = searchParams.get('edit');
+
+  const {
+    encodedValue,
+    realDestinationUrl,
+    design,
+    resetStudio,
+    isDynamic,
+    shortSlug,
+    editingId,
+    editingTitle,
+    loadExistingQRCode,
+  } = useQRStudioStore();
+
   const [viewMode, setViewMode] = useState<StudioViewMode>('2d');
   const [exportOpen, setExportOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -51,12 +83,42 @@ export function QRStudioView() {
 
   const { data: session } = useSession();
   const [saveOpen, setSaveOpen] = useState(false);
-  const [qrTitle, setQrTitle] = useState('Mon QR Code');
+  const [qrTitle, setQrTitle] = useState(editingTitle || '');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Chargement du QR code en mode modification
+  useEffect(() => {
+    if (editParamId && editParamId !== editingId) {
+      fetch(`/api/qr/${editParamId}`)
+        .then((r) => {
+          if (!r.ok) throw new Error('Impossible de charger le QR code');
+          return r.json();
+        })
+        .then((json) => {
+          if (json.data) {
+            loadExistingQRCode(json.data);
+            setQrTitle(json.data.title || '');
+            toast.info(`Mode modification : ${json.data.title || 'QR Code'}`);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          toast.error('Erreur lors du chargement du QR code pour modification');
+        });
+    }
+  }, [editParamId, editingId, loadExistingQRCode]);
+
+  useEffect(() => {
+    if (editingTitle && !qrTitle) {
+      setQrTitle(editingTitle);
+    }
+  }, [editingTitle, qrTitle]);
+
+  const isEditMode = Boolean(editingId);
 
   const getSvgElement = (): SVGSVGElement | null => {
     if (typeof document === 'undefined') return null;
@@ -73,33 +135,47 @@ export function QRStudioView() {
 
   const handleSaveToAccount = async () => {
     if (!session?.user) {
-      toast.error('Veuillez vous connecter pour enregistrer vos QR codes.');
-      window.location.href = '/login?callbackUrl=/studio';
+      toast.error(t('loginRequiredSave'));
+      window.location.href = `/login?callbackUrl=/dashboard/studio${editingId ? `?edit=${editingId}` : ''}`;
       return;
     }
     try {
       setSaving(true);
-      const res = await fetch('/api/qr', {
-        method: 'POST',
+      const endpoint = isEditMode ? `/api/qr/${editingId}` : '/api/qr';
+      const method = isEditMode ? 'PUT' : 'POST';
+
+      const payload = isEditMode
+        ? {
+            title: qrTitle.trim() || t('saveDialog.defaultTitle'),
+            destinationUrl: realDestinationUrl,
+            isDynamic,
+            design,
+          }
+        : {
+            title: qrTitle.trim() || t('saveDialog.defaultTitle'),
+            destinationUrl: realDestinationUrl,
+            shortSlug,
+            isDynamic,
+            design,
+          };
+
+      const res = await fetch(endpoint, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: qrTitle,
-          destinationUrl: encodedValue,
-          isDynamic,
-          design,
-        }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Erreur de sauvegarde');
-      toast.success('QR Code sauvegardé dans votre bibliothèque !', {
+      if (!res.ok) throw new Error(data.error || t('saveError'));
+
+      toast.success(isEditMode ? 'QR code mis à jour avec succès !' : t('saveSuccess'), {
         action: {
-          label: 'Voir Dashboard',
+          label: t('saveSuccessAction'),
           onClick: () => (window.location.href = '/dashboard'),
         },
       });
       setSaveOpen(false);
     } catch (err: any) {
-      toast.error(err.message || 'Erreur lors de la sauvegarde');
+      toast.error(err.message || t('saveError'));
     } finally {
       setSaving(false);
     }
@@ -115,9 +191,9 @@ export function QRStudioView() {
               <div className="h-9 w-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
                 <QrCode className="h-5 w-5" />
               </div>
-              <span className="font-bold text-base tracking-tight flex items-center gap-1.5">
+              <span className="font-heading font-extrabold text-base tracking-wider flex items-center gap-1.5">
                 QRCraft{' '}
-                <span className="text-[10px] uppercase font-extrabold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                <span className="text-[10px] font-accent font-bold uppercase px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                   Studio
                 </span>
               </span>
@@ -129,7 +205,7 @@ export function QRStudioView() {
               <Link href="/dashboard">
                 <Button variant="ghost" size="sm" className="text-xs h-9 gap-1.5">
                   <LayoutDashboard className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Dashboard</span>
+                  <span className="hidden sm:inline">{tCommon('dashboard')}</span>
                 </Button>
               </Link>
             )}
@@ -139,7 +215,7 @@ export function QRStudioView() {
               size="sm"
               onClick={() => {
                 if (!session?.user) {
-                  window.location.href = '/login?callbackUrl=/studio';
+                  window.location.href = `/login?callbackUrl=/dashboard/studio${editingId ? `?edit=${editingId}` : ''}`;
                 } else {
                   setSaveOpen(true);
                 }
@@ -147,7 +223,7 @@ export function QRStudioView() {
               className="text-xs h-9 gap-1.5 border-border/80 hover:bg-muted cursor-pointer"
             >
               <Save className="h-3.5 w-3.5" />
-              <span>Sauvegarder</span>
+              <span>{isEditMode ? 'Mettre à jour' : t('saveToAccount')}</span>
             </Button>
 
             <Button
@@ -157,7 +233,7 @@ export function QRStudioView() {
               className="text-xs h-9 gap-1.5 border-border/80 hover:bg-muted cursor-pointer"
             >
               <RefreshCw className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Réinitialiser</span>
+              <span className="hidden sm:inline">{t('reset')}</span>
             </Button>
 
             <Button
@@ -166,7 +242,7 @@ export function QRStudioView() {
               className="text-xs h-9 gap-1.5 shadow-sm hover:shadow cursor-pointer"
             >
               <Download className="h-3.5 w-3.5" />
-              <span>Exporter</span>
+              <span>{tCommon('export')}</span>
             </Button>
 
             <div className="h-5 w-px bg-border/60 mx-1 hidden sm:block" />
@@ -179,12 +255,31 @@ export function QRStudioView() {
 
       {/* Main Studio Workspace */}
       <main id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        {isEditMode && (
+          <div className="mb-6 p-3.5 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
+            <div className="flex items-center gap-2">
+              <span className="font-heading font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-900 dark:text-amber-200">
+                Mode Modification
+              </span>
+              <span>Vous modifiez actuellement le QR code &quot;{editingTitle || qrTitle}&quot;</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={resetStudio}
+              className="text-xs border-amber-500/30 hover:bg-amber-500/20 h-7 self-start sm:self-auto cursor-pointer"
+            >
+              Quitter le mode modification
+            </Button>
+          </div>
+        )}
+
         <div className="mb-6 space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-            Générateur de QR Codes Personnalisés
+          <h1 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight text-foreground">
+            {isEditMode ? `Modifier : ${editingTitle || t('title')}` : t('title')}
           </h1>
           <p className="text-sm text-muted-foreground">
-            Personnalisez les modules, les dégradés, les coins et le logo avec prévisualisation vectorielle instantanée et projection 3D.
+            {t('subtitle')}
           </p>
         </div>
 
@@ -201,7 +296,7 @@ export function QRStudioView() {
               <div className="flex items-center justify-between mb-5 pb-3 border-b border-border/60">
                 <div
                   role="tablist"
-                  aria-label="Modes d'aperçu du QR code"
+                  aria-label={t('previewModesAria')}
                   className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-xl border border-border/70"
                 >
                   <button
@@ -218,7 +313,7 @@ export function QRStudioView() {
                     }`}
                   >
                     <QrCode className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span>Aperçu 2D</span>
+                    <span>{t('view2d')}</span>
                   </button>
 
                   <button
@@ -235,13 +330,13 @@ export function QRStudioView() {
                     }`}
                   >
                     <Box className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span>Mockup 3D</span>
+                    <span>{t('view3d')}</span>
                   </button>
                 </div>
 
                 {isDynamic && (
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    Dynamique
+                    {tCommon('dynamic')}
                   </span>
                 )}
               </div>
@@ -280,7 +375,7 @@ export function QRStudioView() {
                     className="w-full font-medium shadow-md transition-all hover:shadow-lg gap-2 cursor-pointer"
                   >
                     <Download className="h-4 w-4" />
-                    <span>Télécharger le QR Code</span>
+                    <span>{t('downloadButton')}</span>
                   </Button>
                 </div>
               )}
@@ -303,31 +398,31 @@ export function QRStudioView() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Save className="w-5 h-5 text-indigo-500" />
-              <span>Enregistrer dans mon compte</span>
+              <span>{isEditMode ? 'Mettre à jour le QR Code' : t('saveDialog.title')}</span>
             </DialogTitle>
             <DialogDescription>
-              Donnez un titre à votre QR code pour le retrouver facilement dans votre Dashboard et suivre ses scans en temps réel.
+              {isEditMode ? 'Enregistrez les modifications de style et de destination pour ce QR code.' : t('saveDialog.description')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-3">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="qr-title" className="text-xs font-semibold">Titre du QR Code</Label>
+              <Label htmlFor="qr-title" className="text-xs font-semibold">{t('saveDialog.labelTitle')}</Label>
               <Input
                 id="qr-title"
                 value={qrTitle}
                 onChange={(e) => setQrTitle(e.target.value)}
-                placeholder="Ex : Campagne Printemps 2026, Menu Restaurant..."
+                placeholder={t('saveDialog.placeholder')}
                 className="h-10"
               />
             </div>
 
             <div className="p-3 rounded-lg bg-secondary/50 border border-border/60 text-xs text-muted-foreground flex flex-col gap-1">
-              <span className="font-semibold text-foreground">Destination configurée :</span>
-              <span className="truncate font-mono text-[11px]">{encodedValue}</span>
+              <span className="font-semibold text-foreground">{t('saveDialog.destinationLabel')}</span>
+              <span className="truncate font-mono text-[11px]">{realDestinationUrl}</span>
               {isDynamic && (
                 <span className="text-emerald-500 text-[11px] mt-1 font-medium">
-                  ✓ QR Code Dynamique : vous pourrez modifier cette URL à tout moment sans réimprimer le QR code !
+                  {t('saveDialog.dynamicNotice')}
                 </span>
               )}
             </div>
@@ -335,18 +430,18 @@ export function QRStudioView() {
 
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setSaveOpen(false)} disabled={saving}>
-              Annuler
+              {t('saveDialog.cancel')}
             </Button>
             <Button onClick={handleSaveToAccount} disabled={saving} className="gap-2">
               {saving ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Enregistrement...</span>
+                  <span>{t('saveDialog.saving')}</span>
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  <span>Confirmer l'enregistrement</span>
+                  <span>{isEditMode ? 'Mettre à jour' : t('saveDialog.submit')}</span>
                 </>
               )}
             </Button>
