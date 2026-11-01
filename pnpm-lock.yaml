@@ -4933,8 +4933,8 @@ packages:
   iobuffer@5.4.0:
     resolution: {integrity: sha512-DRebOWuqDvxunfkNJAlc3IzWIPD5xVxwUNbHr7xKB8E6aLJxIPfNX3CoMJghcFjpv6RWQsrcJbghtEwSPoJqMA==}
 
-  ip-address@10.2.0:
-    resolution: {integrity: sha512-/+S6j4E9AHvW9SWMSEY9Xfy66O5PWvVEJ08O0y5JGyEKQpojb0K0GKpz/v5HJ/G0vi3D2sjGK78119oXZeE0qA==}
+  ip-address@10.7.5:
+    resolution: {integrity: sha512-t2v0rkILYv9WXmSL7TpAaU3HXgaFYOPUcH3QHgwQ++gpJuH3bqyMy4Fvt/DJCTKwzH3Cf+bAp5W/mFL39KPLzA==}
     engines: {node: '>= 12'}
 
   ipaddr.js@1.9.1:
@@ -8356,7 +8356,7 @@ snapshots:
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.5
+      '@jridgewell/sourcemap-codec': 1.6.0
       '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/remapping@2.3.5':
@@ -8373,7 +8373,7 @@ snapshots:
   '@jridgewell/trace-mapping@0.3.31':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.5
+      '@jridgewell/sourcemap-codec': 1.6.0
 
   '@lglab/react-qr-code@1.7.3(react@19.3.0)':
     dependencies:
@@ -10691,7 +10691,7 @@ snapshots:
   better-call@1.1.8(zod@3.25.76):
     dependencies:
       '@better-auth/utils': 0.3.0
-      '@better-fetch/fetch': 1.3.1
+      '@better-fetch/fetch': 1.1.21
       rou3: 0.7.12
       set-cookie-parser: 2.7.2
     optionalDependencies:
@@ -10700,7 +10700,7 @@ snapshots:
   better-call@1.1.8(zod@4.6.2):
     dependencies:
       '@better-auth/utils': 0.3.0
-      '@better-fetch/fetch': 1.3.1
+      '@better-fetch/fetch': 1.1.21
       rou3: 0.7.12
       set-cookie-parser: 2.7.2
     optionalDependencies:
@@ -11631,7 +11631,7 @@ snapshots:
   express-rate-limit@8.5.2(express@5.2.1(supports-color@7.2.0)):
     dependencies:
       express: 5.2.1(supports-color@7.2.0)
-      ip-address: 10.2.0
+      ip-address: 10.7.5
 
   express@5.2.1(supports-color@7.2.0):
     dependencies:
@@ -11737,6 +11737,10 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.4):
     optionalDependencies:
       picomatch: 4.0.4
+
+  fdir@6.5.0(picomatch@4.0.7):
+    optionalDependencies:
+      picomatch: 4.0.7
 
   fflate@0.6.11: {}
 
@@ -12063,7 +12067,7 @@ snapshots:
 
   iobuffer@5.4.0: {}
 
-  ip-address@10.2.0: {}
+  ip-address@10.7.5: {}
 
   ipaddr.js@1.9.1: {}
 
@@ -13657,7 +13661,7 @@ snapshots:
 
   socks@2.8.10:
     dependencies:
-      ip-address: 10.2.0
+      ip-address: 10.7.5
       smart-buffer: 4.2.0
 
   sonner@2.0.8(@types/react@19.2.17)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
@@ -13918,8 +13922,8 @@ snapshots:
 
   tinyglobby@0.2.17:
     dependencies:
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
+      fdir: 6.5.0(picomatch@4.0.7)
+      picomatch: 4.0.7
 
   to-regex-range@5.0.1:
     dependencies:
